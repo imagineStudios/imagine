@@ -1,4 +1,4 @@
-function [dImg, dDim] = fNifTyRead(sFilename)
+function SData = fNifTyRead(sFilename)
 
 fid = fopen(sFilename, 'rb');
 if(fid < 0)
@@ -37,21 +37,21 @@ fseek(fid, -iNumEl.*dBytesPerVoxel, 'eof');
 % -------------------------------------------------------------------------
 
 % -------------------------------------------------------------------------
-% Read volume data (convert all data to double)
+% Read volume data
 switch iType
-    case     1, dImg = fread(fid, iNumEl, 'bit1');
-    case     2, dImg = fread(fid, iNumEl, 'uint8');
-    case     4, dImg = fread(fid, iNumEl, 'int16');
-    case     8, dImg = fread(fid, iNumEl, 'int32');
-    case    16, dImg = fread(fid, iNumEl, 'float');
-    case    32, dImg = fread(fid, iNumEl.*2, 'float'); %Complex
+    case     1, dImg = fread(fid, iNumEl, 'bit1->uint8');
+    case     2, dImg = fread(fid, iNumEl, 'uint8*');
+    case     4, dImg = fread(fid, iNumEl, 'int16*');
+    case     8, dImg = fread(fid, iNumEl, 'int32*');
+    case    16, dImg = fread(fid, iNumEl, 'float*');
+    case    32, dImg = fread(fid, iNumEl.*2, 'float*'); %Complex
     case    64, dImg = fread(fid, iNumEl, 'double');
-    case   128, dImg = fread(fid, iNumEl.*3, 'uint8'); % RGB
-    case   256, dImg = fread(fid, iNumEl, 'int8');
-    case   512, dImg = fread(fid, iNumEl, 'uint16');
-    case   768, dImg = fread(fid, iNumEl, 'uint32');
-    case  1024, dImg = fread(fid, iNumEl, 'int64');
-    case  1280, dImg = fread(fid, iNumEl, 'uint64');
+    case   128, dImg = fread(fid, iNumEl.*3, 'uint8*'); % RGB
+    case   256, dImg = fread(fid, iNumEl, 'int8*');
+    case   512, dImg = fread(fid, iNumEl, 'uint16*');
+    case   768, dImg = fread(fid, iNumEl, 'uint32*');
+    case  1024, dImg = fread(fid, iNumEl, 'int64*');
+    case  1280, dImg = fread(fid, iNumEl, 'uint64*');
     case  1792, dImg = fread(fid, iNumEl.*2, 'double'); %Complex
     otherwise, error('Format not suported');
 end

@@ -318,15 +318,17 @@ if exist([sMFilePath, 'imagineSave.mat'], 'file')
             obj.(csSaveVars{iI}) = S.(csSaveVars{iI});
         end
     end
+    
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    % Make sure the figure fits on the screen
+    if (iPosition(1) + iPosition(3) > iScreenSize(3)) || (iPosition(2) + iPosition(4) > iScreenSize(4))
+        iPosition(1:2) = 200;
+        iPosition(3:4) = iScreenSize(3:4) - 400;
+    end
+    if S.lDocked, iPosition = []; end
 end
 
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% Make sure the figure fits on the screen
-if (iPosition(1) + iPosition(3) > iScreenSize(3)) || (iPosition(2) + iPosition(4) > iScreenSize(4))
-    iPosition(1:2) = 200;
-    iPosition(3:4) = iScreenSize(3:4) - 400;
-end
-if S.lDocked, iPosition = []; end
+
 % -------------------------------------------------------------------------
 
 

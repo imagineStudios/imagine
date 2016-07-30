@@ -6,7 +6,7 @@ SView = obj.getView;
 if isempty(SView), return, end
 
 obj.contextMenu(0);
-if isempty(SView.iData) || SView.iData == 0
+if isempty(SView.iData) || SView.iData(1) == 0
     return
 end
 % -------------------------------------------------------------------------

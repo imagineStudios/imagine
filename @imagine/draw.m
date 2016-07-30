@@ -67,7 +67,7 @@ for iView = 1:numel(obj.SView)
     iImgInd = 0;
     
     if isempty(SView.iData)
-        set(SView.hImg(1), 'CData', dBGImg);
+        set(SView.hImg(1), 'CData', dBGImg, 'XData', [1 16], 'YData', [1 16]);
         
         dAxesPos = get(SView.hAxes, 'Position');
         dSize = dAxesPos(4:-1:3);

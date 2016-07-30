@@ -68,7 +68,7 @@ dOrigin = obj.SData(iSeries).dOrigin(iDim(1:2));
 dXData = [0 size(dImg, 2) - 1].*dAspect(2) + dOrigin(2);
 dYData = [0 size(dImg, 1) - 1].*dAspect(1) + dOrigin(1);
 
-if lHD && ~isinteger(dImg) && size(dImg, 3) == 1 && ~strcmp(obj.SData(iSeries).sMode, 'categorical')
+if lHD && ~strcmp(obj.SData(iSeries).sMode, 'vector') && ~strcmp(obj.SData(iSeries).sMode, 'categorical')
     % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
     % Fancy mode: Interpolate the images to full resolution. Is
     % executed when arbitrary input is supplied or the timer fires.
@@ -91,7 +91,7 @@ if lHD && ~isinteger(dImg) && size(dImg, 3) == 1 && ~strcmp(obj.SData(iSeries).s
     dYI = dYI(dYI >= mean(dY(1:2)) & dYI <= mean(dY(end-1:end)));
     
     [dXXI, dYYI] = meshgrid(dXI, dYI);
-    dImg = interp2(dX, dY, dImg, dXXI, dYYI, 'spline', 0);
+    dImg = interp2(dX, dY, double(dImg), dXXI, dYYI, 'spline', 0);
     
     dXData = [dXI(1), dXI(end)];
     dYData = [dYI(1), dYI(end)];

@@ -192,14 +192,11 @@ switch obj.SMenu(iInd).GroupIndex
                 end
                 obj.sPath = sPath;
                 
-                a = imread([obj.sPath, filesep, csFilenames]);
+                SData = fLoadFiles(obj.sPath, csFilenames);
                 
-                S = obj.initData(a, 1);
-                S.name = csFilenames;
-                obj.addData(S);
-                obj.iStartSeries = 1;
+                obj.plus(SData); 
+%                 obj.iStartSeries = 1;
                 
-                obj.sPath = sPath;
                 obj.position;
                 obj.draw
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -253,7 +250,13 @@ switch obj.SMenu(iInd).GroupIndex
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % DELETE DATA from structure
             case 'delete'
-                obj.minus(obj.SAction.SView.iInd + obj.iStartSeries - 1);
+                obj.minus(obj.SAction.SView.iInd);
+%                 obj.SAction.SView.iData = [];
+%                 obj.setViewMapping;
+%                 obj.draw;
+%                 obj.position;
+%                 obj.grid;
+                
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Determine the NUMBER OF PANELS and their LAYOUT
