@@ -67,13 +67,8 @@ for iView = 1:numel(obj.SView)
     iImgInd = 0;
     
     if isempty(SView.iData)
-        set(SView.hImg(1), 'CData', dBGImg, 'XData', [1 16], 'YData', [1 16]);
-        
-        dAxesPos = get(SView.hAxes, 'Position');
-        dSize = dAxesPos(4:-1:3);
-        dLim = size(dBGImg(:,:,1))./max(dSize).*dSize;
-        set(SView.hAxes, 'XLim', size(dBGImg, 2)/2 + 0.5*[-dLim(2) dLim(2)] + 0.5, ...
-                         'YLim', size(dBGImg, 1)/2 + 0.5*[-dLim(1) dLim(1)] + 0.5);
+
+        set(SView.hImg(1), 'CData', dBGImg, 'XData', [1 size(dBGImg, 2)], 'YData', [1 size(dBGImg, 1)]);
         
     else
         
@@ -141,65 +136,3 @@ for iView = 1:numel(obj.SView)
         end
     end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-% Apply mask if any
-% if SView.iMask > 0
-%
-%     [dMask, dXData, dYData] = obj.getData(SView, true, lHD);
-%
-%     if ~isempty(dMask)
-%         if size(obj.SData(SView.iMask).dImg, 3) == 1
-%
-%             switch(class(dMask))
-%
-%                 case 'uint8' % Assume categorial data
-%                     dColormapMask = [0 0 0; lines(max(dMask(:)))];
-%                     dMaskRGB = reshape(dColormapMask(dMask + 1, :), [size(dMask, 1) ,size(dMask, 2), 3]);
-%                     dAlpha = dMaskAlpha;
-%
-%                 case 'logical' % Assume binary mask
-%                     dColormapMask = [0 0 0; lines(1)];
-%                     dMaskRGB = reshape(dColormapMask(dMask + 1, :), [size(dMask, 1) ,size(dMask, 2), 3]);
-%                     dAlpha = dMaskAlpha;
-%
-%                 otherwise % Assume intensity image
-%                     dMin = obj.SData(SView.iMask).dWindowCenter - 0.5.*obj.SData(SView.iMask).dWindowWidth;
-%                     dMax = obj.SData(SView.iMask).dWindowCenter + 0.5.*obj.SData(SView.iMask).dWindowWidth;
-%                     dMask = dMask - dMin;
-%                     dMask = dMask./(dMax - dMin);
-%                     dMask(dMask < 0) = 0;
-%                     dMask(dMask > 1) = 1;
-%                     iMask = round(dMask.*(255)) + 1;
-%                     dColormapMask = hot(256);
-%                     dMaskRGB = reshape(dColormapMask(iMask, :), [size(iMask, 1) ,size(iMask, 2), 3]);
-%                     dAlpha = dMask.*dMaskAlpha;
-%             end
-%             set(SView.hQuiver, 'Visible', 'off');
-%             set(SView.hMask, 'CData', dMaskRGB, 'XData', dXData, 'YData', dYData, 'Visible', 'on', 'AlphaData', dAlpha);
-%
-%         else
-%             set(SView.hQuiver, 'XData', dXData, 'YData', dYData, 'Visible', 'on', 'LineWidth', dQuiverWidth);
-%             set(SView.hQuiver.Edge, 'ColorBinding', 'interpolated', 'ColorData', dMask)
-%             set(SView.hMask, 'Visible', 'off');
-%         end
-%     end

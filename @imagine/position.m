@@ -56,9 +56,8 @@ for iView = 1:numel(obj.SView)
         dSize = dAxesPos(4:-1:3);
         dLim = 16./max(dSize).*dSize;
         set(SView.hAxes, 'XLim', 8 + 0.5*[-dLim(2) dLim(2)] + 0.5, ...
-                         'YLim', 8 + 0.5*[-dLim(1) dLim(1)] + 0.5);
-        
-%         set(SView.hAxes, 'XLim', [0 1], 'YLim', [0 1], 'XDir', 'normal', 'YDir', 'normal');
+                         'YLim', 8 + 0.5*[-dLim(1) dLim(1)] + 0.5, ...
+                         'XDir', 'normal', 'YDir', 'reverse');
         
     end
     

@@ -162,43 +162,7 @@ switch obj.SMenu(iInd).GroupIndex
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % LOAD new FILES using file dialog
             case 'folder_open'
-                if strcmp(get(obj.hF, 'SelectionType'), 'normal')
-                    % Load Files
-                    [csFilenames, sPath] = uigetfile( ...
-                        {'*.*', 'All Files'; ...
-                        '*.dcm; *.DCM; *.mat; *.MAT; *.jpg; *.jpeg; *.JPG; *.JPEG; *.tif; *.tiff; *.TIF; *.TIFF; *.gif; *.GIF; *.bmp; *.BMP; *.png; *.PNG; *.nii; *.NII; *.gipl; *.GIPL', 'All images'; ...
-                        '*.mat; *.MAT', 'Matlab File (*.mat)'; ...
-                        '*.jpg; *.jpeg; *.JPG; *.JPEG', 'JPEG-Image (*.jpg)'; ...
-                        '*.tif; *.tiff; *.TIF; *.TIFF;', 'TIFF-Image (*.tif)'; ...
-                        '*.gif; *.GIF', 'Gif-Image (*.gif)'; ...
-                        '*.bmp; *.BMP', 'Bitmaps (*.bmp)'; ...
-                        '*.png; *.PNG', 'Portable Network Graphics (*.png)'; ...
-                        '*.dcm; *.DCM', 'DICOM Files (*.dcm)'; ...
-                        '*.nii; *.NII', 'NifTy Files (*.nii)'; ...
-                        '*.gipl; *.GIPL', 'Guys Image Processing Lab Files (*.gipl)'}, ...
-                        'OpenLocation'  , obj.sPath, ...
-                        'Multiselect'   , 'on');
-                    if isnumeric(sPath), return, end;   % Dialog aborted
-                else
-                    % Load a folder
-                    sPath = uigetdir(obj.sPath);
-                    if isnumeric(sPath), return, end;
-                    
-                    sPath = [sPath, filesep];
-                    SFiles = dir(sPath);
-                    SFiles = SFiles(~[SFiles.isdir]);
-                    csFilenames = cell(length(SFiles), 1);
-                    for iI = 1:length(SFiles), csFilenames{iI} = SFiles(iI).name; end
-                end
-                obj.sPath = sPath;
-                
-                SData = fLoadFiles(obj.sPath, csFilenames);
-                
-                obj.plus(SData); 
-%                 obj.iStartSeries = 1;
-                
-                obj.position;
-                obj.draw
+                obj.loadFiles;
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - -
