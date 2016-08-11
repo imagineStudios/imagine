@@ -16,7 +16,7 @@ iNViews = iRows*iCols;
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Existing number of views
-iNExistingViews = numel(obj.SView);
+iNExistingViews = numel(obj.hViews);
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Determine the resulting line colormap
@@ -30,11 +30,9 @@ if iNViews < iNExistingViews
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Delete the view axes and implicitely it's children
-    obj.SView = obj.SView(:);
-    for iI = iNViews + 1:iNExistingViews
-        delete(obj.SView(iI).hAxes); % Delete excess views
-    end
-    obj.SView = obj.SView(1:iNViews); % Remove exess handles    
+    obj.hViews = obj.hViews(:);
+    delete(obj.hViews(iNViews + 1:iNExistingViews));
+    obj.hViews = obj.hViews(1:iNViews); % Remove exess handles    
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Delete the lines in the sidebar
@@ -47,42 +45,7 @@ elseif iNViews > iNExistingViews
     % Create the additional views
     for iI = iNExistingViews + 1:iNViews
         
-        % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        % View axes and its children
-        obj.SView(iI).hAxes = axes(...
-            'Parent'            , obj.hF, ...
-            'Layer'             , 'top', ...
-            'Units'             , 'pixels', ...
-            'Color'             , 'k', ...
-            'FontSize'          , 12, ...
-            'XTickMode'         , 'manual', ...
-            'YTickMode'         , 'manual', ...
-            'XColor'            , [0.5 0.5 0.5], ...
-            'YColor'            , [0.5 0.5 0.5], ...
-            'XTickLabelMode'    , 'manual', ...
-            'YTickLabelMode'    , 'manual', ...
-            'XAxisLocation'     , 'top', ...
-            'YDir'              , 'reverse', ...
-            'Box'               , 'on', ...
-            'HitTest'           , 'on', ...
-            'XGrid'             , 'off', ...
-            'YGrid'             , 'off', ...
-            'XMinorGrid'        , 'off', ...
-            'YMinorGrid'        , 'off');
-        hold on
-        
-        try set(obj.SView(iI).hAxes, 'YTickLabelRotation', 90); end
-        
-        obj.SView(iI).hImg      = [];
-        obj.SView(iI).hQuiver   = [];
-        
-        obj.SView(iI).hLine     = [];
-        obj.SView(iI).hScatter  = [];
-        obj.SView(iI).hText     = [];
-        
-        obj.SView(iI).iInd = iI;
-        obj.SView(iI).iData = [];
-        obj.SView(iI).iDimInd = 1;
+        obj.hViews(iI) = iView(obj, iI);
         
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % The line in the sidebar
@@ -94,12 +57,10 @@ elseif iNViews > iNExistingViews
     end
 end
 
-obj.setViewMapping;
-
-uistack([obj.SView.hAxes], 'bottom');
+% obj.setViewMapping;
 
 % Flip the representation in the handles array compared to the screen ordering to enable linear indexing
-obj.SView = reshape(obj.SView, iCols, iRows); 
+obj.hViews = reshape(obj.hViews, iCols, iRows); 
 if ~obj.isOn('2d'), obj.iViews = [iCols, iRows]; end
 
 if strcmp(get(obj.hF, 'Visible'), 'on')

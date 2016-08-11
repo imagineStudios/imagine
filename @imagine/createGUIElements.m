@@ -241,31 +241,31 @@ try
     
     % -------------------------------------------------------------------------
     % Determine the number of views
-    if obj.iViews
-        iViews = obj.iViews;
-    else
-        iNumImages = max(1, length(obj.cMapping));
-        dRoot = sqrt(iNumImages);
-        iPanelsN = ceil(dRoot);
-        iPanelsM = ceil(dRoot);
-        while iPanelsN*iPanelsM >= iNumImages
-            iPanelsN = iPanelsN - 1;
-        end
-        iPanelsN = iPanelsN + 1;
-        iPanelsN = min([4, iPanelsN]);
-        iPanelsM = min([4, iPanelsM]);
-        iViews = [iPanelsN, iPanelsM];
-    end
-    
-    if l3DMode
-        lInd = strcmp({obj.SMenu.Name}, '2d');
-        obj.SMenu(lInd).Active = true;
-        iN = max(1, min([6, length(obj.SData) - obj.iStartSeries + 1, prod(obj.iViews)]));
-        obj.setViews(3, iN);
-        obj.iViews = iViews;
-    else
-        obj.setViews(iViews);
-    end
+%     if obj.iViews
+%         iViews = obj.iViews;
+%     else
+%         iNumImages = max(1, length(obj.cMapping));
+%         dRoot = sqrt(iNumImages);
+%         iPanelsN = ceil(dRoot);
+%         iPanelsM = ceil(dRoot);
+%         while iPanelsN*iPanelsM >= iNumImages
+%             iPanelsN = iPanelsN - 1;
+%         end
+%         iPanelsN = iPanelsN + 1;
+%         iPanelsN = min([4, iPanelsN]);
+%         iPanelsM = min([4, iPanelsM]);
+%         iViews = [iPanelsN, iPanelsM];
+%     end
+%     
+%     if l3DMode
+%         lInd = strcmp({obj.SMenu.Name}, '2d');
+%         obj.SMenu(lInd).Active = true;
+%         iN = max(1, min([6, length(obj.SData) - obj.iStartSeries + 1, prod(obj.iViews)]));
+%         obj.setViews(3, iN);
+%         obj.iViews = iViews;
+%     else
+%         obj.setViews(iViews);
+%     end
     % -------------------------------------------------------------------------
     
 catch me
@@ -327,8 +327,6 @@ if exist([sMFilePath, 'imagineSave.mat'], 'file')
     end
     if S.lDocked, iPosition = []; end
 end
-
-
 % -------------------------------------------------------------------------
 
 

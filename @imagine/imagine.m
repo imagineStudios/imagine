@@ -65,7 +65,7 @@ classdef imagine < handle
         % -----------------------------------------------------------------
         % Graphic object handle containers and other handles
         hF          % The main figure
-        SView       % The views and its components
+        hViews      = iView.empty;% The views and its components
         SSidebar    % The sidebar and its components
         STooltip    % The tooltip and its components
         SAxes       % Miscellaneous axes
@@ -77,7 +77,7 @@ classdef imagine < handle
         % -----------------------------------------------------------------
         % Data structures
         SData    = [];      % Structure with image date and its properties
-        cMapping = {};      % Mapping between data in SData and views  
+%         cMapping = {};      % Mapping between data in SData and views  
         SAction  = [];      % Structure to store information for mouse actions
         SMenu               % A menu item structure
         SSliders            % A slider structure
@@ -102,13 +102,20 @@ classdef imagine < handle
     % =====================================================================
     
     
+    events
+        viewImageChange
+        viewPositionChange
+    end
+    
     
     % =====================================================================
     methods (Access = public)
         
         % -----------------------------------------------------------------
         function obj = imagine(varargin)
-        %IMAGINE Constructor    
+        %IMAGINE Constructor
+        
+%             obj.hViews = view.empty;
 
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             % Get the input data
@@ -120,6 +127,7 @@ classdef imagine < handle
             % Create all the GUI elements
             obj.createGUIElements;
             obj.setColormap('Gray');
+            obj.setViews(1);
             
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             % Do final steps for figure drawing
@@ -129,7 +137,7 @@ classdef imagine < handle
             obj.SMenu(strcmp({obj.SMenu.Name}, 'sidebar')).Active = obj.iSidebarWidth > 0;
             obj.updateActivation;
             set(obj.hF, 'Visible', 'on'); % Triggers the resize function
-            obj.draw;
+            notify(obj, 'viewImageChange');
             
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             % If docked, return focus to console
@@ -210,7 +218,6 @@ classdef imagine < handle
         % -----------------------------------------------------------------
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % Rendering core
-        draw(obj, hObject, eventdata)
         position(obj)
         grid(obj)
         

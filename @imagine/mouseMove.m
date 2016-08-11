@@ -20,7 +20,6 @@ dFleur = ...
 
 set(obj.hF, 'Pointer', 'Arrow', 'WindowButtonDownFcn', @obj.contextMenu); % Default
 
-obj.getView;
 oOver = hittest;
 
 % -------------------------------------------------------------------------
@@ -51,7 +50,7 @@ end
 
 % -------------------------------------------------------------------------
 % Mouse over a VIEW
-obj.SAction.iView = find(oOver == [obj.SView.hAxes]);
+obj.SAction.iView = [];%find(oOver == [obj.oView.hAxes]);
 if ~isempty(obj.SAction.iView)
     
     SView = obj.SView(obj.SAction.iView);
@@ -143,22 +142,22 @@ end
 
 % ---------------------------------------------------------------------
 % Mouse over a line in a view (profile or ROI)
-SView = obj.getView;
-if ~isempty(SView)
-    dPos = get(SView.hAxes, 'CurrentPoint');
-    dX   = get(SView.hLine(1), 'XData');
-    dY   = get(SView.hLine(1), 'YData');
-    iInd = find(abs(dPos(1, 1) - dX) < 5 & abs(dPos(1, 2) - dY) < 5, 1);
-    if ~isempty(iInd)
-        set(obj.hF, 'Pointer', 'fleur');
-    end
-end
+% SView = obj.getView;
+% if ~isempty(SView)
+%     dPos = get(SView.hAxes, 'CurrentPoint');
+%     dX   = get(SView.hLine(1), 'XData');
+%     dY   = get(SView.hLine(1), 'YData');
+%     iInd = find(abs(dPos(1, 1) - dX) < 5 & abs(dPos(1, 2) - dY) < 5, 1);
+%     if ~isempty(iInd)
+%         set(obj.hF, 'Pointer', 'fleur');
+%     end
+% end
 % ---------------------------------------------------------------------
 
 
 
 function fNoBottomLeftText(obj)
-for iView = 1:numel(obj.SView)
+for iView = 1:numel(obj.oView)
     if ~isempty(obj.SView(iView).hText)
         set(obj.SView(iView).hText(2, 1, :), 'String', '');
     end

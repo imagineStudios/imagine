@@ -2,7 +2,7 @@ function position(obj)
 % imagine.POSITION Responsisble for positioning the contents of the views
 % correctly.
 
-if isempty(obj.SView), return, end
+if isempty(obj.hViews), return, end
 
 % Lookup to make setting the axes directions more convenient
 csDirs = {'normal', 'reverse'};

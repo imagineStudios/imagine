@@ -35,8 +35,8 @@ end
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Determine the view arrangement
-iCols = size(obj.SView, 1);
-iRows = size(obj.SView, 2);
+iCols = size(obj.hViews, 1);
+iRows = size(obj.hViews, 2);
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Get the relative widths and heights of the views
@@ -65,15 +65,7 @@ for iY = iRows:-1:1 % Start from the bottom
         else
             iWidth = round(iAllViewWidth.*dWidth(iX));
         end
-        set(obj.SView(iX, iY).hAxes, 'Position', [iXStart + obj.lRuler.*20, iYStart, iWidth - obj.lRuler.*20, iHeight - obj.lRuler.*20]);
-        if ~isempty(obj.SView(iX, iY).hText)
-            set(obj.SView(iX, iY).hText(1, 1, 1), 'Position', [10, iHeight - 10 - obj.lRuler.*20]);
-            set(obj.SView(iX, iY).hText(1, 1, 2), 'Position', [9, iHeight - 9 - obj.lRuler.*20]);
-            set(obj.SView(iX, iY).hText(1, 2, 1), 'Position', [iWidth - 10 - obj.lRuler.*20, iHeight - 10 - obj.lRuler.*20]);
-            set(obj.SView(iX, iY).hText(1, 2, 2), 'Position', [iWidth - 11 - obj.lRuler.*20, iHeight - 9 - obj.lRuler.*20]);
-            set(obj.SView(iX, iY).hText(2, 2, 1), 'Position', [iWidth - 10, 10]);
-            set(obj.SView(iX, iY).hText(2, 2, 2), 'Position', [iWidth - 11, 11] + 2);
-        end
+        obj.hViews(iX, iY).Position = [iXStart + obj.lRuler.*20, iYStart, iWidth - obj.lRuler.*20, iHeight - obj.lRuler.*20];
         iXStart = iXStart + iWidth;
     end
     iYStart = iYStart + iHeight;
@@ -109,6 +101,6 @@ set(obj.SSidebar.hIcons, 'Position', [2, iAllViewHeight - 190 - 32, 192, 32], 'X
 
 % -------------------------------------------------------------------------
 % Draw!
-obj.position;
-obj.grid;
+% obj.position;
+% obj.grid;
 % -------------------------------------------------------------------------

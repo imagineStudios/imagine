@@ -60,7 +60,7 @@ end
 
 % -------------------------------------------------------------------------
 % Loop over all views
-for iView = 1:numel(obj.SView)
+for iView = 1:numel(obj.oView)
     
     SView = obj.SView(iView);
     
