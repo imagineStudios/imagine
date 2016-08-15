@@ -16,7 +16,7 @@ if isempty(dBGImg)
     dPattern = dPattern.*repmat(linspace(1, 0.8, 16)', [1, 16]);
     dPattern = repmat(dPattern, [1 1 3]);
     
-    dBGImg = repmat(permute(obj.Parent.dFGCOLOR, [1 3 2]), [16 16 1]).*dPattern;
+    dBGImg = repmat(permute(obj(1).Parent.dBGCOLOR, [1 3 2]), [16 16 1]).*dPattern;
 end
 
 % -------------------------------------------------------------------------
@@ -31,7 +31,7 @@ end
 %         stop(obj.STimers.hDrawFancy);
 %         start(obj.STimers.hDrawFancy);
 %     end
-%     lHD = false;
+    lHD = false;
 % end
 % -------------------------------------------------------------------------
 
@@ -59,74 +59,33 @@ end
 % -------------------------------------------------------------------------
 % Loop over all views
 
-iImgInd = 0;
+% iImgInd = 0;
+for iI = 1:length(obj)
+    
+    hView = obj(iI);
 
-if isempty(obj.iData)
-    
-    set(obj.hI(1), 'CData', dBGImg, 'XData', [1 size(dBGImg, 2)], 'YData', [1 size(dBGImg, 1)]);
-    
-else
-    
-    for iData = SView.iData
-        
-        if ~obj.isOn('lock_window') && ~strcmp(sDrawMode, 'phase') % Individual windowing
-            dMin = obj.SData(iData).dWindowCenter - 0.5.*obj.SData(iData).dWindowWidth;
-            dMax = obj.SData(iData).dWindowCenter + 0.5.*obj.SData(iData).dWindowWidth;
+    if isempty(hView.hData)
+
+        set(hView.hI(1), 'CData', dBGImg, 'XData', [1 size(dBGImg, 2)], 'YData', [1 size(dBGImg, 1)]);
+
+    else
+
+        for hData = hView.hData
+
+            % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+            % Get the image data, do windowing and apply colormap
+            [dImg, dXData, dYData]  = hData.getData(hView, lHD);
+            set(hView.hI, 'CData', dImg, 'XData', dXData, 'YData', dYData);%, 'AlphaData', dAlpha);
+    %                 
+    %             case 'vector'
+    %                 
+    %                 set(SView.hQuiver, 'XData', dXData, 'YData', dYData, 'Visible', 'on', 'LineWidth', dQuiverWidth);
+    %                 set(SView.hQuiver.Edge, 'ColorBinding', 'interpolated', 'ColorData', uint8(dImg))
+    %         end
+
+    %         set(SView.hText(1, 1, :),  'String', sprintf('[%d]: %s', SView.iData(1), obj.SData(SView.iData(1)).sName), 'Visible', 'on');
+            %             set(SView.hAxes, 'Color', obj.dColormap(1,:));
+
         end
-        
-        if ~strcmp(obj.SData(iData).sMode, 'vector'), iImgInd = iImgInd + 1; end
-        
-        % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-        % Get the image data, do windowing and apply colormap
-        [dImg, dXData, dYData]  = obj.getData(SView, iData, lHD);
-        dImg = double(dImg);
-        
-        switch obj.SData(iData).sMode
-            
-            case {'scalar', 'categorical', 'rgb'}
-                
-                % scale and do colormapping
-                if strcmp(obj.SData(iData).sMode, 'categorical')
-                    dColormap = [0 0 0; lines(max(dImg(:)))];
-                    iImg = round(dImg) + 1;
-                    dImg = reshape(dColormap(iImg, :), [size(iImg, 1) ,size(iImg, 2), 3]);
-                    dAlpha = dMaskAlpha;
-                else
-                    dImg = dImg - dMin;
-                    dAlpha = dImg./(dMax - dMin);
-                    dAlpha(dAlpha < 0) = 0;
-                    dAlpha(dAlpha > 1) = 1;
-                    
-                    if strcmp(obj.SData(iData).sMode, 'scalar')
-                        
-                        if iImgInd == 1
-                            dColormap = obj.dColormap;
-                        else
-                            dColormap = hot(256);
-                        end
-                        iImg = round(dAlpha.*(size(dColormap, 1) - 1)) + 1;
-                        dImg = reshape(dColormap(iImg, :), [size(iImg, 1) ,size(iImg, 2), 3]);
-                        %                         dAlpha = 0;
-                        dAlpha = dMaskAlpha;
-                        %                         dAlpha = dAlpha.*dMaskAlpha;
-                    else
-                        dImg = dAlpha;
-                        dAlpha = mean(dAlpha, 3).*dMaskAlpha;
-                    end
-                end
-                
-                if iImgInd == 1, dAlpha = 1; end
-                
-                set(SView.hImg(iImgInd), 'CData', dImg, 'XData', dXData, 'YData', dYData, 'AlphaData', dAlpha);
-                
-            case 'vector'
-                
-                set(SView.hQuiver, 'XData', dXData, 'YData', dYData, 'Visible', 'on', 'LineWidth', dQuiverWidth);
-                set(SView.hQuiver.Edge, 'ColorBinding', 'interpolated', 'ColorData', uint8(dImg))
-        end
-        
-        set(SView.hText(1, 1, :),  'String', sprintf('[%d]: %s', SView.iData(1), obj.SData(SView.iData(1)).sName), 'Visible', 'on');
-        %             set(SView.hAxes, 'Color', obj.dColormap(1,:));
-        
     end
 end

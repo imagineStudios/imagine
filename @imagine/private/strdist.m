@@ -1,4 +1,4 @@
-function [d,A]=strdist(r,b,krk,cas)
+function dDist = strdist(sStr1, xStr2, lCaseSensitive)
 
 %d=strdist(r,b,krk,cas) computes Levenshtein and editor distance 
 %between strings r and b with use of Vagner-Fisher algorithm.
@@ -23,48 +23,50 @@ function [d,A]=strdist(r,b,krk,cas)
 % disp(strdist('matlab','Mathworks',2,1))
 %    6     9
 
-switch nargin
-   case 1
-      d=numel(r);
-      return
-   case 2
-      krk=1;
-      bb=b;
-      rr=r;
-   case 3
-       bb=b;
-       rr=r;
-   case 4
-      bb=b;
-      rr=r;
-      if cas>0
-         bb=upper(b);
-         rr=upper(r);
-      end
+if nargin < 3, lCaseSensitive = false; end
+if nargin < 2
+    dDist = numel(sStr1);
+    return
 end
 
-if krk~=2
-   krk=1;
+if ischar(xStr2)
+    xStr2 = {xStr2};
 end
 
-d=[];
-luma=numel(bb);	lima=numel(rr);
-lu1=luma+1;       li1=lima+1;
-dl=zeros([lu1,li1]);
-dl(1,:)=0:lima;   dl(:,1)=0:luma;
-%Distance
-for krk1=1:krk
-for i=2:lu1
-   bbi=bb(i-1);
-   for j=2:li1
-      kr=krk1;
-      if strcmp(rr(j-1),bbi)
-         kr=0;
-      end
-   dl(i,j)=min([dl(i-1,j-1)+kr,dl(i-1,j)+1,dl(i,j-1)+1]);
-   end
-end
-d=[d dl(end,end)];
+if ~lCaseSensitive
+    sStr1 = lower(sStr1);
 end
 
+lima = numel(sStr1);
+
+dDist = zeros(size(xStr2));
+for iK = 1:length(xStr2)
+    
+    sStr2 = xStr2{iK};
+    
+    if ~lCaseSensitive
+        sStr2 = lower(sStr2);
+    end
+
+    luma = numel(sStr2);
+    
+    lu1  = luma + 1;
+    
+    dl = zeros([lu1, lima + 1]);
+    dl(1,:) = 0:lima;
+    dl(:,1) = 0:luma;
+    
+    %Distance
+    for iI = 2:lu1
+        bbi = sStr2(iI-1);
+        for iJ = 2:(lima + 1)
+            kr = 1;
+            if strcmp(sStr1(iJ-1), bbi)
+                kr = 0;
+            end
+            dl(iI, iJ) = min([dl(iI-1, iJ-1) + kr, dl(iI-1, iJ)+1, dl(iI, iJ-1) + 1]);
+        end
+    end
+    dDist(iK) = dl(end, end);
+end
 

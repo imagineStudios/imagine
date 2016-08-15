@@ -10,10 +10,11 @@ if isstruct(iCnt) || isobject(iCnt)
     if obj.SAction.lShift
         iDim(3) = 5;
     else
-        SView = obj.getView;
-        if isempty(SView.iData), return, end
-        if ~SView.iData, return, end
-        iDim = obj.SData(SView.iData(1)).iDims(SView.iDimInd, :);
+        hView = obj.getView;
+        if isempty(hView), return, end
+        if isempty(hView.hData), return, end
+        iDim      = hView.hData(1).Dims(hView.iDimInd, :);
+        dStepSize = hView.hData(1).Res(iDim(3));
     end
     
 else
@@ -27,45 +28,37 @@ end
 
 
 % -------------------------------------------------------------------------
-% Loop over all data
-for iSeries = 1:length(obj.SData)
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    % Calculate new image index and make sure it's not out of bounds
-    dRes = obj.SData(iSeries).dRes;
-    dSize = fSize(obj.SData(iSeries).dImg, 1:5);
-    
-    iNewImgInd = obj.SData(iSeries).dDrawCenter(iDim(3)) + iCnt.*dRes(iDim(3));
-    
-    dMin = obj.SData(iSeries).dOrigin(iDim(3));
-    dMax = dMin + dRes(iDim(3)).*(dSize(iDim(3)) - 1);
-    
-    iNewImgInd = min(max(iNewImgInd, dMin), dMax);
-    obj.SData(iSeries).dDrawCenter(iDim(3)) = iNewImgInd;
+% Loop over all views
+for iI = 1:length(obj.hViews)
+    if ~isempty(obj.hViews(iI).DrawCenter)
+        d = obj.hViews(iI).DrawCenter(iDim(3)) + iCnt.*dStepSize;
+        obj.hViews(iI).DrawCenter(iDim(3)) = d;
+    end
 end
 % -------------------------------------------------------------------------
 
 
 % -----------------------------------------------------------------
 % Show a crosshair using the grids if in 3D mode
-if obj.isOn('2d')
-    if obj.dGrid ~= -1, obj.SAction.dGrid = obj.dGrid; end
-    obj.dGrid = -1;
-    obj.position;
-    obj.grid;
-end
+% if obj.isOn('2d')
+%     if obj.dGrid ~= -1, obj.SAction.dGrid = obj.dGrid; end
+%     obj.dGrid = -1;
+%     obj.position;
+%     obj.grid;
+% end
 
-if iDim(3) == 5
-    obj.showPosition('time');
-else
+% if iDim(3) == 5
+%     obj.showPosition('time');
+% else
 %     if ~obj.isOn('2d')
-        obj.showPosition('slice');
+%         obj.showPosition('slice');
 %     end
-end
+% end
 
 % -----------------------------------------------------------------
 
 
 % -----------------------------------------------------------------
 % Draw!
-obj.draw;
+% notify(obj, 'viewImageChange');
 % -----------------------------------------------------------------

@@ -1,22 +1,20 @@
-function tooltip(obj, sString, eventdata)
+function tooltip(obj, sString, ~)
 
-dTOOLTIPSCALING         = 12;
+dTOOLTIPSCALING = 12; % Empirical factor to scale from letter count to width in px
 
 % -------------------------------------------------------------------------
-% Create the image of the tooltip
-persistent dMaskBorder dBackground
+% Create the image and alpha mask for the tooltip
+persistent dBGMask dBGImg
 
-if isempty(dMaskBorder)
-    sPath = mfilename('fullpath');
-    sPath = fileparts(sPath);
-    [~, ~, dMaskBorder] = imread([sPath, filesep, 'icons', filesep, 'tooltip_mask.png']);
-    dMaskBorder = double(dMaskBorder)/255;
+if isempty(dBGImg)
+    dBGImg = [linspace(60, 70, 20), linspace(30, 40, 20)]' + 5.*rand(40, 1);
 end
 
-iTOOLTIPHEIGHT = size(dMaskBorder, 1);
-
-if isempty(dBackground)
-    dBackground = [linspace(60, 70, 20), linspace(30, 40, 20)]' + 5.*rand(40, 1);
+if isempty(dBGMask)
+    sPath = mfilename('fullpath');
+    sPath = fileparts(sPath);
+    [~, ~, dBGMask] = imread([sPath, filesep, 'icons', filesep, 'tooltip_mask.png']);
+    dBGMask = double(dBGMask)/255;
 end
 % -------------------------------------------------------------------------
 
@@ -35,42 +33,44 @@ if isempty(sString) || isobject(sString(1)) || ishandle(sString(1))
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Hide the scatters and restore the text visibility
-    for iView = 1:numel(obj.SView)
-        set(obj.SView(iView).hScatter, 'Visible', 'off');
+    for iView = 1:numel(obj.hViews)
+%         set(obj.hViews(iView).hS, 'Visible', 'off');
 %         set(obj.SView(iView).hText(2, 1, :), 'Visible', 'on');
     end
     
 else
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    % Show the tooltip
-    
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    % Make sure tooltip is on to and restart timers
-    stop(obj.STimers.hToolTip);
-    start(obj.STimers.hToolTip);
+    % Show the tooltip (if no change has ocurred)
     if ~strcmp(get(obj.STooltip.hText, 'String'), sString)
         
+        % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+        % Determine the position in the figure
         iWidth = round(length(sString).*dTOOLTIPSCALING) + 20;
+        dHeight = size(dBGMask, 1);
         dFigureSize = get(obj.hF, 'Position');
-        dFigureSize(3) = dFigureSize(3) + 2.*obj.iIconSize - obj.iSidebarWidth;
-        dFigureSize(4) = dFigureSize(4) - 2.*obj.iIconSize;
+        dXPos = (dFigureSize(3) + 2.*obj.iIconSize - obj.iSidebarWidth - iWidth)/2;
+        dYPos = 0.618.*(dFigureSize(4) - 2.*obj.iIconSize) - dHeight/2; % Awww... the golden ratio!
+        set(obj.STooltip.hAxes, ...
+            'Position'  , [dXPos, dYPos, iWidth, dHeight], ...
+            'XLim'      , [0.5, iWidth + 0.5], ...
+            'YLim'      , [0.5, dHeight + 0.5]);
         
-%         if strcmp(get(obj.STooltip.hImg, 'Visible'), 'off')
-            set(obj.STooltip.hAxes, 'Position', [(dFigureSize(3) - iWidth)/2, ...
-                0.618.*dFigureSize(4) - iTOOLTIPHEIGHT/2, ... % Awww... the golden ratio!
-                iWidth, iTOOLTIPHEIGHT], ...
-                'XLim', [0.5, iWidth + 0.5], ...
-                'YLim', [0.5, iTOOLTIPHEIGHT + 0.5]);
-%         end
-        
-        set(obj.STooltip.hText, 'String', sString, 'Position', ...
-            [iWidth/2, iTOOLTIPHEIGHT*0.55], 'Visible', 'on');
-        
-        dMask = 0.75.*[dMaskBorder, ones(iTOOLTIPHEIGHT, iWidth - 2*size(dMaskBorder, 2)), flip(dMaskBorder, 2)];
-        dImg = repmat(dBackground, [1, iWidth]);
-        
+        % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+        % Update the image data and the alpha mask
+        dMask = 0.75.*[dBGMask, ones(dHeight, iWidth - 2*size(dBGMask, 2)), flip(dBGMask, 2)];
+        dImg = repmat(dBGImg, [1, iWidth]);
         set(obj.STooltip.hImg, 'CData', dImg, 'AlphaData', dMask, 'Visible', 'on');
+        
+        % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+        % Update the text
+        set(obj.STooltip.hText, 'String', sString, 'Position', ...
+            [iWidth/2, dHeight*0.55], 'Visible', 'on');
     end
+    
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    % restart timers
+    stop(obj.STimers.hToolTip);
+    start(obj.STimers.hToolTip);
     
 end
 % -------------------------------------------------------------------------

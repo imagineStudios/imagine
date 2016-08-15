@@ -1,19 +1,19 @@
 function disp(obj)
 
-fprintf(1, 'IMAGINE %s with %d series\n\n', obj.sVERSION, length(obj.SData));
+fprintf(1, 'IMAGINE %s with %d series\n\n', obj.sVERSION, length(obj.hData));
 
-if isempty(obj.SData), return, end
+if isempty(obj.hData), return, end
 
-lVisible = false(length(obj.SData));
+lVisible = false(length(obj.hData));
 for iI = 1:numel(obj.SView)
     lVisible(obj.SView(iI).iData) = true;
 end
 
-for iI = 1:length(obj.SData)
-    sName = fCropText(obj.SData(iI).sName, 12);
-    dSize = size(obj.SData(iI).dImg);
+for iI = 1:length(obj.hData)
+    sName = fCropText(obj.hData(iI).sName, 12);
+    dSize = size(obj.hData(iI).dImg);
     dSize = dSize([1, 2, 4]);
-    if ~isreal(obj.SData(iI).dImg)
+    if ~isreal(obj.hData(iI).dImg)
         sMode = 'Complex';
     else
         if dSize(3) == 3;
@@ -27,7 +27,7 @@ for iI = 1:length(obj.SData)
     else
         sVisible = ' ';
     end
-    fprintf(1, '[%02d]: %s%s %03dx%03dx%03d %s   %2.2f, %2.2f, %2.2f\n', iI, sVisible, sName, dSize(1), dSize(2), dSize(3), sMode, obj.SData(iI).dOrigin([1 2 4]));
+    fprintf(1, '[%02d]: %s%s %03dx%03dx%03d %s   %2.2f, %2.2f, %2.2f\n', iI, sVisible, sName, dSize(1), dSize(2), dSize(3), sMode, obj.hData(iI).dOrigin([1 2 4]));
 end
 
 function sText = fCropText(sText, iLength)

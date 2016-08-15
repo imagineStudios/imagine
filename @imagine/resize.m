@@ -21,7 +21,7 @@ if isa(hObject, 'timer')
     stop(obj.STimers.hIcons);
 elseif isa(hObject, 'matlab.ui.Figure')
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    % Timer logic
+    % Origin is figure -> start timer to check for icon resizing
     if strcmp(get(obj.hF, 'Visible'), 'on');
         stop(obj.STimers.hIcons);
         start(obj.STimers.hIcons);
@@ -96,11 +96,4 @@ set(obj.SImgs.hIcons(lInd), 'XData', 1 + dFigureWidth - obj.iIconSize);
 set(obj.SSidebar.hPanel, 'Position', [dFigureWidth - obj.iSidebarWidth, 2, max(1, obj.iSidebarWidth), iAllViewHeight]);
 set(obj.SSidebar.hAxes,  'Position', [1, iAllViewHeight - 190, 256, 192]);
 set(obj.SSidebar.hIcons, 'Position', [2, iAllViewHeight - 190 - 32, 192, 32], 'XLim', [0 192] + 0.5, 'YLim', [0 32] + 0.5);
-% -------------------------------------------------------------------------
-
-
-% -------------------------------------------------------------------------
-% Draw!
-% obj.position;
-% obj.grid;
 % -------------------------------------------------------------------------

@@ -99,7 +99,7 @@ if ~isempty(obj.SAction.iView)
     
 else
     % If not over a view, hide the bottom left text
-    fNoBottomLeftText(obj);
+    obj.hViews.NoBottomLeftText;
 end
 % -------------------------------------------------------------------------
 
@@ -153,15 +153,6 @@ end
 %     end
 % end
 % ---------------------------------------------------------------------
-
-
-
-function fNoBottomLeftText(obj)
-for iView = 1:numel(obj.oView)
-    if ~isempty(obj.SView(iView).hText)
-        set(obj.SView(iView).hText(2, 1, :), 'String', '');
-    end
-end
 
 
 function fUpdateDataCursor(obj, SView)

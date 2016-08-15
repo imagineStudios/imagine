@@ -1,3 +1,0 @@
-classdef view < handle
-
-end

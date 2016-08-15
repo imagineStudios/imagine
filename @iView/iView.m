@@ -1,11 +1,15 @@
 classdef iView < handle
     
     properties
-        Parent
+        Parent = imagine.empty
     end
     
     properties(SetObservable = true)
         Position
+        Zoom            = 1
+        DrawCenter      = []
+        iDimInd         = 1;
+        hData           = [];
     end
     
     properties (Access = private)
@@ -17,10 +21,6 @@ classdef iView < handle
         hT          % Text components
         
         iInd        = 0
-        iData       = [];
-        iDimInd     = 1;
-        
-        hListener
         
     end
     
@@ -64,17 +64,47 @@ classdef iView < handle
             
             uistack(obj.hA, 'bottom');
             
-            obj.hListener = addlistener(obj, 'Position', 'PostSet', @obj.setPosition);
-            obj.hListener(1) = addlistener(hImagine, 'viewImageChange', @obj.draw);
+            addlistener(obj, {'Position', 'DrawCenter', 'Zoom'}, 'PostSet', @obj.setPosition);
+            addlistener(obj, 'DrawCenter', 'PostSet', @obj.draw);
+            addlistener(hImagine, 'viewImageChange', @obj.draw);
+            addlistener(hImagine, 'ViewMapping', 'PostSet', @obj.updateMapping);
+            addlistener(obj.Parent, 'ObjectBeingDestroyed', @obj.delete);
+            
+            obj.updateMapping;
         end
         
+        function delete(obj, ~, ~)
+            delete@handle(obj)
+        end
+        
+        function NoBottomLeftText(obj)
+            for iI = 1:length(obj)
+                if ~isempty(obj(iI).hT)
+                    set(obj(iI).hT(2, 1, :), 'String', '');
+                end
+            end
+        end
+        
+        draw(obj, ~, ~)
     end
     
     methods(Access = private)
         
         setPosition(obj, ~, ~)
-        draw(obj, ~, ~)
         position(obj, ~, ~)
+        
+        function updateMapping(obj, ~, ~)
+            obj.hData = obj.Parent.hData(obj.Parent.ViewMapping{obj.iInd});
+            if isempty(obj.DrawCenter) && ~isempty(obj.hData)
+                obj.DrawCenter = obj.hData(1).getSize./2;
+                obj.DrawCenter = padarray(obj.DrawCenter, [0, 5 - length(obj.DrawCenter)], 1, 'post');
+            end
+        end
+        
+        function iOrient = getOrientation(obj)
+            
+        end
+        
         
     end
 end

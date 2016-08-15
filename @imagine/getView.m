@@ -1,33 +1,14 @@
-function SView = getView(obj)
+function hView = getView(obj)
 
-% oOver = hittest;
-% lInd = oOver == [obj.SView.hAxes];
+dPos = reshape([obj.hViews.Position]', 4, []);
+dXStart = dPos(1, :);
+dYStart = dPos(2, :);
+dXEnd = dXStart + dPos(3, :);
+dYEnd = dYStart + dPos(4, :);
 
+dMousePos = get(obj.hF, 'CurrentPoint');
 
-hViews = [obj.SView.hAxes];
-if isscalar(hViews)
-    dXLim = get(hViews, 'XLim');
-    dYLim = get(hViews, 'YLim');
-    dPos  = get(hViews, 'CurrentPoint');
-else
-    dXLim = cell2mat(get(hViews, 'XLim'));
-    dYLim = cell2mat(get(hViews, 'YLim'));
-    dPos  = cell2mat(get(hViews, 'CurrentPoint'));
-end
+lMask = dMousePos(1) >= dXStart & dMousePos(1) <= dXEnd ...
+      & dMousePos(2) >= dYStart & dMousePos(2) <= dYEnd;
 
-dXPos = dPos(1:2:end, 1);
-dYPos = dPos(1:2:end, 2);
-
-lInd = dXPos >= dXLim(: ,1) & dXPos <= dXLim(: ,2) & ...
-       dYPos >= dYLim(: ,1) & dYPos <= dYLim(: ,2);
-    
-
-
-if ~any(lInd)
-    SView = [];
-else
-    SView = obj.SView(lInd);
-end
-
-
-
+hView = obj.hViews(lMask);

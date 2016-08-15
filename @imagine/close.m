@@ -2,14 +2,12 @@ function close(obj, ~, ~)
 
 % -------------------------------------------------------------------------
 % Stop and delete the timers
-try
-    csFields = fieldnames(obj.STimers);
-    for iI = 1:length(csFields)
-        stop(obj.STimers.(csFields{iI}));
-        delete(obj.STimers.(csFields{iI}));
+if ~isempty(obj.STimers)
+    csTimers = fieldnames(obj.STimers);
+    for iI = 1:length(csTimers)
+        stop(obj.STimers.(csTimers{iI}));
+        delete(obj.STimers.(csTimers{iI}));
     end
-catch me
-    disp(me.message);
 end
 % -------------------------------------------------------------------------
 

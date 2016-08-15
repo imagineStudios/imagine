@@ -2,3 +2,9 @@ imagineSave.mat
 .dropbox
 unused
 appbar.*
+*.cpp
+*.mlappinstall
+*.prj
+*.mexmaci64
+*_resources
+Icon/r
