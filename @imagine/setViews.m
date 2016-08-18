@@ -1,7 +1,14 @@
 function setViews(obj, iCols, iRows)
 
+iAxesPerView = double(obj.isOn('2d')) * 2 + 1;
+
 % -------------------------------------------------------------------------
 % Determine new number of views
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Existing number of views
+iNExistingViews = numel(obj.hViews);
+
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Desired number of views
 if nargin < 3
@@ -12,65 +19,33 @@ if nargin < 3
         iCols = iCols(1);
     end
 end
-iNViews = iRows*iCols;
-
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% Existing number of views
-iNExistingViews = numel(obj.hViews);
-
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% Determine the resulting line colormap
-% dColors = lines(iNViews);
+iNViews = ceil(iRows*iCols/iAxesPerView);
+obj.iAxes = [iCols, iRows];
 % -------------------------------------------------------------------------
 
+
+% -------------------------------------------------------------------------
+% Create new or delete obsolete views
+obj.hViews = obj.hViews(:);
 if iNViews < iNExistingViews
-    
-    % ---------------------------------------------------------------------
-    % Delete the obsolete GUI elements
-    
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Delete the view axes and implicitely it's children
-    obj.hViews = obj.hViews(:);
     delete(obj.hViews(iNViews + 1:iNExistingViews));
-    obj.hViews = obj.hViews(1:iNViews); % Remove exess handles    
+    obj.hViews = obj.hViews(1:iNViews); % Remove invalid handles    
     
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    % Delete the lines in the sidebar
-%     delete(obj.SSidebar.hLine(iNViews + 1:end));
-%     obj.SSidebar.hLine = obj.SSidebar.hLine(1:iNViews);
-    % ---------------------------------------------------------------------
-
 elseif iNViews > iNExistingViews
-    % ---------------------------------------------------------------------
-    % Create the additional views
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    % Create the new views
     for iI = iNExistingViews + 1:iNViews
-        
-        if iI > length(obj.ViewMapping)
-            obj.ViewMapping{iI} = [];
-        end
-        
         obj.hViews(iI) = iView(obj, iI);
-        
-        % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        % The line in the sidebar
-%         obj.SSidebar.hLine(iI) = line(0, 0, ...
-%             'Parent'                , obj.SSidebar.hAxes, ...
-%             'Color'                 , dColors(iI,:), ...
-%             'Visible'               , 'off');
-        
-        
     end
 end
+% -------------------------------------------------------------------------
 
-% obj.setViewMapping;
-
-% obj.ViewMapping = obj.ViewMapping; % This should trigger the update in the views
-
-% Flip the representation in the handles array compared to the screen ordering to enable linear indexing
-obj.hViews = reshape(obj.hViews, iCols, iRows); 
-% if ~obj.isOn('2d'), obj.iViews = [iCols, iRows]; end
+obj.hViews.setMode(obj.isOn('2d'));
+obj.hViews.setData(obj.DataMapping);
 
 if strcmp(get(obj.hF, 'Visible'), 'on')
     obj.resize(0); % Assign correct positioning to all views
-    obj.hViews.draw; 
+    notify(obj, 'viewImageChange');
 end

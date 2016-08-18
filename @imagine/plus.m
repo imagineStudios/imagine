@@ -16,11 +16,11 @@ obj.hData(iDataInd) = iData(obj, varargin{:});
 
 % -------------------------------------------------------------------------
 % Determine to which view the new data has to be added
-iCurrentViews = length(obj.ViewMapping);
+iCurrentViews = length(obj.hViews);
 
 hP = inputParser;
 hP.KeepUnmatched = true;
-hValidFcn = @(x) validateattributes(x, {'numeric'}, {'scalar', 'positive'});
+hValidFcn = @(x) validateattributes(x, {'numeric'}, {'vector', 'positive'});
 hP.addParameter('View', iCurrentViews + 1, hValidFcn);
 hP.parse(varargin{2:end});
 % -------------------------------------------------------------------------
@@ -30,10 +30,10 @@ hP.parse(varargin{2:end});
 % Add the data to the view mapping and update
 % The view class listen to changes in cViewMapping
 for iView = 1:length(hP.Results.View)
-    if length(obj.ViewMapping) >= iView
-        obj.ViewMapping{iView} = [obj.ViewMapping{iView}, iDataInd];
+    if length(obj.DataMapping) >= iView
+        obj.DataMapping{iView} = [obj.DataMapping{iView}, obj.hData(iDataInd)];
     else
-        obj.ViewMapping{iView} = iDataInd;
+        obj.DataMapping{iView} = obj.hData(iDataInd);
     end
 end
 % -------------------------------------------------------------------------

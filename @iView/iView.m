@@ -1,79 +1,56 @@
 classdef iView < handle
     
     properties
-        Parent = imagine.empty
+        hData            = iData.empty  % The data series associated with the view
+        
+        OldZoom
+        OldDrawCenter
+        
+        hParent = imagine.empty
     end
     
     properties(SetObservable = true)
-        Position
-        Zoom            = 1
-        DrawCenter      = []
-        iDimInd         = 1;
-        hData           = [];
+        Ind             = 1     % Index of the view (global)
+%         Position
+        Mode            = '2D'
+        
+        Zoom            = 1     % Zoom level
+        DrawCenter      = []    % Coordinates of the central point
     end
     
     properties (Access = private)
-        hA          % Axes
-        hI          % Image components
-        hQ          % Quiver components
+        
+        hA              = matlab.graphics.axis.Axes.empty
+        hI              = matlab.graphics.primitive.Image.empty% Image components
+        hQ              
         hL          % Line components
-        hS          % Scatter components
+        hS          = matlab.graphics.chart.primitive.Scatter.empty% Quiver components
         hT          % Text components
+        hP          % Patch component
         
-        iInd        = 0
-        
+        dColor
+        hListeners
     end
     
     methods
+        
         function obj = iView(hImagine, iInd)
             
-            obj.Parent = hImagine;
+            obj.hParent = hImagine;
+            obj.Ind = iInd;
+            obj.hListeners = addlistener(obj.hParent, 'ObjectBeingDestroyed', @obj.delete);
             
-            % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            % View axes and its children
-            obj.hA = axes(...
-                'Parent'            , hImagine.hF, ...
-                'Layer'             , 'top', ...
-                'Units'             , 'pixels', ...
-                'Color'             , 'k', ...
-                'FontSize'          , 12, ...
-                'XTickMode'         , 'manual', ...
-                'YTickMode'         , 'manual', ...
-                'XColor'            , [0.5 0.5 0.5], ...
-                'YColor'            , [0.5 0.5 0.5], ...
-                'XTickLabelMode'    , 'manual', ...
-                'YTickLabelMode'    , 'manual', ...
-                'XAxisLocation'     , 'top', ...
-                'YDir'              , 'reverse', ...
-                'Box'               , 'on', ...
-                'HitTest'           , 'on', ...
-                'XGrid'             , 'off', ...
-                'YGrid'             , 'off', ...
-                'XMinorGrid'        , 'off', ...
-                'YMinorGrid'        , 'off');
-            hold on
+            dColors = lines(iInd);
+            obj.dColor = dColors(end, :);
             
-            obj.hI = image( ...
-                'Parent'                , obj.hA, ...
-                'CData'                 , zeros(1, 1, 3), ...
-                'HitTest'               , 'off');
-            
-            try set(obj.hA, 'YTickLabelRotation', 90); end
-            
-            obj.iInd = iInd;
-            
-            uistack(obj.hA, 'bottom');
-            
-            addlistener(obj, {'Position', 'DrawCenter', 'Zoom'}, 'PostSet', @obj.setPosition);
-            addlistener(obj, 'DrawCenter', 'PostSet', @obj.draw);
-            addlistener(hImagine, 'viewImageChange', @obj.draw);
-            addlistener(hImagine, 'ViewMapping', 'PostSet', @obj.updateMapping);
-            addlistener(obj.Parent, 'ObjectBeingDestroyed', @obj.delete);
-            
-            obj.updateMapping;
+            obj.setAxes;
         end
         
+        setAxes(obj)
+        
         function delete(obj, ~, ~)
+            delete([obj.hA]);
+            delete([obj.hListeners]);
             delete@handle(obj)
         end
         
@@ -86,25 +63,36 @@ classdef iView < handle
         end
         
         draw(obj, ~, ~)
-    end
-    
-    methods(Access = private)
-        
-        setPosition(obj, ~, ~)
         position(obj, ~, ~)
+        setMapping(obj, ~, ~)
+        setData(obj, l3D, cData)
+        [iView, iDimInd] = isOver(obj, hOver)
+        iDivider = isOverDevider(obj, dCoord_px)
         
-        function updateMapping(obj, ~, ~)
-            obj.hData = obj.Parent.hData(obj.Parent.ViewMapping{obj.iInd});
-            if isempty(obj.DrawCenter) && ~isempty(obj.hData)
-                obj.DrawCenter = obj.hData(1).getSize./2;
-                obj.DrawCenter = padarray(obj.DrawCenter, [0, 5 - length(obj.DrawCenter)], 1, 'post');
+        function backup(obj)
+            for iI = 1:length(obj)
+                obj(iI).OldZoom = obj(iI).Zoom;
+                obj(iI).OldDrawCenter = obj(iI).DrawCenter;
             end
         end
         
-        function iOrient = getOrientation(obj)
-            
+        function setMode(obj, l3D)
+            for iI = 1:numel(obj)
+                if l3D
+                    obj(iI).Mode = '3D';
+                else
+                    obj(iI).Mode = '2D';
+                end
+                obj(iI).setAxes;
+            end
         end
         
+        setPosition(obj, iX, iY, iWidth, iHeight)
         
     end
+    
+    methods(Access = private)
+
+    end
+    
 end

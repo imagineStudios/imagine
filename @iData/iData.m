@@ -9,8 +9,8 @@ classdef iData < handle
         SpatialUnits    = 'px'
         TemporalUnits   = ''
         Mode            = 'scalar'
-        Invert          = [0 0 0 0]
-        Dims            = [1 2 4; 1 4 2; 4 2 1]
+        Invert          = [0 0 0]
+        Dims            = [1 2 3; 1 3 2; 3 2 1]
         Orientation     = 'logical'
         
         WindowCenter
@@ -23,7 +23,7 @@ classdef iData < handle
     end
     
     properties(Access = private)
-        
+        hListeners
     end
     
     methods
@@ -37,17 +37,23 @@ classdef iData < handle
             
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             % Make sure data object is deleted if imagine is closed
-            addlistener(obj.Parent, 'ObjectBeingDestroyed', @obj.delete);
+            obj.hListeners = addlistener(obj.Parent, 'ObjectBeingDestroyed', @obj.delete);
         end
         
         function delete(obj, ~, ~)
+            delete([obj.hListeners]);
             delete@handle(obj);
         end
         
-        [dImg, dXData, dYData] = getData(obj, SView, iSeries, lHD)
+        [dImg, dXData, dYData] = getData(obj, SView, iDimInd, lHD)
         
         function dSize = getSize(obj)
-            dSize = size(obj.Img);
+            dSize = fSize(obj.Img, 1:5);
+        end
+        
+        function dCenter = getCenter(obj)
+            dCenter = round((fSize(obj.Img, 1:5)/2 - 1).*obj.Res + obj.Origin);
+            dCenter(4) = 1;
         end
         
     end
@@ -56,7 +62,10 @@ classdef iData < handle
         parseInputs(obj, varargin)
         
         function d3Lim_px = getSliceLim(obj, d3Lim_mm, iDim)
-            d3Lim_px = min(max(round((d3Lim_mm - obj.Origin(iDim(3)))./obj.Res(iDim(3)) + 1), 1), size(obj.Img, iDim(3)));
+%             d3Lim_px = min(max(round((d3Lim_mm - obj.Origin(iDim(3)))./obj.Res(iDim(3)) + 1), 1), size(obj.Img, iDim(3)));
+            d3Lim_px = round((d3Lim_mm - obj.Origin(iDim(3)))./obj.Res(iDim(3)) + 1);
+            d3Lim_px = d3Lim_px(1):d3Lim_px(2);
+            d3Lim_px = d3Lim_px(d3Lim_px > 0 & d3Lim_px < size(obj.Img, iDim(3)));
         end
     end
 end

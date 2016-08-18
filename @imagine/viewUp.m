@@ -4,7 +4,7 @@ set(hObject, 'WindowButtonMotionFcn', @obj.mouseMove, 'WindowButtonUpFcn', '', '
 
 % -------------------------------------------------------------------------
 % If over an axis...
-iSeries = obj.SAction.SView.iData(1);
+iSeries = obj.SAction.hView.hData(1);
 
 if ~obj.SAction.lMoved
     
@@ -40,7 +40,7 @@ else
         
         case 'cursor'
             if obj.isOn('2d') || ~strcmp(obj.SAction.sSelectionType, 'normal')
-                obj.draw;
+%                 obj.draw;
             end
             
         case 'swap'

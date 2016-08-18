@@ -1,22 +1,9 @@
 function draw(obj, ~, ~)
 
 persistent dBGImg
-
 % dBGImg = [];
 if isempty(dBGImg)
-    dLogo = [0 0 0 1 1 0 0 0; ...
-        0 0 0 1 1 0 0 0; ...
-        0 0 0 0 0 0 0 0; ...
-        0 0 1 1 1 0 0 0; ...
-        0 0 0 1 1 0 0 0; ...
-        0 0 0 1 1 0 0 0; ...
-        0 0 1 1 1 1 0 0; ...
-        0 0 0 0 0 0 0 0;];
-    dPattern = 0.8 + 0.1*rand(16) + 0.2*padarray(dLogo, [4 4], 0, 'both');
-    dPattern = dPattern.*repmat(linspace(1, 0.8, 16)', [1, 16]);
-    dPattern = repmat(dPattern, [1 1 3]);
-    
-    dBGImg = repmat(permute(obj(1).Parent.dBGCOLOR, [1 3 2]), [16 16 1]).*dPattern;
+    dBGImg = fBGImg(obj(1).hParent.dBGCOLOR);
 end
 
 % -------------------------------------------------------------------------
@@ -60,13 +47,13 @@ end
 % Loop over all views
 
 % iImgInd = 0;
-for iI = 1:length(obj)
+for iI = 1:numel(obj)
     
     hView = obj(iI);
 
     if isempty(hView.hData)
 
-        set(hView.hI(1), 'CData', dBGImg, 'XData', [1 size(dBGImg, 2)], 'YData', [1 size(dBGImg, 1)]);
+        set(hView.hI, 'CData', dBGImg, 'XData', [1 size(dBGImg, 2)], 'YData', [1 size(dBGImg, 1)]);
 
     else
 
@@ -74,7 +61,7 @@ for iI = 1:length(obj)
 
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Get the image data, do windowing and apply colormap
-            [dImg, dXData, dYData]  = hData.getData(hView, lHD);
+            [dImg, dXData, dYData]  = hData.getData(hView, 1, lHD);
             set(hView.hI, 'CData', dImg, 'XData', dXData, 'YData', dYData);%, 'AlphaData', dAlpha);
     %                 
     %             case 'vector'
@@ -89,3 +76,18 @@ for iI = 1:length(obj)
         end
     end
 end
+
+function dImg = fBGImg(dColor)
+dLogo = [0 0 0 1 1 0 0 0; ...
+         0 0 0 1 1 0 0 0; ...
+         0 0 0 0 0 0 0 0; ...
+         0 0 1 1 1 0 0 0; ...
+         0 0 0 1 1 0 0 0; ...
+         0 0 0 1 1 0 0 0; ...
+         0 0 1 1 1 1 0 0; ...
+         0 0 0 0 0 0 0 0;];
+dPattern = 0.8 + 0.1*rand(16) + 0.2*padarray(dLogo, [4 4], 0, 'both');
+dPattern = dPattern.*repmat(linspace(1, 0.8, 16)', [1, 16]);
+dPattern = repmat(dPattern, [1 1 3]);
+
+dImg = repmat(permute(dColor, [1 3 2]), [16 16 1]).*dPattern;

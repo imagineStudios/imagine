@@ -10,11 +10,11 @@ if isstruct(iCnt) || isobject(iCnt)
     if obj.SAction.lShift
         iDim(3) = 5;
     else
-        hView = obj.getView;
+        hView = obj.SAction.hView;
         if isempty(hView), return, end
         if isempty(hView.hData), return, end
-        iDim      = hView.hData(1).Dims(hView.iDimInd, :);
-        dStepSize = hView.hData(1).Res(iDim(3));
+        iDim      = hView.hData(1).Dims(1, :);
+        dStepSize = min(hView.hData(1).Res);
     end
     
 else
@@ -29,7 +29,7 @@ end
 
 % -------------------------------------------------------------------------
 % Loop over all views
-for iI = 1:length(obj.hViews)
+for iI = 1:numel(obj.hViews)
     if ~isempty(obj.hViews(iI).DrawCenter)
         d = obj.hViews(iI).DrawCenter(iDim(3)) + iCnt.*dStepSize;
         obj.hViews(iI).DrawCenter(iDim(3)) = d;

@@ -6,7 +6,8 @@ persistent dGridImg
 
 % dGridImg = [];
 if isempty(dGridImg)
-    dGridImg = fGridImg(obj);
+    dGridImg = 1 - 0.7.*rand(obj.iMAXVIEWS);
+    dGridImg = fBlend(3*obj.dBGCOLOR, dGridImg, 'Multiply', 0.5);
 end
 % -------------------------------------------------------------------------
 
@@ -510,13 +511,13 @@ switch obj.SMenu(iInd).GroupIndex
                 end
                 if ~lShow, set(obj.SSidebar.hPanel, 'Visible', 'off'); end
                 
-            case '2d' % The view mode
-                if ~obj.SMenu(iInd).Active
-                    obj.setViews(obj.iViews);
-                else
-                    iN = max(1, min([6, length(obj.SData) - obj.iStartSeries + 1, prod(obj.iViews)]));
-                    obj.setViews(3, iN);
-                end
+            case '2d'
+%                 if obj.isOn('2d')
+                    obj.setViews(obj.iAxes);
+%                 else
+%                     obj.setViews([obj.iPanelsr(1) ceil(obj.iPanels(2)/3)]);
+%                 end
+                
         end
         % End of TOGGLE buttons
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -528,7 +529,7 @@ switch obj.SMenu(iInd).GroupIndex
             sActivate = obj.SMenu(iInd).Name;
         end
         fRadioGroup(obj, 1, sActivate);
-        obj.draw
+        notify(obj, 'viewImageChange');
         
     case 3
         
@@ -655,8 +656,3 @@ end
 %
 % end
 
-
-function dGridImg = fGridImg(obj)
-    
-dImg = 1 - 0.7.*rand(obj.iMAXVIEWS);
-dGridImg = fBlend(3*obj.dFGCOLOR, dImg, 'Multiply', 0.5);

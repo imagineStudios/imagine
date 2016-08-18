@@ -26,7 +26,7 @@ end
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Check the image data for some stupid combinations
 if isfloat(dImg)
-    if size(dImg, 3) == 3 && ~isreal(dImg)
+    if size(dImg, 5) == 3 && ~isreal(dImg)
         error('Vector/rgb data must be real!');
     end
 else
@@ -35,12 +35,7 @@ end
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Check input dimensions
-if size(dImg, 3) == 3 || size(dImg, 3) == 1
-    if ndims(dImg) > 5, error('Too many input dimensions!'); end
-else
-    if ndims(dImg) > 4, error('Too many input dimensions!'); end
-    dImg = permute(dImg, [1 2 5 3 4]);
-end
+if ndims(dImg) > 5, error('Too many input dimensions!'); end
 obj.Img = dImg;
 % -------------------------------------------------------------------------
 
@@ -100,19 +95,19 @@ hP.parse(cParams{:});
 
 % -------------------------------------------------------------------------
 % Handle the orientation data
-obj.Orientation = validatestring(hP.Results.Orientation, {'t', 'tra', 'transversal', 'c', 'cor', 'coronal', 'p', 'phys', 'physical', 's', 'sag', 'sagittal'});
+obj.Orientation = validatestring(hP.Results.Orientation, {'transversal', 'coronal', 'physical', 'sagittal'});
 switch (obj.Orientation)
     case 'transversal'
-        obj.Dims = [1 2 4; 4 2 1; 4 1 2];
-        obj.Invert = [0 0 0 1];
+        obj.Dims = [1 2 3; 3 2 1; 3 1 2];
+        obj.Invert = [0 0 1];
         
     case {'coronal', 'physical'}
-        obj.Dims = [1 2 4; 1 4 2; 4 2 1];
-        obj.Invert = [0 0 0 0];
+        obj.Dims = [1 2 3; 1 3 2; 3 2 1];
+        obj.Invert = [0 0 0];
         
     case {'sagittal'}
-        obj.Dims = [1 2 4; 1 4 2; 2 4 1];
-        obj.Invert = [0 0 0 0];
+        obj.Dims = [1 2 3; 1 3 2; 2 3 1];
+        obj.Invert = [0 0 0];
         
     otherwise
         error('Orientation must be either "tra", "cor" or "sag"!');

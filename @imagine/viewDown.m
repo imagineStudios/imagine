@@ -2,16 +2,16 @@ function viewDown(obj, ~, ~)
 
 % -------------------------------------------------------------------------
 % Make sure we're really over a non-empty view
-SView = obj.getView;
-if isempty(SView), return, end
+hView = obj.SAction.hView;
+if isempty(hView), return, end
 
 obj.contextMenu(0);
-if isempty(SView.iData) || SView.iData(1) == 0
+if isempty(hView.hData)
     return
 end
 % -------------------------------------------------------------------------
 
-set([obj.SView.hScatter], 'Visible', 'off'); % Make sure the position display is hidden
+% set([obj.SView.hScatter], 'Visible', 'off'); % Make sure the position display is hidden
 
 % -------------------------------------------------------------------------
 % Save some info about button down event
@@ -25,17 +25,16 @@ if obj.dGrid ~= -1, obj.SAction.dGrid = obj.dGrid; end
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Properties of the starting view
-obj.SAction.SView            = SView;
-dPos = get(SView.hAxes, 'CurrentPoint');
+obj.SAction.hView            = hView;
+dPos = get(hView.hA, 'CurrentPoint');
 obj.SAction.dViewStartPos    = dPos(1, 1:2);
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Backup the data properties
-obj.SAction.dDrawCenter   = reshape([obj.SData.dDrawCenter], [5, length(obj.SData)]);
-obj.SAction.dOrigin       = reshape([obj.SData.dOrigin],     [5, length(obj.SData)]);
-obj.SAction.dZoomFactor   = [obj.SData.dZoom];
-obj.SAction.dWindowCenter = [obj.SData.dWindowCenter];
-obj.SAction.dWindowWidth  = [obj.SData.dWindowWidth];
+obj.SAction.dDrawCenter = hView.DrawCenter;
+obj.hViews.backup;
+% obj.SAction.dWindowCenter = [obj.SData.dWindowCenter];
+% obj.SAction.dWindowWidth  = [obj.SData.dWindowWidth];
 % -------------------------------------------------------------------------
 
 
@@ -45,8 +44,8 @@ switch obj.getTool
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     case 'cursor'
-        obj.draw; % Make sure, the uninterpolated data is shown (expands beyond view bounds)
-        stop(obj.STimers.hDrawFancy); % Prevent interpolation
+%         obj.draw; % Make sure, the uninterpolated data is shown (expands beyond view bounds)
+%         stop(obj.STimers.hDrawFancy); % Prevent interpolation
         
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Swap: Use a preview of the start axis to visualize the data exchange

@@ -1,25 +1,27 @@
-function [dImg, dXData, dYData] = getData(obj, hView, iSeries, lHD)
+function [dImg, dXData, dYData] = getData(obj, hView, iDimInd, lHD)
 
-if nargin < 4, lHD = false;   end
-if nargin < 3
-    iSeries = hView.iData(1);
-end
+if nargin < 3, lHD = false;   end
 
-iDim = hView.hData(1).Dims(hView.iDimInd, :);
+iDim = obj.Dims(iDimInd, :);
 
 % -------------------------------------------------------------------------
 % Get the corresponding image data
-d3Lim_mm = hView.get3Lim;
+d3Lim_mm = hView.get3Lim(iDim);
 d3Lim_px = obj.getSliceLim(d3Lim_mm, iDim);
 
-iT = min(hView.DrawCenter(5), size(obj.Img, 5));
+iT = min(hView.DrawCenter(4), size(obj.Img, 4));
 
-switch iDim(3)
-    case 1, dImg = obj.Img(d3Lim_px(1):d3Lim_px(2),:,:,:,iT);
-    case 2, dImg = obj.Img(:,d3Lim_px(1):d3Lim_px(2),:,:,iT);
-    case 4, dImg = obj.Img(:,:,:,d3Lim_px(1):d3Lim_px(2),iT);
+if ~isempty(d3Lim_px)
+    switch iDim(3)
+        case 1, dImg = obj.Img(d3Lim_px,:,:,iT,:);
+        case 2, dImg = obj.Img(:,d3Lim_px,:,iT,:);
+        case 3, dImg = obj.Img(:,:,d3Lim_px,iT,:);
+    end
+    dImg = permute(dImg, [iDim(1:2) iDim(3) 5 4]);
+else
+    dImg = 0;
 end
-dImg = permute(dImg, [iDim(1:2) 3 iDim(3)]);
+
 % -------------------------------------------------------------------------
 
 
@@ -43,10 +45,10 @@ switch sDrawMode
         end
         
     case 'max'
-        dImg = max(dImg, [], 4);
+        dImg = max(dImg, [], 3);
         
     case 'min'
-        dImg = min(dImg, [], 4);
+        dImg = min(dImg, [], 3);
         
 end
 % -------------------------------------------------------------------------
@@ -58,34 +60,34 @@ dYData = [0 size(dImg, 1) - 1].*dAspect(1) + dOrigin(1);
 
 dImg = double(dImg);
 
-if lHD && ~strcmp(obj.SData(iSeries).sMode, 'vector') && ~strcmp(obj.SData(iSeries).sMode, 'categorical')
-    % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-    % Fancy mode: Interpolate the images to full resolution. Is
-    % executed when arbitrary input is supplied or the timer fires.
-    
-    % -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-    % Pad the image for better boundary extrapolation
-    dImg = [dImg(:,1), dImg, dImg(:, end)];
-    dImg = [dImg(1,:); dImg; dImg(end, :)];
-    dX = (-1:size(dImg, 2) - 2).*dAspect(2) + dOrigin(2);
-    dY = (-1:size(dImg, 1) - 2).*dAspect(1) + dOrigin(1);
-    
-    dXLim = get(hView.hAxes, 'XLim');
-    dYLim = get(hView.hAxes, 'YLim');
-    dPosition = get(hView.hAxes, 'Position');
-    
-    dXI = (0.5:dPosition(3) - 0.5)./dPosition(3).*diff(dXLim) + dXLim(1);
-    dYI = (0.5:dPosition(4) - 0.5)./dPosition(4).*diff(dYLim) + dYLim(1);
-    
-    dXI = dXI(dXI >= mean(dX(1:2)) & dXI <= mean(dX(end-1:end)));
-    dYI = dYI(dYI >= mean(dY(1:2)) & dYI <= mean(dY(end-1:end)));
-    
-    [dXXI, dYYI] = meshgrid(dXI, dYI);
-    dImg = interp2(dX, dY, double(dImg), dXXI, dYYI, 'spline', 0);
-    
-    dXData = [dXI(1), dXI(end)];
-    dYData = [dYI(1), dYI(end)];
-end
+% if lHD && ~strcmp(obj.SData(iSeries).sMode, 'vector') && ~strcmp(obj.SData(iSeries).sMode, 'categorical')
+%     % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+%     % Fancy mode: Interpolate the images to full resolution. Is
+%     % executed when arbitrary input is supplied or the timer fires.
+%     
+%     % -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+%     % Pad the image for better boundary extrapolation
+%     dImg = [dImg(:,1), dImg, dImg(:, end)];
+%     dImg = [dImg(1,:); dImg; dImg(end, :)];
+%     dX = (-1:size(dImg, 2) - 2).*dAspect(2) + dOrigin(2);
+%     dY = (-1:size(dImg, 1) - 2).*dAspect(1) + dOrigin(1);
+%     
+%     dXLim = get(hView.hAxes, 'XLim');
+%     dYLim = get(hView.hAxes, 'YLim');
+%     dPosition = get(hView.hAxes, 'Position');
+%     
+%     dXI = (0.5:dPosition(3) - 0.5)./dPosition(3).*diff(dXLim) + dXLim(1);
+%     dYI = (0.5:dPosition(4) - 0.5)./dPosition(4).*diff(dYLim) + dYLim(1);
+%     
+%     dXI = dXI(dXI >= mean(dX(1:2)) & dXI <= mean(dX(end-1:end)));
+%     dYI = dYI(dYI >= mean(dY(1:2)) & dYI <= mean(dY(end-1:end)));
+%     
+%     [dXXI, dYYI] = meshgrid(dXI, dYI);
+%     dImg = interp2(dX, dY, double(dImg), dXXI, dYYI, 'spline', 0);
+%     
+%     dXData = [dXI(1), dXI(end)];
+%     dYData = [dYI(1), dYI(end)];
+% end
 
 % -------------------------------------------------------------------------
 % If vector data, create the quiver data

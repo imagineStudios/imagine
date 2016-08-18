@@ -6,11 +6,8 @@ dROTATION_THRESHOLD     = 50;       % Defines the number of pixels the cursor ha
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Get some frequently used values
 iD = get(obj.hF, 'CurrentPoint') - obj.SAction.iPos;
-
-iSeries = obj.SAction.SView.iData(1);
-iDim    = obj.SData(iSeries).iDims(obj.SAction.SView.iDimInd, :);
-
 if norm(iD) > 2, obj.SAction.lMoved = true; end
+iDim = obj.SAction.hView.hData(1).Dims(1, :);
 
 switch obj.getTool
     
@@ -22,43 +19,35 @@ switch obj.getTool
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Normal, left mouse button -> MOVE operation
             case 'normal'
-                if obj.isOn('2d'), obj.dGrid = -1; end
+%                 if obj.isOn('2d'), obj.dGrid = -1; end
+                if obj.isOn('2d')
+                    
+                end
                 
-                dD = flip(double(iD));
-                if strcmp(get(obj.SAction.SView.hAxes, 'YDir'), 'reverse'), dD(1) = -dD(1); end
-                if strcmp(get(obj.SAction.SView.hAxes, 'XDir'), 'reverse'), dD(2) = -dD(2); end
+                dPos = get(obj.SAction.hView.hA, 'CurrentPoint');
+                dDelta = dPos(1, 1:2) - obj.SAction.dViewStartPos;
                 
                 % -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
                 % Apply
-                if strcmp(obj.getTool, 'cursor')
-                    % Move the whole thing
-                    for iI = 1:length(obj.SData)
-                        obj.SData(iI).dDrawCenter(iDim(1:2)) = obj.SAction.dDrawCenter(iDim(1:2), iI)' - ...
-                            dD./obj.SData(iI).dZoom.*min(obj.SData(iI).dRes([1 2 4]));
-                    end
-                else
-                    % Relatively move the mask
-                    iInd = obj.cMapping{1}(2);
-                    for iI = iInd(iInd > 0)
-                        obj.SData(iI).dOrigin(iDim(1:2)) = obj.SAction.dOrigin(iDim(1:2), iI)' + ...
-                            dD./obj.SData(iI).dZoom.*min(obj.SData(iI).dRes([1 2 4]));
+                for iI = 1:numel(obj.hViews)
+                    if ~isempty(obj.hViews(iI).hData)
+                        obj.hViews(iI).DrawCenter(iDim([2 1])) = obj.hViews(iI).DrawCenter(iDim([2 1])) - dDelta;
                     end
                 end
-                obj.position;
-                if obj.isOn('2d') || strcmp(obj.getTool, 'cursor_mask')% Show Crosshair and update other slices
-                    obj.draw;
-                    obj.showPosition('slice');
-                end
-                obj.grid;
+%                 if obj.isOn('2d') || strcmp(obj.getTool, 'cursor_mask')% Show Crosshair and update other slices
+%                     obj.draw;
+%                     obj.showPosition('slice');
+%                 end
+%                 obj.grid;
                 
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Shift key or right mouse button -> ZOOM operation
             case 'alt'
                 
-                for iI = 1:length(obj.SData)
-                    if obj.isOn('2d'), obj.dGrid = -1; end
+                for iI = 1:numel(obj.hViews)
+%                     if obj.isOn('2d'), obj.dGrid = -1; end
 
-                    dZoom = obj.SAction.dZoomFactor(iI)*exp(dSENSITIVITY.*iD(2));
+                    dZoom = obj.hViews(iI).OldZoom*exp(dSENSITIVITY.*iD(2));
                     dZoomLog = log2(dZoom);
                     iExp = round(dZoomLog);
                     if abs(dZoomLog - iExp) < 0.05
@@ -66,24 +55,19 @@ switch obj.getTool
                     end 
                     dZoom = max(0.1, min(32, dZoom));
                     
-                    if ~obj.isOn('2d')
-                        dOldDrawCenter_mm = obj.SAction.dDrawCenter(iDim, 1)';
-                        dMouseStart_mm = [obj.SAction.dViewStartPos(2:-1:1), dOldDrawCenter_mm(3)];
-                        dD = dOldDrawCenter_mm - dMouseStart_mm;
-                        obj.SData(iI).dDrawCenter(iDim) = dMouseStart_mm + obj.SAction.dZoomFactor(iI)./dZoom.*dD;
-                    end
-                    obj.SData(iI).dZoom = dZoom; % Save ZoomFactor data 
+%                     if ~obj.isOn('2d')
+%                         dOldDrawCenter_mm = obj.hViews(iI).OldDrawCenter(iDim, 1)';
+%                         dMouseStart_mm = [obj.SAction.dViewStartPos(2:-1:1), dOldDrawCenter_mm(3)];
+%                         dD = dOldDrawCenter_mm - dMouseStart_mm;
+%                         obj.SData(iI).dDrawCenter(iDim) = dMouseStart_mm + obj.SAction.dZoomFactor(iI)./dZoom.*dD;
+%                     end
+                    obj.hViews(iI).Zoom = dZoom; % Save ZoomFactor data 
                 end
                 
-                if obj.isOn('2d')
-                    iDataInd = obj.SAction.SView.iInd + obj.iStartSeries - 1;
-                else
-                    iDataInd = obj.iStartSeries;
-                end
-                obj.tooltip(sprintf('%d %%', round(obj.SData(iDataInd).dZoom*100)));
+                obj.tooltip(sprintf('%d %%', round(obj.SAction.hView.Zoom*100)));
                 
-                obj.position;
-                obj.grid;
+%                 obj.position;
+%                 obj.grid;
             
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Control key or middle mouse button -> WINDOW operation

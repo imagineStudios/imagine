@@ -65,26 +65,27 @@ classdef imagine < handle
         
         % -----------------------------------------------------------------
         % Data and Views (custom classes)
-        hViews          = iView.empty;  % The views and its components
-        hData           = iData.empty;  % Structure with image data and properties
+        hViews          = iView.empty  % The views and its components
+        hData           = iData.empty  % Structure with image data and properties
         
         % -----------------------------------------------------------------
         % GUI state
-        sPath           = pwd; % The working directory
-        SAction         = [];  % Structure to store information for mouse actions
+        sPath           = pwd % The working directory
+        SAction         = []  % Structure to store information for mouse actions
         SMenu                  % A menu item structure
         SSliders               % A slider structure
-        iIconSize       = 64;
-        dGrid           = 0;        % Distance between grid lines, 0 = off, -1 = show axes center for 3D view
-        lRuler          = false;
-        dColWidth       = [1 1 1 1 1 1];
-        dRowHeight      = [1 1 1 1 1 1];
-        iSidebarWidth   = 0;
-        sROIMode        = 'none';        
+        iIconSize       = 64
+        dGrid           = 0         % Distance between grid lines, 0 = off, -1 = show axes center for 3D view
+        lRuler          = false
+        dColWidth       = [1 1 1 1 1 1]
+        dRowHeight      = [1 1 1 1 1 1]
+        iSidebarWidth   = 0
+        sROIMode        = 'none'
+        iAxes           = [3 2]
     end
     
     properties(SetObservable = true)
-        ViewMapping    = {};
+        DataMapping    = {};
     end
     
     
@@ -117,7 +118,7 @@ classdef imagine < handle
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Create all the GUI elements
                 obj.createGUIElements;
-                obj.setViews(2, 1);
+                obj.setViews(obj.iAxes);
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Do final steps for figure drawing
@@ -126,8 +127,8 @@ classdef imagine < handle
                 end
                 obj.SMenu(strcmp({obj.SMenu.Name}, 'sidebar')).Active = obj.iSidebarWidth > 0;
                 obj.updateActivation;
+                obj.hViews.draw;
                 set(obj.hF, 'Visible', 'on'); % Triggers the resize function, notifies the views
-                notify(obj, 'viewImageChange');
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % If docked, return focus to console
@@ -252,6 +253,7 @@ classdef imagine < handle
         % Conversion helpers
         dCoord_mm = pixel2Phys(obj, dCoord_px, iSeries, iDims)
         dCoord_px = phys2Pixel(obj, dCoord_mm, iSeries, iDims)
+        [iInd, iDimInd] = line2Data(obj, iInd)
         
         parseInputs(obj, varargin)
         createGUIElements(obj)

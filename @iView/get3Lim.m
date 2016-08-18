@@ -1,9 +1,9 @@
-function dZLim = get3Lim(obj)
+function dZLim = get3Lim(obj, iDim)
 
-if any(strcmp(obj.Parent.getDrawMode, {'min', 'max'}));
-    dMipDepth = obj.Parent.getSlider('Projection Depth');
-    dZLim = obj.DrawCenter(4) + 0.5.*[-dMipDepth dMipDepth];
+if any(strcmp(obj.hParent.getDrawMode, {'min', 'max'}));
+    dMipDepth = obj.hParent.getSlider('Projection Depth');
+    dZLim = obj.DrawCenter(iDim(3)) + 0.5.*[-dMipDepth dMipDepth];
 else
-    dZLim = [obj.DrawCenter(4), obj.DrawCenter(4)];
+    dZLim = [obj.DrawCenter(iDim(3)), obj.DrawCenter(iDim(3))];
 end
 

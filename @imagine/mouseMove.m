@@ -1,30 +1,50 @@
 function mouseMove(obj, ~, ~)
 
-dFleur = ...
-   [NaN, NaN, NaN, NaN, NaN, NaN, NaN,   2,   2, NaN, NaN, NaN, NaN, NaN, NaN, NaN; ...
-    NaN, NaN, NaN, NaN, NaN, NaN,   2,   1,   1,   2, NaN, NaN, NaN, NaN, NaN, NaN; ... 
-    NaN, NaN, NaN, NaN, NaN,   2,   1,   1,   1,   1,   2, NaN, NaN, NaN, NaN, NaN; ... 
-    NaN, NaN, NaN, NaN,   2,   1,   1,   1,   1,   1,   1,   2, NaN, NaN, NaN, NaN; ...
-    NaN, NaN, NaN,   2, NaN,   2,   2,   1,   1,   2,   2, NaN,   2, NaN, NaN, NaN; ...
-    NaN, NaN,   2,   1,   2, NaN,   2,   1,   1,   2, NaN,   2,   1,   2, NaN, NaN; ...
-    NaN,   2,   1,   1,   2,   2,   2,   1,   1,   2,   2,   2,   1,   1,   2, NaN; ...
-      2,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   2; ...
-      2,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   2; ...
-    NaN,   2,   1,   1,   2,   2,   2,   1,   1,   2,   2,   2,   1,   1,   2, NaN; ...
-    NaN, NaN,   2,   1,   2, NaN,   2,   1,   1,   2, NaN,   2,   1,   2, NaN, NaN; ...
-    NaN, NaN, NaN,   2, NaN,   2,   2,   1,   1,   2,   2, NaN,   2, NaN, NaN, NaN; ...
-    NaN, NaN, NaN, NaN,   2,   1,   1,   1,   1,   1,   1,   2, NaN, NaN, NaN, NaN; ...
-    NaN, NaN, NaN, NaN, NaN,   2,   1,   1,   1,   1,   2, NaN, NaN, NaN, NaN, NaN; ...
-    NaN, NaN, NaN, NaN, NaN, NaN,   2,   1,   1,   2, NaN, NaN, NaN, NaN, NaN, NaN; ...
-    NaN, NaN, NaN, NaN, NaN, NaN, NaN,   2,   2, NaN, NaN, NaN, NaN, NaN, NaN, NaN];
+persistent dFleur
+if isempty(dFleur), dFleur = fGetFleur; end
 
 set(obj.hF, 'Pointer', 'Arrow', 'WindowButtonDownFcn', @obj.contextMenu); % Default
 
-oOver = hittest;
+hOver = hittest;
+
+% -------------------------------------------------------------------------
+% Check if over a slider
+obj.SAction.iSlider = find(hOver == [obj.SSliders.hAxes]);
+if ~isempty(obj.SAction.iSlider)
+    set(obj.hF, 'Pointer', 'left');
+    set(obj.hF, 'WindowButtonDownFcn', @obj.sliderDown);
+    return
+end
+% -------------------------------------------------------------------------
+
+
+% -------------------------------------------------------------------------
+% Check if over an icon (button)
+iIcon = find(obj.SImgs.hIcons == hOver);
+if ~isempty(iIcon)
+    
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    % Over icon, show tooltip
+    sText = obj.SMenu(iIcon).Tooltip;
+    sAccelerator = obj.SMenu(iIcon).Accelerator;
+    if ~isempty(sAccelerator)
+        iModifier = bitget(obj.SMenu(iIcon).Modifier, 1:8);
+        if iModifier(3), sAccelerator = sprintf('Alt+%s', sAccelerator); end
+        if iModifier(2), sAccelerator = sprintf('Ctl+%s', sAccelerator); end
+        if iModifier(1), sAccelerator = sprintf('Shift+%s', sAccelerator); end
+        sText = sprintf('%s [%s]', sText, sAccelerator);
+    end
+    obj.tooltip(sText);
+    
+    set(obj.hF, 'WindowButtonDownFcn', @obj.iconDown);
+    return
+end
+% -------------------------------------------------------------------------
+
 
 % -------------------------------------------------------------------------
 % If over the tooltip, move it out of the way
-if obj.STooltip.hImg == oOver || obj.STooltip.hText == oOver
+if obj.STooltip.hImg == hOver || obj.STooltip.hText == hOver
     
     dTooltipPos = get(obj.STooltip.hAxes, 'Position');
     dFigureSize = get(obj.hF, 'Position');
@@ -47,26 +67,38 @@ end
 % -------------------------------------------------------------------------
 
 
+% ---------------------------------------------------------------------
+% Mouse over a line in a view (profile or ROI)
+% SView = obj.getView;
+% if ~isempty(SView)
+%     dPos = get(SView.hAxes, 'CurrentPoint');
+%     dX   = get(SView.hLine(1), 'XData');
+%     dY   = get(SView.hLine(1), 'YData');
+%     iInd = find(abs(dPos(1, 1) - dX) < 5 & abs(dPos(1, 2) - dY) < 5, 1);
+%     if ~isempty(iInd)
+%         set(obj.hF, 'Pointer', 'fleur');
+%     end
+% end
+% ---------------------------------------------------------------------
 
 % -------------------------------------------------------------------------
 % Mouse over a VIEW
-obj.SAction.iView = [];%find(oOver == [obj.oView.hAxes]);
-if ~isempty(obj.SAction.iView)
-    
-    SView = obj.SView(obj.SAction.iView);
-    
+[iView, iDimInd] = obj.hViews.isOver(hOver);
+obj.SAction.hView = obj.hViews(iView);
+obj.SAction.iDimInd = iDimInd;
+if ~isempty(obj.SAction.hView)
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Check if near a view boundary, update pointer if so and bail
-    obj.SAction.iDivider = fGetDivider(obj, obj.SAction.iView);
-    if any(obj.SAction.iDivider)
-        
-        if obj.SAction.iDivider(1), set(obj.hF, 'Pointer', 'left'); end
-        if obj.SAction.iDivider(2), set(obj.hF, 'Pointer', 'top');  end
-        set(obj.hF, 'WindowButtonDownFcn', @obj.dividerDown);
-        
-        fNoBottomLeftText(obj);
-        return
-    end
+%     obj.SAction.iDivider = fGetDivider(obj, obj.SAction.hView);
+%     if any(obj.SAction.iDivider)
+%         
+%         if obj.SAction.iDivider(1), set(obj.hF, 'Pointer', 'left'); end
+%         if obj.SAction.iDivider(2), set(obj.hF, 'Pointer', 'top');  end
+%         set(obj.hF, 'WindowButtonDownFcn', @obj.dividerDown);
+%         
+% %         fNoBottomLeftText(obj);
+%         return
+%     end
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % If resclicing mode and in box
@@ -84,8 +116,8 @@ if ~isempty(obj.SAction.iView)
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % If view is not empty, show data pointer and update sidebar if necessary
-    if ~isempty(SView.iData)
-        fUpdateDataCursor(obj, SView);
+    if ~isempty(obj.SAction.hView.hData)
+%         fUpdateDataCursor(obj, SView);
         setptr(obj.hF, 'datacursor');
         set(obj.hF, 'WindowButtonDownFcn', @obj.viewDown);
         return
@@ -93,7 +125,7 @@ if ~isempty(obj.SAction.iView)
     else
         % If view is empty, hide the bottom left text
         set(obj.hF, 'Pointer', 'Arrow');
-        fNoBottomLeftText(obj);
+%         fNoBottomLeftText(obj);
         return
     end
     
@@ -102,57 +134,6 @@ else
     obj.hViews.NoBottomLeftText;
 end
 % -------------------------------------------------------------------------
-
-
-% -------------------------------------------------------------------------
-% Check if over a slider
-obj.SAction.iSlider = find(oOver == [obj.SSliders.hAxes]);
-if ~isempty(obj.SAction.iSlider)
-    set(obj.hF, 'Pointer', 'left');
-    set(obj.hF, 'WindowButtonDownFcn', @obj.sliderDown);
-    return
-end
-% -------------------------------------------------------------------------
-
-
-% -------------------------------------------------------------------------
-% Check if over an icon (button)
-iIcon = find(obj.SImgs.hIcons == oOver);
-if ~isempty(iIcon)
-    
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    % Over icon, show tooltip
-    sText = obj.SMenu(iIcon).Tooltip;
-    sAccelerator = obj.SMenu(iIcon).Accelerator;
-    if ~isempty(sAccelerator)
-        iModifier = bitget(obj.SMenu(iIcon).Modifier, 1:8);
-        if iModifier(3), sAccelerator = sprintf('Alt+%s', sAccelerator); end
-        if iModifier(2), sAccelerator = sprintf('Ctl+%s', sAccelerator); end
-        if iModifier(1), sAccelerator = sprintf('Shift+%s', sAccelerator); end
-        sText = sprintf('%s [%s]', sText, sAccelerator);
-    end
-    obj.tooltip(sText);
-    
-    set(obj.hF, 'WindowButtonDownFcn', @obj.iconDown);
-    return
-end
-% -------------------------------------------------------------------------
-
-
-
-% ---------------------------------------------------------------------
-% Mouse over a line in a view (profile or ROI)
-% SView = obj.getView;
-% if ~isempty(SView)
-%     dPos = get(SView.hAxes, 'CurrentPoint');
-%     dX   = get(SView.hLine(1), 'XData');
-%     dY   = get(SView.hLine(1), 'YData');
-%     iInd = find(abs(dPos(1, 1) - dX) < 5 & abs(dPos(1, 2) - dY) < 5, 1);
-%     if ~isempty(iInd)
-%         set(obj.hF, 'Pointer', 'fleur');
-%     end
-% end
-% ---------------------------------------------------------------------
 
 
 function fUpdateDataCursor(obj, SView)
@@ -196,32 +177,35 @@ for iView = 1:numel(obj.SView)
 end
 
 
-function iDivider = fGetDivider(obj, iView)
+function iDivider = fGetDivider(obj, hView)
 
-iDivider = [0, 0];
+iDivider = hView.isOverDivider(get(obj.hF, 'CurrentPoint'));
 
-hAxes = obj.SView(iView).hAxes;
+[iNCols, iNRows] = size(obj.hViews);
+[iC, iR] = ind2sub([iNCols, iNRows], find(hView == obj.hViews));
 
-[iNCols, iNRows] = size(obj.SView);
-[iC, iR] = ind2sub([iNCols, iNRows], iView);
-dCoord = get(hAxes, 'CurrentPoint');
-dXLim  = get(hAxes, 'XLim');
-dYLim  = get(hAxes, 'YLim');
-dPos   = get(hAxes, 'Position');
-
-dDiff_px = abs(dCoord(1, 1) - dXLim)./diff(dXLim).*dPos(3);
-lDiffX = dDiff_px < 10;
-if strcmp(get(hAxes, 'XDir'), 'reverse'), lDiffX = flip(lDiffX, 2); end
-if any(lDiffX)
-    iDivider(1) = iC + find(lDiffX) - 2;
-end
+if iDivider(1), iDivider(1) = iDivider(1) + iC - 2; end
 if iDivider(1) >= iNCols, iDivider(1) = 0; end
 
-dDiff_px = abs(dCoord(1, 2) - dYLim)./diff(dYLim).*dPos(4);
-lDiffY = dDiff_px < 10;
-if strcmp(get(hAxes, 'YDir'), 'normal'), lDiffY = flip(lDiffY, 2); end
-if any(lDiffY)
-    iDivider(2) = iR + find(lDiffY) - 2;
-end
+if iDivider(2), iDivider(2) = - iDivider(2) + iR + 1; end
 if iDivider(2) >= iNRows, iDivider(2) = 0; end
 
+
+function dFleur = fGetFleur
+dFleur = ...
+   [NaN, NaN, NaN, NaN, NaN, NaN, NaN,   2,   2, NaN, NaN, NaN, NaN, NaN, NaN, NaN; ...
+    NaN, NaN, NaN, NaN, NaN, NaN,   2,   1,   1,   2, NaN, NaN, NaN, NaN, NaN, NaN; ... 
+    NaN, NaN, NaN, NaN, NaN,   2,   1,   1,   1,   1,   2, NaN, NaN, NaN, NaN, NaN; ... 
+    NaN, NaN, NaN, NaN,   2,   1,   1,   1,   1,   1,   1,   2, NaN, NaN, NaN, NaN; ...
+    NaN, NaN, NaN,   2, NaN,   2,   2,   1,   1,   2,   2, NaN,   2, NaN, NaN, NaN; ...
+    NaN, NaN,   2,   1,   2, NaN,   2,   1,   1,   2, NaN,   2,   1,   2, NaN, NaN; ...
+    NaN,   2,   1,   1,   2,   2,   2,   1,   1,   2,   2,   2,   1,   1,   2, NaN; ...
+      2,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   2; ...
+      2,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   2; ...
+    NaN,   2,   1,   1,   2,   2,   2,   1,   1,   2,   2,   2,   1,   1,   2, NaN; ...
+    NaN, NaN,   2,   1,   2, NaN,   2,   1,   1,   2, NaN,   2,   1,   2, NaN, NaN; ...
+    NaN, NaN, NaN,   2, NaN,   2,   2,   1,   1,   2,   2, NaN,   2, NaN, NaN, NaN; ...
+    NaN, NaN, NaN, NaN,   2,   1,   1,   1,   1,   1,   1,   2, NaN, NaN, NaN, NaN; ...
+    NaN, NaN, NaN, NaN, NaN,   2,   1,   1,   1,   1,   2, NaN, NaN, NaN, NaN, NaN; ...
+    NaN, NaN, NaN, NaN, NaN, NaN,   2,   1,   1,   2, NaN, NaN, NaN, NaN, NaN, NaN; ...
+    NaN, NaN, NaN, NaN, NaN, NaN, NaN,   2,   2, NaN, NaN, NaN, NaN, NaN, NaN, NaN];
