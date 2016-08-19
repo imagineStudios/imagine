@@ -1,4 +1,4 @@
-function [dImg, dXData, dYData] = getData(obj, hView, iDimInd, lHD)
+function [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, lHD)
 
 if nargin < 3, lHD = false;   end
 
@@ -6,11 +6,26 @@ iDim = obj.Dims(iDimInd, :);
 
 % -------------------------------------------------------------------------
 % Get the corresponding image data
-d3Lim_mm = hView.get3Lim(iDim);
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Calculate the boundaries of the projection in physical units
+if any(strcmp(obj.Parent.getDrawMode, {'min', 'max'}));
+    dMipDepth = obj.Parent.getSlider('Projection Depth');
+    d3Lim_mm = dDrawCenter(iDim(3)) + 0.5.*[-dMipDepth dMipDepth];
+else
+    d3Lim_mm = [dDrawCenter(iDim(3)), dDrawCenter(iDim(3))];
+end
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Translate to slice indices
 d3Lim_px = obj.getSliceLim(d3Lim_mm, iDim);
 
-iT = min(hView.DrawCenter(4), size(obj.Img, 4));
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Determine timepoint
+iT = min(dDrawCenter(4), size(obj.Img, 4));
 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Get data and permute into first two dimensions (3rd for projection data, 4th for rgb/vector data)
 if ~isempty(d3Lim_px)
     switch iDim(3)
         case 1, dImg = obj.Img(d3Lim_px,:,:,iT,:);
@@ -21,7 +36,6 @@ if ~isempty(d3Lim_px)
 else
     dImg = 0;
 end
-
 % -------------------------------------------------------------------------
 
 
@@ -29,14 +43,15 @@ end
 % Apply the global draw mode
 sDrawMode = obj.Parent.getDrawMode;
 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % For complex data and not phase mode, get the magnitude
 if ~strcmp(sDrawMode, 'phase') && ~isreal(dImg)
     dImg = abs(dImg);
 end
 
-% Get phase image or projections respectively
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Calculate phase image or projection
 switch sDrawMode
-    
     case 'phase'
         if isreal(dImg)
             dImg = pi*sign(dImg);
@@ -119,11 +134,14 @@ dImg = double(dImg);
 %     [dXData, dYData] = fQuiver(dXData, dYData, dU(:), dV(:));
 % end
 
-dMin = obj.WindowCenter - 0.5.*obj.WindowWidth;
-dMax = obj.WindowCenter + 0.5.*obj.WindowWidth;
-
 % dQuiverSpacing  = obj.Parent.getSlider('Quiver Spacing');
 % dAlpha          = obj.Parent.getSlider('Mask Alpha');
+
+% -------------------------------------------------------------------------
+% Apply the intensity scaling and current colormap
+
+dMin = obj.WindowCenter - 0.5.*obj.WindowWidth;
+dMax = obj.WindowCenter + 0.5.*obj.WindowWidth;
 
 switch obj.Mode
     
@@ -148,3 +166,4 @@ switch obj.Mode
         dImg(dImg > 1) = 1;
         
 end
+% -------------------------------------------------------------------------

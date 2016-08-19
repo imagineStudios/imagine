@@ -61,8 +61,10 @@ for iI = 1:numel(obj)
 
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Get the image data, do windowing and apply colormap
-            [dImg, dXData, dYData]  = hData.getData(hView, 1, lHD);
-            set(hView.hI, 'CData', dImg, 'XData', dXData, 'YData', dYData);%, 'AlphaData', dAlpha);
+            for iDimInd = 1:length(hView.hA)
+                [dImg, dXData, dYData]  = hData.getData(hView.DrawCenter, iDimInd, lHD);
+                set(hView.hI(iDimInd), 'CData', dImg, 'XData', dXData, 'YData', dYData);%, 'AlphaData', dAlpha);
+            end
     %                 
     %             case 'vector'
     %                 

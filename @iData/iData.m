@@ -45,7 +45,7 @@ classdef iData < handle
             delete@handle(obj);
         end
         
-        [dImg, dXData, dYData] = getData(obj, SView, iDimInd, lHD)
+        [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, lHD)
         
         function dSize = getSize(obj)
             dSize = fSize(obj.Img, 1:5);
