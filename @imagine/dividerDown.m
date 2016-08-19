@@ -1,18 +1,16 @@
 function dividerDown(obj, ~, ~)
 
+iFigureSize = get(obj.hF, 'Position');
 obj.SAction.iPos = get(obj.hF, 'CurrentPoint');
 obj.SAction.dColWidth = obj.dColWidth;
 obj.SAction.dRowHeight = obj.dRowHeight;
 
-if obj.SAction.iDivider(1)
-    dPixels(1,:) = obj.hViews(obj.SAction.iDivider(1), 1).dPosition;
-    dPixels(2,:) = obj.hViews(obj.SAction.iDivider(1) + 1, 1).dPosition;
-    obj.SAction.dPixels = dPixels(:, 3);
-    
-elseif obj.SAction.iDivider(2)
-    dPixels(1,:) = obj.hViews(1, obj.SAction.iDivider(2)).dPosition;
-    dPixels(2,:) = obj.hViews(1, obj.SAction.iDivider(2) + 1).dPosition;
-    obj.SAction.dPixels = dPixels(:, 4);
+if ~isempty(obj.SAction.iDividerX)
+    iX = round(fNonLinSpace(obj.iIconSize + 1, iFigureSize(3) + 1, obj.dColWidth(1:obj.iAxes(1))));
+    obj.SAction.dWidth = diff(iX);
+elseif ~isempty(obj.SAction.iDividerY)
+    iY = round(fNonLinSpace(iFigureSize(4) - obj.iIconSize + 1, 1, obj.dRowHeight(1:obj.iAxes(2))));
+    obj.SAction.dHeight = -diff(iY);
 end
 
 set(obj.hF, 'WindowButtonMotionFcn', @obj.dividerDrag, ...

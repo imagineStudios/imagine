@@ -81,6 +81,17 @@ end
 % end
 % ---------------------------------------------------------------------
 
+[obj.SAction.iDividerX, obj.SAction.iDividerY] = fGetDivider(obj);
+if ~isempty(obj.SAction.iDividerX)
+    set(obj.hF, 'Pointer', 'left')
+    set(obj.hF, 'WindowButtonDownFcn', @obj.dividerDown);
+    return
+elseif ~isempty(obj.SAction.iDividerY)
+    set(obj.hF, 'Pointer', 'top')
+    set(obj.hF, 'WindowButtonDownFcn', @obj.dividerDown);
+    return
+end
+
 % -------------------------------------------------------------------------
 % Mouse over a VIEW
 [iView, iDimInd] = obj.hViews.isOver(hOver);
@@ -89,7 +100,6 @@ obj.SAction.iDimInd = iDimInd;
 if ~isempty(obj.SAction.hView)
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Check if near a view boundary, update pointer if so and bail
-%     obj.SAction.iDivider = fGetDivider(obj, obj.SAction.hView);
 %     if any(obj.SAction.iDivider)
 %         
 %         if obj.SAction.iDivider(1), set(obj.hF, 'Pointer', 'left'); end
@@ -177,18 +187,17 @@ for iView = 1:numel(obj.SView)
 end
 
 
-function iDivider = fGetDivider(obj, hView)
 
-iDivider = hView.isOverDivider(get(obj.hF, 'CurrentPoint'));
+function [iDX, iDY] = fGetDivider(obj)
 
-[iNCols, iNRows] = size(obj.hViews);
-[iC, iR] = ind2sub([iNCols, iNRows], find(hView == obj.hViews));
+iMousePos = get(obj.hF, 'CurrentPoint');
+iFigureSize = get(obj.hF, 'Position');
 
-if iDivider(1), iDivider(1) = iDivider(1) + iC - 2; end
-if iDivider(1) >= iNCols, iDivider(1) = 0; end
+iX = round(fNonLinSpace(obj.iIconSize + 1, iFigureSize(3) + 1, obj.dColWidth(1:obj.iAxes(1))));
+iDX = find(abs(iMousePos(1) - iX(2:end-1)) < 10);
+iY = round(fNonLinSpace(iFigureSize(4) - obj.iIconSize + 1, 1, obj.dRowHeight(1:obj.iAxes(2))));
+iDY = find(abs(iMousePos(2) - iY(2:end-1)) < 10);
 
-if iDivider(2), iDivider(2) = - iDivider(2) + iR + 1; end
-if iDivider(2) >= iNRows, iDivider(2) = 0; end
 
 
 function dFleur = fGetFleur

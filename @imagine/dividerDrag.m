@@ -5,21 +5,21 @@ obj.SAction.lMoved = true;
 iPos = get(obj.hF, 'CurrentPoint');
 dD = iPos - obj.SAction.iPos;
 
-if obj.SAction.iDivider(1)
-    dNewPixels(1) = obj.SAction.dPixels(1) + dD(1);
-    dNewPixels(1) = min(max(10, dNewPixels(1)), sum(obj.SAction.dPixels) - 10);
-    dNewPixels(2) = sum(obj.SAction.dPixels) - dNewPixels(1);
-    
-    dWidth = obj.dColWidth(obj.SAction.iDivider(1):obj.SAction.iDivider(1) + 1);
-    dWidth = dNewPixels./sum(obj.SAction.dPixels).*sum(dWidth);
-    obj.dColWidth(obj.SAction.iDivider(1):obj.SAction.iDivider(1) + 1) = dWidth;
+if ~isempty(obj.SAction.iDividerX)
+    iPos = obj.SAction.iDividerX;
+    dWidthSum = sum(obj.SAction.dWidth(iPos:iPos + 1));
+    dNewWidth = obj.SAction.dWidth;
+    dNewWidth(iPos) = min(max(10, obj.SAction.dWidth(iPos) + dD(1)), dWidthSum - 10);
+    dNewWidth(iPos + 1) = dWidthSum - dNewWidth(iPos);
+    dNewPropWidth = dNewWidth./sum(dNewWidth).*sum(obj.dColWidth(1:obj.iAxes(1)));
+    obj.dColWidth(1:obj.iAxes(1)) = dNewPropWidth;
 else
-    dNewPixels(1) = obj.SAction.dPixels(1) - dD(2);
-    dNewPixels(1) = min(max(10, dNewPixels(1)), sum(obj.SAction.dPixels) - 10);
-    dNewPixels(2) = sum(obj.SAction.dPixels) - dNewPixels(1);
-    
-    dHeight = obj.dRowHeight(obj.SAction.iDivider(2):obj.SAction.iDivider(2) + 1);
-    dHeight = dNewPixels./sum(obj.SAction.dPixels).*sum(dHeight);
-    obj.dRowHeight(obj.SAction.iDivider(2):obj.SAction.iDivider(2) + 1) = dHeight;
+    iPos = obj.SAction.iDividerY;
+    dHeightSum = sum(obj.SAction.dHeight(iPos:iPos + 1));
+    dNewHeight = obj.SAction.dHeight;
+    dNewHeight(iPos) = min(max(10, obj.SAction.dHeight(iPos) - dD(2)), dHeightSum - 10);
+    dNewHeight(iPos + 1) = dHeightSum - dNewHeight(iPos);
+    dNewPropHeight = dNewHeight./sum(dNewHeight).*sum(obj.dRowHeight(1:obj.iAxes(2)));
+    obj.dRowHeight(1:obj.iAxes(2)) = dNewPropHeight;
 end
 obj.resize(0);

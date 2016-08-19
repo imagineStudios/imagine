@@ -87,11 +87,3 @@ iYYHeight = - diff(iYY(:, 1:end - 1), 1, 1)' - 1;
 obj.hViews.setPosition(iXXStart, iYYStart, iXXWidth, iYYHeight);
 % -------------------------------------------------------------------------
 
-
-
-
-
-function dPos = fNonLinSpace(dStart, dEnd, dRelDistance)
-
-dInt = cumsum(dRelDistance./sum(dRelDistance));
-dPos = [dStart, (dEnd - dStart).*dInt + dStart];
