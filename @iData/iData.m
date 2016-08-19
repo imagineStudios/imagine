@@ -46,15 +46,8 @@ classdef iData < handle
         end
         
         [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, lHD)
-        
-        function dSize = getSize(obj)
-            dSize = fSize(obj.Img, 1:5);
-        end
-        
-        function dCenter = getCenter(obj)
-            dCenter = round((fSize(obj.Img, 1:5)/2 - 1).*obj.Res + obj.Origin);
-            dCenter(4) = 1;
-        end
+        iSize = getSize(obj)
+        dCenter = getCenter(obj)
         
     end
     

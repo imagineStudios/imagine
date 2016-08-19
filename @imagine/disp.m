@@ -1,34 +1,24 @@
 function disp(obj)
 
-fprintf(1, 'IMAGINE %s with %d series\n\n', obj.sVERSION, length(obj.hData));
+fprintf(1, 'IMAGINE %s with %d series:\n\n', obj.sVERSION, length(obj.hData));
 
 if isempty(obj.hData), return, end
 
-lVisible = false(length(obj.hData));
-for iI = 1:numel(obj.SView)
-    lVisible(obj.SView(iI).iData) = true;
+for iI = 1:length(obj.hData)
+    sName = fCropText(obj.hData(iI).Name, 12);
+    dSize = obj.hData(iI).getSize;
+    fprintf(1, '[%02d]: %s %03dx%03dx%03dx%03d %s   %2.2f, %2.2f, %2.2f\n', iI, sName, dSize(1), dSize(2), dSize(3), dSize(4), obj.hData(iI).Mode);
 end
 
-for iI = 1:length(obj.hData)
-    sName = fCropText(obj.hData(iI).sName, 12);
-    dSize = size(obj.hData(iI).dImg);
-    dSize = dSize([1, 2, 4]);
-    if ~isreal(obj.hData(iI).dImg)
-        sMode = 'Complex';
-    else
-        if dSize(3) == 3;
-            sMode = '   RGB';
-        else
-            sMode = 'Scalar';
-        end
-    end
-    if lVisible(iI)
-        sVisible = '*';
-    else
-        sVisible = ' ';
-    end
-    fprintf(1, '[%02d]: %s%s %03dx%03dx%03d %s   %2.2f, %2.2f, %2.2f\n', iI, sVisible, sName, dSize(1), dSize(2), dSize(3), sMode, obj.hData(iI).dOrigin([1 2 4]));
-end
+% fprintf(1, '\n\nAnd %d views with the following mapping:\n\n', length(obj.hData));
+% 
+% for iI = 1:length(obj.hViews)
+%     
+%     sData = sprintf('%02d ', obj.DataMapping{iI});
+%     fprintf(1, '[%02d]: [%s]\n', iI, sData);
+% end
+fprintf(1, '\n');
+
 
 function sText = fCropText(sText, iLength)
 

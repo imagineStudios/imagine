@@ -6,12 +6,12 @@ classdef iView < handle
         OldZoom
         OldDrawCenter
         
-        hParent = imagine.empty
+        hParent         = imagine.empty
     end
     
     properties(SetObservable = true)
         Ind             = 1     % Index of the view (global)
-%         Position
+        
         Mode            = '2D'
         
         Zoom            = 1     % Zoom level
@@ -20,8 +20,8 @@ classdef iView < handle
     
     properties (Access = private)
         
-        hA              = matlab.graphics.axis.Axes.empty
-        hI              = matlab.graphics.primitive.Image.empty% Image components
+        hA          = matlab.graphics.axis.Axes.empty
+        hI          = matlab.graphics.primitive.Image.empty% Image components
         hQ              
         hL          % Line components
         hS          = matlab.graphics.chart.primitive.Scatter.empty% Quiver components
@@ -46,48 +46,31 @@ classdef iView < handle
             obj.setAxes;
         end
         
-        setAxes(obj)
-        
         function delete(obj, ~, ~)
             delete([obj.hA]);
             delete([obj.hListeners]);
             delete@handle(obj)
         end
-        
-        function NoBottomLeftText(obj)
-            for iI = 1:length(obj)
-                if ~isempty(obj(iI).hT)
-                    set(obj(iI).hT(2, 1, :), 'String', '');
-                end
-            end
-        end
-        
+                
         draw(obj, ~, ~)
         position(obj, ~, ~)
-        setMapping(obj, ~, ~)
+        
+        setAxes(obj)
+        setPosition(obj, iX, iY, iWidth, iHeight)
         setData(obj, l3D, cData)
+        setMode(obj, l3D)
         [iView, iDimInd] = isOver(obj, hOver)
         iDivider = isOverDevider(obj, dCoord_px)
+        backup(obj)
         
-        function backup(obj)
-            for iI = 1:length(obj)
-                obj(iI).OldZoom = obj(iI).Zoom;
-                obj(iI).OldDrawCenter = obj(iI).DrawCenter;
-            end
-        end
-        
-        function setMode(obj, l3D)
-            for iI = 1:numel(obj)
-                if l3D
-                    obj(iI).Mode = '3D';
-                else
-                    obj(iI).Mode = '2D';
-                end
-                obj(iI).setAxes;
-            end
-        end
-        
-        setPosition(obj, iX, iY, iWidth, iHeight)
+%         function NoBottomLeftText(obj)
+%             for iI = 1:length(obj)
+%                 if ~isempty(obj(iI).hT)
+%                     set(obj(iI).hT(2, 1, :), 'String', '');
+%                 end
+%             end
+%         end
+
         
     end
     

@@ -131,7 +131,7 @@ if ~isempty(obj.SAction.hView)
     
 else
     % If not over a view, hide the bottom left text
-    obj.hViews.NoBottomLeftText;
+%     obj.hViews.NoBottomLeftText;
 end
 % -------------------------------------------------------------------------
 
