@@ -8,12 +8,12 @@ if isstruct(iCnt) || isobject(iCnt)
     % Mouse wheel callback: operate depending on current view
     iCnt = iCnt.VerticalScrollCount;
     if obj.SAction.lShift
-        iDim(3) = 5;
+        iDim(3) = 4;
     else
         hView = obj.SAction.hView;
         if isempty(hView), return, end
         if isempty(hView.hData), return, end
-        iDim      = hView.hData(1).Dims(1, :);
+        iDim      = hView.hData(1).Dims(obj.SAction.iDimInd, :);
         dStepSize = min(hView.hData(1).Res);
     end
     
@@ -28,37 +28,28 @@ end
 
 
 % -------------------------------------------------------------------------
-% Loop over all views
-for iI = 1:numel(obj.hViews)
-    if ~isempty(obj.hViews(iI).DrawCenter)
-        d = obj.hViews(iI).DrawCenter(iDim(3)) + iCnt.*dStepSize;
-        obj.hViews(iI).DrawCenter(iDim(3)) = d;
-    end
-end
+% Apply scrolling to all views
+dDelta = zeros(1, 5);
+dDelta(iDim(3)) = iCnt.*dStepSize;
+obj.hViews.shift(dDelta);
 % -------------------------------------------------------------------------
 
 
 % -----------------------------------------------------------------
-% Show a crosshair using the grids if in 3D mode
-% if obj.isOn('2d')
+% Update the view contents
+obj.hViews.draw;
+if obj.isOn('3d')
 %     if obj.dGrid ~= -1, obj.SAction.dGrid = obj.dGrid; end
 %     obj.dGrid = -1;
-%     obj.position;
+    obj.hViews.position;
 %     obj.grid;
-% end
+end
 
 % if iDim(3) == 5
 %     obj.showPosition('time');
 % else
-%     if ~obj.isOn('2d')
+%     if ~obj.isOn('3d')
 %         obj.showPosition('slice');
 %     end
 % end
-
-% -----------------------------------------------------------------
-
-
-% -----------------------------------------------------------------
-% Draw!
-% notify(obj, 'viewImageChange');
 % -----------------------------------------------------------------

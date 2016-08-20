@@ -19,37 +19,26 @@ switch obj.getTool
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Normal, left mouse button -> MOVE operation
             case 'normal'
-%                 if obj.isOn('2d'), obj.dGrid = -1; end
-                if obj.isOn('2d')
-                    
-                end
+%                 if obj.isOn('3d'), obj.dGrid = -1; end
                 
+                dDelta = zeros(1, 5);
                 dPos = obj.SAction.hView.getCurrentPoint(obj.SAction.iDimInd);
-                dDelta = dPos(1, 1:2) - obj.SAction.dViewStartPos;
+                dDelta(iDim([2, 1])) = dPos(1, 1:2) - obj.SAction.dViewStartPos;
                 
                 % -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
                 % Apply
-                for iI = 1:numel(obj.hViews)
-                    if ~isempty(obj.hViews(iI).hData)
-                        obj.hViews(iI).DrawCenter(iDim([2 1])) = obj.hViews(iI).DrawCenter(iDim([2 1])) - dDelta;
-                    end
-                end
+                obj.hViews.shift(-dDelta);
                 obj.hViews.position;
-                if obj.isOn('2d')
+                if obj.isOn('3d')
                     obj.hViews.draw;
                 end
-%                 if obj.isOn('2d') || strcmp(obj.getTool, 'cursor_mask')% Show Crosshair and update other slices
-%                     obj.draw;
-%                     obj.showPosition('slice');
-%                 end
-%                 obj.grid;
                 
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Shift key or right mouse button -> ZOOM operation
             case 'alt'
                 
                 for iI = 1:numel(obj.hViews)
-%                     if obj.isOn('2d'), obj.dGrid = -1; end
+%                     if obj.isOn('3d'), obj.dGrid = -1; end
 
                     dZoom = obj.hViews(iI).OldZoom*exp(dSENSITIVITY.*iD(2));
                     dZoomLog = log2(dZoom);
@@ -59,7 +48,7 @@ switch obj.getTool
                     end 
                     dZoom = max(0.1, min(32, dZoom));
                     
-%                     if ~obj.isOn('2d')
+%                     if ~obj.isOn('3d')
 %                         dOldDrawCenter_mm = obj.hViews(iI).OldDrawCenter(iDim, 1)';
 %                         dMouseStart_mm = [obj.SAction.dViewStartPos(2:-1:1), dOldDrawCenter_mm(3)];
 %                         dD = dOldDrawCenter_mm - dMouseStart_mm;
@@ -69,8 +58,7 @@ switch obj.getTool
                 end
                 
                 obj.tooltip(sprintf('%d %%', round(obj.SAction.hView.Zoom*100)));
-                
-%                 obj.position;
+                obj.hViews.position;
 %                 obj.grid;
             
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -

@@ -511,8 +511,8 @@ switch obj.SMenu(iInd).GroupIndex
                 end
                 if ~lShow, set(obj.SSidebar.hPanel, 'Visible', 'off'); end
                 
-            case '2d'
-%                 if obj.isOn('2d')
+            case '3d'
+%                 if obj.isOn('3d')
                     obj.setViews(obj.iAxes);
 %                 else
 %                     obj.setViews([obj.iPanelsr(1) ceil(obj.iPanels(2)/3)]);

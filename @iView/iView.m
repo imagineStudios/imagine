@@ -62,6 +62,8 @@ classdef iView < handle
         [iView, iDimInd] = isOver(obj, hOver)
         iDivider = isOverDevider(obj, dCoord_px)
         backup(obj)
+        shift(obj, dDelta)
+        
         
         function dCoord = getCurrentPoint(obj, iDimInd)
             dCoord = get(obj.hA(iDimInd), 'CurrentPoint');

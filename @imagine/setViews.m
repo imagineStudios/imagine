@@ -1,6 +1,6 @@
 function setViews(obj, iCols, iRows)
 
-iAxesPerView = double(obj.isOn('2d')) * 2 + 1;
+iAxesPerView = double(obj.isOn('3d')) * 2 + 1;
 
 % -------------------------------------------------------------------------
 % Determine new number of views
@@ -42,7 +42,7 @@ elseif iNViews > iNExistingViews
 end
 % -------------------------------------------------------------------------
 
-obj.hViews.setMode(obj.isOn('2d'));
+obj.hViews.setMode(obj.isOn('3d'));
 obj.hViews.setData(obj.DataMapping);
 
 if strcmp(get(obj.hF, 'Visible'), 'on')

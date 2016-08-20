@@ -253,7 +253,7 @@ obj.STooltip.hText = text(75, 22, '', ...
 %     end
 %
 %     if l3DMode
-%         lInd = strcmp({obj.SMenu.Name}, '2d');
+%         lInd = strcmp({obj.SMenu.Name}, '3d');
 %         obj.SMenu(lInd).Active = true;
 %         iN = max(1, min([6, length(obj.SData) - obj.iStartSeries + 1, prod(obj.iViews)]));
 %         obj.setViews(3, iN);

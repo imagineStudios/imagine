@@ -1,34 +1,30 @@
-function viewUp(obj, hObject, eventdata)
+function viewUp(obj, hObject, ~)
 
 set(hObject, 'WindowButtonMotionFcn', @obj.mouseMove, 'WindowButtonUpFcn', '', 'WindowButtonDownFcn', '');
 
 % -------------------------------------------------------------------------
 % If over an axis...
-iSeries = obj.SAction.hView.hData(1);
+% iSeries = obj.SAction.hView.hData(1);
 
 if ~obj.SAction.lMoved
     
     switch obj.SAction.sSelectionType
         
-        case 'normal'
-        if strcmp(obj.getTool, 'cursor') && obj.isOn('2d')
+        case 'normal' % In 3d mode: jump to coordinate
+        if strcmp(obj.getTool, 'cursor') && obj.isOn('3d')
             
-            iDim = obj.SData(obj.SAction.SView.iData(1)).iDims(obj.SAction.SView.iDimInd, :);
-            dCoord = get(obj.SAction.SView.hAxes, 'CurrentPoint');
+            iDim = obj.SAction.hView.hData(1).Dims(obj.SAction.iDimInd, :);
+            dCoord = obj.SAction.hView.getCurrentPoint(obj.SAction.iDimInd);
             
-            iSize = size(obj.SData(iSeries).dImg);
-            dXLim = obj.SData(iSeries).dOrigin(iDim(2)) + [0 iSize(iDim(2)) - 1].*obj.SData(iSeries).dRes(iDim(2));
-            dYLim = obj.SData(iSeries).dOrigin(iDim(1)) + [0 iSize(iDim(1)) - 1].*obj.SData(iSeries).dRes(iDim(1));
-            
-            if dCoord(1, 1) >= dXLim(1) && dCoord(1, 1) <= dXLim(2) && ...
-               dCoord(1, 2) >= dYLim(1) && dCoord(1, 2) <= dYLim(2)
-                for iI = 1:length(obj.SData)
-                    obj.SData(iI).dDrawCenter(iDim([2 1])) = dCoord(1, 1:2);
-                end
-                obj.position;
-                obj.grid;
-                obj.draw;
+            for iI = 1:length(obj.hViews)
+                obj.hViews(iI).DrawCenter(iDim([2 1])) = dCoord(1, 1:2);
             end
+            obj.hViews.position;
+            % obj.grid;
+            if obj.isOn('3d')
+                obj.hViews.draw;
+            end
+
         end
         
         case 'alt'
@@ -39,7 +35,7 @@ else
     switch obj.getTool
         
         case 'cursor'
-            if obj.isOn('2d') || ~strcmp(obj.SAction.sSelectionType, 'normal')
+            if obj.isOn('3d') || ~strcmp(obj.SAction.sSelectionType, 'normal')
 %                 obj.draw;
             end
             
@@ -51,7 +47,7 @@ else
             
             if iSeries ~= iStartSeries && iSeries
                 
-                if obj.isOn('2d')
+                if obj.isOn('3d')
                     iMapping2 = obj.iStartSeries + iView - 1;
                     iMapping1 = obj.iStartSeries + obj.SAction.iView - 1;
                 else
