@@ -1,6 +1,6 @@
 function setPosition(obj, iX, iY, iWidth, iHeight)
 
-iAxesPerView = 1 + double(strcmp(obj(1).Mode, '3D'))*2;
+iAxesPerView = 1 + double(strcmp(obj(1).sMode, '3D'))*2;
 
 for iI = 1:length(obj)
     o = obj(iI);

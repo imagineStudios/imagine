@@ -23,7 +23,7 @@ try
     S.sPath = obj.sPath;
     S.lRuler        = obj.lRuler;
     S.dGrid         = max(0, obj.dGrid);
-    S.l3DMode       = obj.isOn('2d');
+    S.l3DMode       = obj.isOn('3d');
     S.lDocked       = strcmp(get(obj.hF, 'WindowStyle'), 'docked');
     S.iSidebarWidth = obj.iSidebarWidth;
     S.iIconSize     = obj.iIconSize;

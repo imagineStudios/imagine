@@ -1,34 +1,31 @@
 classdef iView < handle
     
     properties
-        hData            = iData.empty  % The data series associated with the view
-        
+        hData            = iData.empty                                     % The data series associated with the view
         OldZoom
         OldDrawCenter
-        
-        hParent         = imagine.empty
     end
     
     properties(SetObservable = true)
         Ind             = 1     % Index of the view (global)
-        
-        Mode            = '2D'
-        
         Zoom            = 1     % Zoom level
         DrawCenter      = []    % Coordinates of the central point
     end
     
     properties (Access = private)
+        hParent     = imagine.empty
         
         hA          = matlab.graphics.axis.Axes.empty
-        hI          = matlab.graphics.primitive.Image.empty% Image components
-        hQ              
-        hL          % Line components
-        hS          = matlab.graphics.chart.primitive.Scatter.empty% Quiver components
-        hT          % Text components
-        hP          % Patch component
         
-        dColor
+        hI          = matlab.graphics.primitive.Image.empty                % Image components
+%         hQ          = cquiver.empty                                        % The quiver component
+        hL          = matlab.graphics.primitive.Line.empty                 % Line components
+        hS          = matlab.graphics.chart.primitive.Scatter.empty        % Scatter components
+        hT          = matlab.graphics.primitive.Text.empty                 % Text components
+        hP          = matlab.graphics.primitive.Patch.empty                % Patch component
+        
+        sMode       = '2D'
+        dColor      = [0.1 0.2 0.3]
         hListeners
     end
     

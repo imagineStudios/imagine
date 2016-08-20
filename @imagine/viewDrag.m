@@ -40,6 +40,8 @@ switch obj.getTool
                 for iI = 1:numel(obj.hViews)
 %                     if obj.isOn('3d'), obj.dGrid = -1; end
 
+                    % -   -   -   -   -   -   -   -   -   -   -   -   -   -
+                    % Calculate the new zoom level (snap to powers of 2)
                     dZoom = obj.hViews(iI).OldZoom*exp(dSENSITIVITY.*iD(2));
                     dZoomLog = log2(dZoom);
                     iExp = round(dZoomLog);
@@ -47,14 +49,15 @@ switch obj.getTool
                         dZoom = 2.^iExp;
                     end 
                     dZoom = max(0.1, min(32, dZoom));
-                    
-%                     if ~obj.isOn('3d')
-%                         dOldDrawCenter_mm = obj.hViews(iI).OldDrawCenter(iDim, 1)';
-%                         dMouseStart_mm = [obj.SAction.dViewStartPos(2:-1:1), dOldDrawCenter_mm(3)];
-%                         dD = dOldDrawCenter_mm - dMouseStart_mm;
-%                         obj.SData(iI).dDrawCenter(iDim) = dMouseStart_mm + obj.SAction.dZoomFactor(iI)./dZoom.*dD;
-%                     end
                     obj.hViews(iI).Zoom = dZoom; % Save ZoomFactor data 
+                    
+                    % -   -   -   -   -   -   -   -   -   -   -   -   -   -
+                    % If in 2D mode, keep the mouse down point constant
+                    if ~obj.isOn('3d')
+                        dMouseStart_mm = obj.SAction.dViewStartPos(2:-1:1);
+                        dD = obj.SAction.dDrawCenter(iDim([1, 2])) - dMouseStart_mm;
+                        obj.hViews(iI).DrawCenter(iDim([1, 2])) = dMouseStart_mm + obj.hViews(iI).OldZoom./dZoom.*dD;
+                    end
                 end
                 
                 obj.tooltip(sprintf('%d %%', round(obj.SAction.hView.Zoom*100)));

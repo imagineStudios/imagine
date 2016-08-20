@@ -14,7 +14,7 @@ end
 % set([obj.SView.hScatter], 'Visible', 'off'); % Make sure the position display is hidden
 
 % -------------------------------------------------------------------------
-% Save some info about button down event
+% Save some infos about button down event
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Properties of the axes and imagine object
@@ -26,10 +26,12 @@ if obj.dGrid ~= -1, obj.SAction.dGrid = obj.dGrid; end
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Properties of the starting view
 obj.SAction.dViewStartPos = obj.SAction.hView.getCurrentPoint(obj.SAction.iDimInd);
+obj.SAction.dDrawCenter   = obj.SAction.hView.DrawCenter;
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Backup the data properties
 % obj.SAction.dDrawCenter = hView.DrawCenter;
+
 obj.hViews.backup;
 % obj.SAction.dWindowCenter = [obj.SData.dWindowCenter];
 % obj.SAction.dWindowWidth  = [obj.SData.dWindowWidth];

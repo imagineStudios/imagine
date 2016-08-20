@@ -1,6 +1,6 @@
 function setAxes(obj)
 
-iAxesPerView = 1 + double(strcmp(obj.Mode, '3D'))*2;
+iAxesPerView = 1 + double(strcmp(obj.sMode, '3D'))*2;
 
 iFirstAxesInd = (obj.Ind - 1)*iAxesPerView + 1;
 iNTotalAxes = prod(obj.hParent.iAxes);
