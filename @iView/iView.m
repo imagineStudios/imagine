@@ -63,6 +63,11 @@ classdef iView < handle
         iDivider = isOverDevider(obj, dCoord_px)
         backup(obj)
         
+        function dCoord = getCurrentPoint(obj, iDimInd)
+            dCoord = get(obj.hA(iDimInd), 'CurrentPoint');
+            dCoord = dCoord(1, 1:2);
+        end
+        
 %         function NoBottomLeftText(obj)
 %             for iI = 1:length(obj)
 %                 if ~isempty(obj(iI).hT)

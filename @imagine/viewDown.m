@@ -25,13 +25,11 @@ if obj.dGrid ~= -1, obj.SAction.dGrid = obj.dGrid; end
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Properties of the starting view
-obj.SAction.hView            = hView;
-dPos = get(hView.hA, 'CurrentPoint');
-obj.SAction.dViewStartPos    = dPos(1, 1:2);
+obj.SAction.dViewStartPos = obj.SAction.hView.getCurrentPoint(obj.SAction.iDimInd);
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Backup the data properties
-obj.SAction.dDrawCenter = hView.DrawCenter;
+% obj.SAction.dDrawCenter = hView.DrawCenter;
 obj.hViews.backup;
 % obj.SAction.dWindowCenter = [obj.SData.dWindowCenter];
 % obj.SAction.dWindowWidth  = [obj.SData.dWindowWidth];

@@ -7,7 +7,7 @@ dROTATION_THRESHOLD     = 50;       % Defines the number of pixels the cursor ha
 % Get some frequently used values
 iD = get(obj.hF, 'CurrentPoint') - obj.SAction.iPos;
 if norm(iD) > 2, obj.SAction.lMoved = true; end
-iDim = obj.SAction.hView.hData(1).Dims(1, :);
+iDim = obj.SAction.hView.hData(1).Dims(obj.SAction.iDimInd, :);
 
 switch obj.getTool
     
@@ -24,7 +24,7 @@ switch obj.getTool
                     
                 end
                 
-                dPos = get(obj.SAction.hView.hA, 'CurrentPoint');
+                dPos = obj.SAction.hView.getCurrentPoint(obj.SAction.iDimInd);
                 dDelta = dPos(1, 1:2) - obj.SAction.dViewStartPos;
                 
                 % -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -33,6 +33,10 @@ switch obj.getTool
                     if ~isempty(obj.hViews(iI).hData)
                         obj.hViews(iI).DrawCenter(iDim([2 1])) = obj.hViews(iI).DrawCenter(iDim([2 1])) - dDelta;
                     end
+                end
+                obj.hViews.position;
+                if obj.isOn('2d')
+                    obj.hViews.draw;
                 end
 %                 if obj.isOn('2d') || strcmp(obj.getTool, 'cursor_mask')% Show Crosshair and update other slices
 %                     obj.draw;

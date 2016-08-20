@@ -3,20 +3,11 @@ function mouseMove(obj, ~, ~)
 persistent dFleur
 if isempty(dFleur), dFleur = fGetFleur; end
 
-set(obj.hF, 'Pointer', 'Arrow', 'WindowButtonDownFcn', @obj.contextMenu); % Default
+% Set default mouse pointer
+set(obj.hF, 'Pointer', 'Arrow', 'WindowButtonDownFcn', @obj.contextMenu);
 
+% Get current object
 hOver = hittest;
-
-% -------------------------------------------------------------------------
-% Check if over a slider
-obj.SAction.iSlider = find(hOver == [obj.SSliders.hAxes]);
-if ~isempty(obj.SAction.iSlider)
-    set(obj.hF, 'Pointer', 'left');
-    set(obj.hF, 'WindowButtonDownFcn', @obj.sliderDown);
-    return
-end
-% -------------------------------------------------------------------------
-
 
 % -------------------------------------------------------------------------
 % Check if over an icon (button)
@@ -37,6 +28,17 @@ if ~isempty(iIcon)
     obj.tooltip(sText);
     
     set(obj.hF, 'WindowButtonDownFcn', @obj.iconDown);
+    return
+end
+% -------------------------------------------------------------------------
+
+
+% -------------------------------------------------------------------------
+% Check if over a slider
+obj.SAction.iSlider = find(hOver == [obj.SSliders.hAxes]);
+if ~isempty(obj.SAction.iSlider)
+    set(obj.hF, 'Pointer', 'left');
+    set(obj.hF, 'WindowButtonDownFcn', @obj.sliderDown);
     return
 end
 % -------------------------------------------------------------------------
@@ -81,6 +83,9 @@ end
 % end
 % ---------------------------------------------------------------------
 
+
+% -------------------------------------------------------------------------
+% Check if on the boundaries between two views
 [obj.SAction.iDividerX, obj.SAction.iDividerY] = fGetDivider(obj);
 if ~isempty(obj.SAction.iDividerX)
     set(obj.hF, 'Pointer', 'left')
@@ -91,6 +96,8 @@ elseif ~isempty(obj.SAction.iDividerY)
     set(obj.hF, 'WindowButtonDownFcn', @obj.dividerDown);
     return
 end
+% -------------------------------------------------------------------------
+
 
 % -------------------------------------------------------------------------
 % Mouse over a VIEW
@@ -98,18 +105,6 @@ end
 obj.SAction.hView = obj.hViews(iView);
 obj.SAction.iDimInd = iDimInd;
 if ~isempty(obj.SAction.hView)
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    % Check if near a view boundary, update pointer if so and bail
-%     if any(obj.SAction.iDivider)
-%         
-%         if obj.SAction.iDivider(1), set(obj.hF, 'Pointer', 'left'); end
-%         if obj.SAction.iDivider(2), set(obj.hF, 'Pointer', 'top');  end
-%         set(obj.hF, 'WindowButtonDownFcn', @obj.dividerDown);
-%         
-% %         fNoBottomLeftText(obj);
-%         return
-%     end
-    
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % If resclicing mode and in box
     if strcmp(obj.sROIMode, 'reslice') && strcmp(get(SView.hLine(1), 'Visible'), 'on')
