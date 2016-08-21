@@ -49,16 +49,11 @@ classdef iData < handle
         iSize = getSize(obj)
         dCenter = getCenter(obj)
         
+        d3Lim_px = getSliceLim(obj, dDrawCenter, iDim)
+        
     end
     
     methods (Access = private)
         parseInputs(obj, varargin)
-        
-        function d3Lim_px = getSliceLim(obj, d3Lim_mm, iDim)
-%             d3Lim_px = min(max(round((d3Lim_mm - obj.Origin(iDim(3)))./obj.Res(iDim(3)) + 1), 1), size(obj.Img, iDim(3)));
-            d3Lim_px = round((d3Lim_mm - obj.Origin(iDim(3)))./obj.Res(iDim(3)) + 1);
-            d3Lim_px = d3Lim_px(1):d3Lim_px(2);
-            d3Lim_px = d3Lim_px(d3Lim_px > 0 & d3Lim_px < size(obj.Img, iDim(3)));
-        end
     end
 end

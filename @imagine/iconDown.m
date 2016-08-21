@@ -525,11 +525,11 @@ switch obj.SMenu(iInd).GroupIndex
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % The render-mode group
     case 1 % The render-mode group
-        if ~obj.SMenu(iInd).Active
+        if ~obj.SMenu(iInd).Active;
             sActivate = obj.SMenu(iInd).Name;
         end
         fRadioGroup(obj, 1, sActivate);
-        notify(obj, 'viewImageChange');
+        obj.hViews.draw;
         
     case 3
         

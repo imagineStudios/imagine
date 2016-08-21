@@ -9,16 +9,10 @@ iDim = obj.Dims(iDimInd, :);
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Calculate the boundaries of the projection in physical units
-if any(strcmp(obj.Parent.getDrawMode, {'min', 'max'}));
-    dMipDepth = obj.Parent.getSlider('Projection Depth');
-    d3Lim_mm = dDrawCenter(iDim(3)) + 0.5.*[-dMipDepth dMipDepth];
-else
-    d3Lim_mm = [dDrawCenter(iDim(3)), dDrawCenter(iDim(3))];
-end
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Translate to slice indices
-d3Lim_px = obj.getSliceLim(d3Lim_mm, iDim);
+d3Lim_px = obj.getSliceLim(dDrawCenter, iDim);
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Determine timepoint

@@ -26,6 +26,7 @@ classdef iView < handle
         
         sMode       = '2D'
         dColor      = [0.1 0.2 0.3]
+        iRandColor
         hListeners
     end
     
@@ -39,6 +40,11 @@ classdef iView < handle
             
             dColors = lines(iInd);
             obj.dColor = dColors(end, :);
+            
+            dPattern = 1 - 0.7*rand(4096, 1);
+            dBGImg = fBlend(obj.dColor, dPattern, 'multiply', 0.5);
+            dBGImg = permute(dBGImg, [3 1 2]);
+            obj.iRandColor = uint8([dBGImg; zeros(1, 4096) + 0.5].*255);
             
             obj.setAxes;
         end
@@ -60,6 +66,8 @@ classdef iView < handle
         iDivider = isOverDevider(obj, dCoord_px)
         backup(obj)
         shift(obj, dDelta)
+        zoom(obj, dFactor)
+        showSlicePosition(obj);
         
         
         function dCoord = getCurrentPoint(obj, iDimInd)

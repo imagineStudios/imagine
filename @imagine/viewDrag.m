@@ -31,6 +31,7 @@ switch obj.getTool
                 obj.hViews.position;
                 if obj.isOn('3d')
                     obj.hViews.draw;
+                    obj.hViews.showSlicePosition;
                 end
                 
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -42,21 +43,14 @@ switch obj.getTool
 
                     % -   -   -   -   -   -   -   -   -   -   -   -   -   -
                     % Calculate the new zoom level (snap to powers of 2)
-                    dZoom = obj.hViews(iI).OldZoom*exp(dSENSITIVITY.*iD(2));
-                    dZoomLog = log2(dZoom);
-                    iExp = round(dZoomLog);
-                    if abs(dZoomLog - iExp) < 0.05
-                        dZoom = 2.^iExp;
-                    end 
-                    dZoom = max(0.1, min(32, dZoom));
-                    obj.hViews(iI).Zoom = dZoom; % Save ZoomFactor data 
+                    obj.hViews(iI).zoom(dSENSITIVITY.*iD(2));
                     
                     % -   -   -   -   -   -   -   -   -   -   -   -   -   -
                     % If in 2D mode, keep the mouse down point constant
                     if ~obj.isOn('3d')
                         dMouseStart_mm = obj.SAction.dViewStartPos(2:-1:1);
                         dD = obj.SAction.dDrawCenter(iDim([1, 2])) - dMouseStart_mm;
-                        obj.hViews(iI).DrawCenter(iDim([1, 2])) = dMouseStart_mm + obj.hViews(iI).OldZoom./dZoom.*dD;
+                        obj.hViews(iI).DrawCenter(iDim([1, 2])) = dMouseStart_mm + obj.hViews(iI).OldZoom./obj.hViews(iI).Zoom.*dD;
                     end
                 end
                 

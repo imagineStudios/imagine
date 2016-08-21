@@ -14,15 +14,16 @@ if isstruct(iCnt) || isobject(iCnt)
         if isempty(hView), return, end
         if isempty(hView.hData), return, end
         iDim      = hView.hData(1).Dims(obj.SAction.iDimInd, :);
-        dStepSize = min(hView.hData(1).Res);
+        dStepSize = hView.hData(1).Res(iDim(3));
     end
     
 else
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Keyboard input (iCnt is numeric): work on the first view
-    if isempty(obj.SView(1).iData), return, end
-    iDim = obj.SData(obj.SView(1).iData(1)).iDims(obj.SView(1).iDimInd, :);
+    if isempty(obj.hViews(1).hData), return, end
+    iDim = obj.hViews(1).hData(1).Dims(1, :);
+    dStepSize = obj.hViews(1).hData(1).Res(iDim(3));
 end
 % -------------------------------------------------------------------------
 
@@ -44,6 +45,7 @@ if obj.isOn('3d')
     obj.hViews.position;
 %     obj.grid;
 end
+obj.hViews.showSlicePosition;
 
 % if iDim(3) == 5
 %     obj.showPosition('time');
