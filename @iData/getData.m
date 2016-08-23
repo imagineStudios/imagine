@@ -1,6 +1,6 @@
-function [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, lHD)
+function [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
 
-if nargin < 3, lHD = false;   end
+if nargin < 5, lHD = false;   end
 
 iDim = obj.Dims(iDimInd, :);
 
@@ -62,41 +62,42 @@ switch sDrawMode
 end
 % -------------------------------------------------------------------------
 
-dAspect = obj.Res(iDim(1:2));
-dOrigin = obj.Origin(iDim(1:2));
-dXData = [0 size(dImg, 2) - 1].*dAspect(2) + dOrigin(2);
-dYData = [0 size(dImg, 1) - 1].*dAspect(1) + dOrigin(1);
-
 dImg = double(dImg);
 
-% if lHD && ~strcmp(obj.SData(iSeries).sMode, 'vector') && ~strcmp(obj.SData(iSeries).sMode, 'categorical')
-%     % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-%     % Fancy mode: Interpolate the images to full resolution. Is
-%     % executed when arbitrary input is supplied or the timer fires.
-%     
-%     % -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
-%     % Pad the image for better boundary extrapolation
-%     dImg = [dImg(:,1), dImg, dImg(:, end)];
-%     dImg = [dImg(1,:); dImg; dImg(end, :)];
-%     dX = (-1:size(dImg, 2) - 2).*dAspect(2) + dOrigin(2);
-%     dY = (-1:size(dImg, 1) - 2).*dAspect(1) + dOrigin(1);
-%     
-%     dXLim = get(hView.hAxes, 'XLim');
-%     dYLim = get(hView.hAxes, 'YLim');
-%     dPosition = get(hView.hAxes, 'Position');
-%     
-%     dXI = (0.5:dPosition(3) - 0.5)./dPosition(3).*diff(dXLim) + dXLim(1);
-%     dYI = (0.5:dPosition(4) - 0.5)./dPosition(4).*diff(dYLim) + dYLim(1);
-%     
-%     dXI = dXI(dXI >= mean(dX(1:2)) & dXI <= mean(dX(end-1:end)));
-%     dYI = dYI(dYI >= mean(dY(1:2)) & dYI <= mean(dY(end-1:end)));
-%     
-%     [dXXI, dYYI] = meshgrid(dXI, dYI);
-%     dImg = interp2(dX, dY, double(dImg), dXXI, dYYI, 'spline', 0);
-%     
-%     dXData = [dXI(1), dXI(end)];
-%     dYData = [dYI(1), dYI(end)];
-% end
+dAspect = obj.Res(iDim(1:2));
+dOrigin = obj.Origin(iDim(1:2));
+
+if lHD && ~strcmp(obj.Mode, 'vector') && ~strcmp(obj.Mode, 'categorical')
+    % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+    % Fancy mode: Interpolate the images to full resolution. Is
+    % executed when arbitrary input is supplied or the timer fires.
+    
+    % -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+    % Pad the image for better boundary extrapolation
+    dImg = [dImg(:,1), dImg, dImg(:, end)];
+    dImg = [dImg(1,:); dImg; dImg(end, :)];
+    dX = (-1:size(dImg, 2) - 2).*dAspect(2) + dOrigin(2);
+    dY = (-1:size(dImg, 1) - 2).*dAspect(1) + dOrigin(1);
+    
+    dXLim = get(hA, 'XLim');
+    dYLim = get(hA, 'YLim');
+    dPosition = get(hA, 'Position');
+    
+    dXI = (0.5:dPosition(3) - 0.5)./dPosition(3).*diff(dXLim) + dXLim(1);
+    dYI = (0.5:dPosition(4) - 0.5)./dPosition(4).*diff(dYLim) + dYLim(1);
+    
+    dXI = dXI(dXI >= mean(dX(1:2)) & dXI <= mean(dX(end-1:end)));
+    dYI = dYI(dYI >= mean(dY(1:2)) & dYI <= mean(dY(end-1:end)));
+    
+    [dXXI, dYYI] = meshgrid(dXI, dYI);
+    dImg = interp2(dX, dY, double(dImg), dXXI, dYYI, 'spline', 0);
+    
+    dXData = [dXI(1), dXI(end)];
+    dYData = [dYI(1), dYI(end)];
+else
+    dXData = [0 size(dImg, 2) - 1].*dAspect(2) + dOrigin(2);
+    dYData = [0 size(dImg, 1) - 1].*dAspect(1) + dOrigin(1);
+end
 
 % -------------------------------------------------------------------------
 % If vector data, create the quiver data

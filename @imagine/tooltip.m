@@ -33,10 +33,7 @@ if isempty(sString) || isobject(sString(1)) || ishandle(sString(1))
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Hide the scatters and restore the text visibility
-    for iView = 1:numel(obj.hViews)
-%         set(obj.hViews(iView).hS, 'Visible', 'off');
-%         set(obj.SView(iView).hText(2, 1, :), 'Visible', 'on');
-    end
+    obj.hViews.showSquare;
     
 else
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

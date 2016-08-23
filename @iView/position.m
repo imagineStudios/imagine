@@ -29,22 +29,7 @@ for iI = 1:length(obj)
             set(hView.hA(iDimInd), 'XLim', dXLim_mm, 'YLim', dYLim_mm, ...
                 'XDir', csDirs{ hView.hData(1).Invert(iDim(2)) + 1}, ...
                 'YDir', csDirs{~hView.hData(1).Invert(iDim(1)) + 1});
-            
-            % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            % Draw the color marker in the top-left corner
-%             if hView.hData(1).Invert(iDim(1))
-%                 dYData = dYLim_mm(2) - 10.*diff(dYLim_mm)./dAxesPos(4);
-%             else
-%                 dYData = dYLim_mm(1) + 10.*diff(dYLim_mm)./dAxesPos(4);
-%             end
-%             if hView.hData(1).Invert(iDim(2))
-%                 dXData = dXLim_mm(2) - 10.*diff(dXLim_mm)./dAxesPos(3);
-%             else
-%                 dXData = dXLim_mm(1) + 10.*diff(dXLim_mm)./dAxesPos(3);
-%             end
-%             
-%             set(hView.hS(iDimInd), 'XData', dXData, 'YData', dYData);
-            
+                        
         else
             
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

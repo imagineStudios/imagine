@@ -69,13 +69,13 @@ for iI = 1:numel(obj)
             end
             
             %         set(o.hText(2, 1, :), 'Visible', 'off');
-            %         set([obj.STooltip.hImg obj.STooltip.hText],  'Visible', 'off');
+%             set([obj.STooltip.hImg obj.STooltip.hText],  'Visible', 'off');
         end
     end
 end
 
-% stop(obj.STimers.hToolTip);
-% start(obj.STimers.hToolTip);
+stop(obj(1).hParent.STimers.hToolTip);
+start(obj(1).hParent.STimers.hToolTip);
 
 
 function [iNRows, iNCols] = fOptiRows(iN, iNMaxRows)

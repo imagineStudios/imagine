@@ -1,27 +1,10 @@
-function draw(obj, ~, ~)
+function draw(obj, lHD)
 
 persistent dBGImg
 % dBGImg = [];
 if isempty(dBGImg)
     dBGImg = fBGImg(obj(1).hParent.dBGCOLOR);
 end
-
-% -------------------------------------------------------------------------
-% Timer logic for hd mode
-% if nargin > 1
-%     % Stop timer to make sure it doesn't fire again
-%     stop(obj.STimers.hDrawFancy);
-%     lHD = obj.isOn('hd');
-% else
-%     if obj.isOn('hd')
-%         % Reset and start timer
-%         stop(obj.STimers.hDrawFancy);
-%         start(obj.STimers.hDrawFancy);
-%     end
-    lHD = false;
-% end
-% -------------------------------------------------------------------------
-
 
 % -------------------------------------------------------------------------
 % Determine some drawing parameters
@@ -62,7 +45,7 @@ for iI = 1:numel(obj)
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Get the image data, do windowing and apply colormap
             for iDimInd = 1:length(hView.hA)
-                [dImg, dXData, dYData]  = hData.getData(hView.DrawCenter, iDimInd, lHD);
+                [dImg, dXData, dYData]  = hData.getData(hView.DrawCenter, iDimInd, hView.hA(iDimInd), lHD);
                 set(hView.hI(iDimInd), 'CData', dImg, 'XData', dXData, 'YData', dYData);%, 'AlphaData', dAlpha);
             end
     %                 
@@ -78,6 +61,24 @@ for iI = 1:numel(obj)
         end
     end
 end
+
+
+
+% if lHD && ~strcmp(obj.SData(iSeries).sMode, 'vector') && ~strcmp(obj.SData(iSeries).sMode, 'categorical')
+
+    % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+    % Fancy mode: Interpolate the images to full resolution. Is
+    % executed when arbitrary input is supplied or the timer fires.
+    
+    % -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+    % Pad the image for better boundary extrapolation
+%     dImg = [dImg(:,1), dImg, dImg(:, end)];
+%     dImg = [dImg(1,:); dImg; dImg(end, :)];
+%     dX = (-1:size(dImg, 2) - 2).*dAspect(2) + dOrigin(2);
+%     dY = (-1:size(dImg, 1) - 2).*dAspect(1) + dOrigin(1);
+    
+
+
 
 function dImg = fBGImg(dColor)
 dLogo = [0 0 0 1 1 0 0 0; ...

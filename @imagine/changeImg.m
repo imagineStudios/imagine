@@ -38,12 +38,12 @@ obj.hViews.shift(dDelta);
 
 % -----------------------------------------------------------------
 % Update the view contents
-obj.hViews.draw;
+obj.draw;
 if obj.isOn('3d')
 %     if obj.dGrid ~= -1, obj.SAction.dGrid = obj.dGrid; end
-%     obj.dGrid = -1;
+    obj.dGrid = -1;
     obj.hViews.position;
-%     obj.grid;
+    obj.hViews.grid;
 end
 obj.hViews.showSlicePosition;
 

@@ -22,7 +22,7 @@ if ~obj.SAction.lMoved
             obj.hViews.position;
             % obj.grid;
             if obj.isOn('3d')
-                obj.hViews.draw;
+                obj.draw;
             end
 
         end

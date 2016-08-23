@@ -2,6 +2,8 @@ function setPosition(obj, iX, iY, iWidth, iHeight)
 
 iAxesPerView = 1 + double(strcmp(obj(1).sMode, '3D'))*2;
 
+iRuler = 20.*double(obj(1).hParent.lRuler);
+
 for iI = 1:length(obj)
     o = obj(iI);
 
@@ -10,7 +12,8 @@ for iI = 1:length(obj)
 %     obj.dPosition = dPosition;
     for iJ = 1:length(o.hA)
         iPos = iStartPos + iJ - 1;
-        set(o.hA(iJ), 'Position', [iX(iPos), iY(iPos), iWidth(iPos), iHeight(iPos)]);
+        set(o.hA(iJ), 'Position', ...
+            [iX(iPos) + iRuler, iY(iPos), iWidth(iPos) - iRuler, iHeight(iPos) - iRuler]);
     end
 
 % if ~isempty(obj.hT)
@@ -24,3 +27,4 @@ for iI = 1:length(obj)
 
 end
 obj.position;
+obj.grid;

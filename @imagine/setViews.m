@@ -47,5 +47,4 @@ obj.hViews.setData(obj.DataMapping);
 
 if strcmp(get(obj.hF, 'Visible'), 'on')
     obj.resize(0); % Assign correct positioning to all views
-    notify(obj, 'viewImageChange');
 end

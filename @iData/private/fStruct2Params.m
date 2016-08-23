@@ -9,7 +9,7 @@ end
 
 % -------------------------------------------------------------------------
 % Define a mapping structure for fields
-SMapping = struct('Source', 'Target', 'Tolerance');
+% SMapping = struct('Source', 'Target', 'Tolerance');
 
 SMapping(1).Source = {'aspect', 'res', 'resolution'};
 SMapping(1).Target = 'resolution';

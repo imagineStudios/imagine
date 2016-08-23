@@ -81,7 +81,7 @@ classdef imagine < handle
         dRowHeight      = [1 1 1 1 1 1]
         iSidebarWidth   = 0
         sROIMode        = 'none'
-        iAxes           = [3 2]
+        iAxes           = [1, 1]
     end
     
     properties(SetObservable = true)
@@ -91,14 +91,6 @@ classdef imagine < handle
     
     properties (Access = private)
         
-    end
-    % =====================================================================
-    
-    
-    % =====================================================================
-    events
-        viewImageChange             % Fired whenever the views' image data has to be refreshed
-        viewPositionChange          % Fired whenever the views' positioning has to be updated
     end
     % =====================================================================
     
@@ -127,7 +119,7 @@ classdef imagine < handle
                 end
                 obj.SMenu(strcmp({obj.SMenu.Name}, 'sidebar')).Active = obj.iSidebarWidth > 0;
                 obj.updateActivation;
-                obj.hViews.draw;
+                obj.draw;
                 set(obj.hF, 'Visible', 'on'); % Triggers the resize function, notifies the views
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -183,6 +175,7 @@ classdef imagine < handle
         
         dVal  = getSlider(obj, sName)
         sMode = getDrawMode(obj)
+        lHD   = getHDMode(obj)
     end
     % =====================================================================
     
@@ -219,6 +212,7 @@ classdef imagine < handle
         keyPress(obj, hObject, eventdata)
         keyRelease(obj, hObject, eventdata)
         
+        % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         changeImg(obj, hObject, iCnt)
         % -----------------------------------------------------------------
         
@@ -226,11 +220,7 @@ classdef imagine < handle
         
         % -----------------------------------------------------------------
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        % Rendering core
-        grid(obj)
-        
-        showPosition(obj, sMode)
-        
+        % Rendering core        
         drawFocus(obj, dCoord_mm)
         drawGraph(obj)
         drawHistogram(obj, iView)
@@ -240,7 +230,6 @@ classdef imagine < handle
                 
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % GUI state helpers
-        iView = getView(obj)
         sTool = getTool(obj)
         sMode = getSidebarMode(obj)
         lOn   = isOn(obj, sTag)
@@ -251,8 +240,6 @@ classdef imagine < handle
         
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % Conversion helpers
-        dCoord_mm = pixel2Phys(obj, dCoord_px, iSeries, iDims)
-        dCoord_px = phys2Pixel(obj, dCoord_mm, iSeries, iDims)
         [iInd, iDimInd] = line2Data(obj, iInd)
         
         parseInputs(obj, varargin)

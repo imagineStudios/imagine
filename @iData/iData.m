@@ -45,7 +45,7 @@ classdef iData < handle
             delete@handle(obj);
         end
         
-        [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, lHD)
+        [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
         iSize = getSize(obj)
         dCenter = getCenter(obj)
         

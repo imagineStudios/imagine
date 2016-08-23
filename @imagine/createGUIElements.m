@@ -34,10 +34,10 @@ end
 
 % ---------------------------------------------------------------------
 % Timer objects to realize delayed actions (like hiding of tooltip)
-obj.STimers.hToolTip   = timer('StartDelay', 0.8, 'UserData', 'Imagine', 'TimerFcn', @obj.tooltip);
-% obj.STimers.hGrid      = timer('StartDelay', 0.5, 'UserData', 'Imagine', 'TimerFcn', @obj.restoreGrid);
-obj.STimers.hIcons     = timer('StartDelay', 0.1, 'UserData', 'Imagine', 'TimerFcn', @obj.resize);
-%     obj.STimers.hDrawFancy = timer('StartDelay', 0.1, 'UserData', 'Imagine', 'TimerFcn', @obj.draw);
+obj.STimers.hToolTip   = timer('Name', 'tooltip', 'StartDelay', 0.8, 'UserData', 'Imagine', 'TimerFcn', @obj.tooltip);
+obj.STimers.hGrid      = timer('Name', 'grid', 'StartDelay', 0.5, 'UserData', 'Imagine', 'TimerFcn', @obj.restoreGrid);
+obj.STimers.hIcons     = timer('Name', 'icons', 'StartDelay', 0.1, 'UserData', 'Imagine', 'TimerFcn', @obj.resize);
+obj.STimers.hDrawFancy = timer('Name', 'drawFancy', 'StartDelay', 0.1, 'UserData', 'Imagine', 'TimerFcn', @obj.draw);
 %     obj.STimers.hDraw      = timer('ExecutionMode', 'fixedRate', 'Period', 1, 'UserData', 'Imagine', 'TimerFcn', @obj.updateData, 'BusyMode', 'drop');
 % ---------------------------------------------------------------------
 

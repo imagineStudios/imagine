@@ -29,7 +29,7 @@ classdef iView < handle
         iRandColor
         hListeners
     end
-    
+        
     methods
         
         function obj = iView(hImagine, iInd)
@@ -55,8 +55,9 @@ classdef iView < handle
             delete@handle(obj)
         end
                 
-        draw(obj, ~, ~)
+        draw(obj, lHD)
         position(obj, ~, ~)
+        grid(obj)
         
         setAxes(obj)
         setPosition(obj, iX, iY, iWidth, iHeight)
@@ -67,7 +68,8 @@ classdef iView < handle
         backup(obj)
         shift(obj, dDelta)
         zoom(obj, dFactor)
-        showSlicePosition(obj);
+        showSlicePosition(obj)
+        showSquare(obj)
         
         
         function dCoord = getCurrentPoint(obj, iDimInd)
@@ -84,10 +86,6 @@ classdef iView < handle
 %         end
 
         
-    end
-    
-    methods(Access = private)
-
     end
     
 end

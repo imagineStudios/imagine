@@ -562,9 +562,9 @@ switch obj.SMenu(iInd).GroupIndex
         
     case 255 % The toolbar
         
-        hLines = [obj.SView.hLine];
-        set(hLines, 'Visible', 'off');
-        obj.sROIMode = 'none';
+%         hLines = [obj.SView.hLine];
+%         set(hLines, 'Visible', 'off');
+%         obj.sROIMode = 'none';
         fRadioGroup(obj, 255, obj.SMenu(iInd).Name);
         % -   -   -   -   -   -   -   -   -   -   -   -   -
         

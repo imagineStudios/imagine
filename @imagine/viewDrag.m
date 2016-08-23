@@ -19,7 +19,7 @@ switch obj.getTool
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Normal, left mouse button -> MOVE operation
             case 'normal'
-%                 if obj.isOn('3d'), obj.dGrid = -1; end
+                if obj.isOn('3d'), obj.dGrid = -1; end
                 
                 dDelta = zeros(1, 5);
                 dPos = obj.SAction.hView.getCurrentPoint(obj.SAction.iDimInd);
@@ -30,7 +30,8 @@ switch obj.getTool
                 obj.hViews.shift(-dDelta);
                 obj.hViews.position;
                 if obj.isOn('3d')
-                    obj.hViews.draw;
+                    obj.draw;
+                    obj.hViews.grid;
                     obj.hViews.showSlicePosition;
                 end
                 
