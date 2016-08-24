@@ -30,11 +30,8 @@ obj.SAction.dDrawCenter   = obj.SAction.hView.DrawCenter;
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Backup the data properties
-% obj.SAction.dDrawCenter = hView.DrawCenter;
-
 obj.hViews.backup;
-% obj.SAction.dWindowCenter = [obj.SData.dWindowCenter];
-% obj.SAction.dWindowWidth  = [obj.SData.dWindowWidth];
+obj.hData.backup;
 % -------------------------------------------------------------------------
 
 
@@ -44,8 +41,8 @@ switch obj.getTool
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     case 'cursor'
-%         obj.draw; % Make sure, the uninterpolated data is shown (expands beyond view bounds)
-%         stop(obj.STimers.hDrawFancy); % Prevent interpolation
+        obj.draw; % Make sure, the uninterpolated data is shown (expands beyond view bounds)
+        stop(obj.STimers.hDrawFancy); % Prevent interpolation
         
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Swap: Use a preview of the start axis to visualize the data exchange

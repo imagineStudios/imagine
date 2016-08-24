@@ -63,11 +63,9 @@ else
         end
     end
 end
-dMin = obj.HistCenter(1);
-dMax = obj.HistCenter(end);
-obj.WindowCenter = double(dMin + dMax)./2;
-obj.WindowWidth  = double(dMax - dMin);
-if obj.WindowWidth == 0, obj.WindowWidth = 1; end
+obj.Window(1) = obj.HistCenter(1);
+obj.Window(2) = obj.HistCenter(end);
+if diff(obj.Window) == 0, obj.Window(2) = obj.Window(1) + 1; end
 % -------------------------------------------------------------------------
 
 

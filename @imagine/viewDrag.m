@@ -43,7 +43,7 @@ switch obj.getTool
 %                     if obj.isOn('3d'), obj.dGrid = -1; end
 
                     % -   -   -   -   -   -   -   -   -   -   -   -   -   -
-                    % Calculate the new zoom level (snap to powers of 2)
+                    % Calculate the new zoom level
                     obj.hViews(iI).zoom(dSENSITIVITY.*iD(2));
                     
                     % -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -62,21 +62,8 @@ switch obj.getTool
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Control key or middle mouse button -> WINDOW operation
             case 'extend'
-                if strcmp(obj.getTool, 'cursor')
-                    for iI = 1:length(obj.SData)
-                        obj.SData(iI).dWindowWidth  = obj.SAction.dWindowWidth(iI) .*exp(dSENSITIVITY*(-iD(2)));
-                        obj.SData(iI).dWindowCenter = obj.SAction.dWindowCenter(iI).*exp(dSENSITIVITY*  iD(1));
-                    end
-                    obj.tooltip(sprintf('Center %g / Width %g', obj.SData(iSeries).dWindowCenter, obj.SData(iSeries).dWindowWidth));
-                else
-                    for iI = 1:length(obj.cMapping)
-                        if length(obj.cMapping{iI}) > 1
-                            iInd = obj.cMapping{iI}(2);
-                            obj.SData(iInd).dWindowWidth  = obj.SAction.dWindowWidth(iInd) .*exp(dSENSITIVITY*(-iD(2)));
-                            obj.SData(iInd).dWindowCenter = obj.SAction.dWindowCenter(iInd).*exp(dSENSITIVITY*  iD(1));
-                        end
-                    end
-                end
+                obj.hData.window(dSENSITIVITY*iD);
+%                 obj.tooltip(sprintf('Center %g / Width %g', obj.SData(iSeries).dWindowCenter, obj.SData(iSeries).dWindowWidth));
                 obj.draw;
 %                 obj.drawHistogram(1);
         end        

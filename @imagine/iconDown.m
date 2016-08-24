@@ -529,7 +529,7 @@ switch obj.SMenu(iInd).GroupIndex
             sActivate = obj.SMenu(iInd).Name;
         end
         fRadioGroup(obj, 1, sActivate);
-        obj.hViews.draw;
+        obj.draw;
         
     case 3
         

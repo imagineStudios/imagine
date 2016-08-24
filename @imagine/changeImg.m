@@ -9,6 +9,7 @@ if isstruct(iCnt) || isobject(iCnt)
     iCnt = iCnt.VerticalScrollCount;
     if obj.SAction.lShift
         iDim(3) = 4;
+        dStepSize = 1;
     else
         hView = obj.SAction.hView;
         if isempty(hView), return, end

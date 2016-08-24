@@ -4,8 +4,8 @@ classdef iData < handle
         Parent          = imagine.empty
         Img             = []
         Name            = ''
-        Res             = ones(1, 5)
-        Origin          = ones(1, 5)
+        Res             = ones(1, 4)
+        Origin          = ones(1, 4)
         SpatialUnits    = 'px'
         TemporalUnits   = ''
         Mode            = 'scalar'
@@ -13,8 +13,7 @@ classdef iData < handle
         Dims            = [1 2 3; 1 3 2; 3 2 1]
         Orientation     = 'logical'
         
-        WindowCenter
-        WindowWidth
+        Window
         
         dColormap
         
@@ -24,6 +23,8 @@ classdef iData < handle
     
     properties(Access = private)
         hListeners
+        OldCenter
+        OldWidth
     end
     
     methods
@@ -50,6 +51,21 @@ classdef iData < handle
         dCenter = getCenter(obj)
         
         d3Lim_px = getSliceLim(obj, dDrawCenter, iDim)
+        
+        function backup(obj)
+            for iI = 1:numel(obj)
+                obj(iI).OldCenter = mean(obj(iI).Window);
+                obj(iI).OldWidth  = obj(iI).Window(2) - obj(iI).Window(1);
+            end
+        end
+        
+        function window(obj, dFactor)
+            for iI = 1:length(obj)
+                dCenter = obj(iI).OldCenter.*exp(dFactor(1));
+                dWidth  = obj(iI).OldWidth.*exp(-dFactor(2));
+                obj(iI).Window = dCenter + 0.5.*[-dWidth, dWidth];
+            end
+        end
         
     end
     

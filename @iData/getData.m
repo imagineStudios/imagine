@@ -67,7 +67,7 @@ dImg = double(dImg);
 dAspect = obj.Res(iDim(1:2));
 dOrigin = obj.Origin(iDim(1:2));
 
-if lHD && ~strcmp(obj.Mode, 'vector') && ~strcmp(obj.Mode, 'categorical')
+if lHD && ~strcmp(obj.Mode, 'vector') && ~strcmp(obj.Mode, 'categorical') && ~isscalar(dImg)
     % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
     % Fancy mode: Interpolate the images to full resolution. Is
     % executed when arbitrary input is supplied or the timer fires.
@@ -135,8 +135,8 @@ end
 % -------------------------------------------------------------------------
 % Apply the intensity scaling and current colormap
 
-dMin = obj.WindowCenter - 0.5.*obj.WindowWidth;
-dMax = obj.WindowCenter + 0.5.*obj.WindowWidth;
+dMin = obj.Window(1);
+dMax = obj.Window(2);
 
 switch obj.Mode
     

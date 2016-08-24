@@ -65,7 +65,7 @@ set(obj.SImgs.hIcons(lInd), 'XData', 1 + dFigureWidth - obj.iIconSize);
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Sidebar
-set(obj.SSidebar.hPanel, 'Position', [dFigureWidth - obj.iSidebarWidth, 2, max(1, obj.iSidebarWidth), dContentsHeight]);
+set(obj.SSidebar.hPanel, 'Position', [dFigureWidth - obj.iSidebarWidth, 0, obj.iSidebarWidth + 1, dContentsHeight + 1]);
 set(obj.SSidebar.hAxes,  'Position', [1, dContentsHeight - 190, 256, 192]);
 set(obj.SSidebar.hIcons, 'Position', [2, dContentsHeight - 190 - 32, 192, 32], 'XLim', [0 192] + 0.5, 'YLim', [0 32] + 0.5);
 % -------------------------------------------------------------------------
@@ -74,7 +74,7 @@ set(obj.SSidebar.hIcons, 'Position', [2, dContentsHeight - 190 - 32, 192, 32], '
 % Arrange the views
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Get the origins, widths and heights of each view's axes
-iX = round(fNonLinSpace(dToolbarWidth + 1, dFigureWidth + 1, obj.dColWidth(1:obj.iAxes(1))));
+iX = round(fNonLinSpace(dToolbarWidth + 1, dFigureWidth - obj.iSidebarWidth + 1, obj.dColWidth(1:obj.iAxes(1))));
 iY = round(fNonLinSpace(dContentsHeight + 1, 1, obj.dRowHeight(1:obj.iAxes(2))));
 [iXX, iYY] = meshgrid(iX, iY);
 iXXStart = iXX(1:end - 1, 1:end - 1)';
