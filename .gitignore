@@ -7,3 +7,5 @@ appbar.*
 *.prj
 *.mexmaci64
 *_resources
+PETMR.mat
+*.afphoto
