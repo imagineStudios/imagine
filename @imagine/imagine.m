@@ -46,18 +46,18 @@ classdef imagine < handle
     properties (Constant)
         sVERSION                = '3.0 Alpha';          % Figure title
         dBGCOLOR                = [0.18 0.20 0.25];     % Background color
-        dHIGHLIGHTCOLOR         = [0.5 0.5 0.5];        % Color of axes and stuff
+        dHIGHLIGHTCOLOR         = [0.8 0.8 0.8];        % Color of axes and stuff
         iMAXVIEWS               = 6;                    % Maximum number of views per dimension
         lWIP                    = false;                % Show work-in-progress features
+        iCOLORMAPLENTGH         = 2^10;
     end
     
     
-    properties        
+    properties      
         
         % -----------------------------------------------------------------
         % Graphic object handle containers and other handles
         hF          % The main figure
-        SSidebar    % The sidebar and its components
         STooltip    % The tooltip and its components
         SAxes       % Miscellaneous axes
         SImgs       % Miscellaneous images
@@ -66,31 +66,34 @@ classdef imagine < handle
         % -----------------------------------------------------------------
         % Data and Views (custom classes)
         hViews          = iView.empty  % The views and its components
-        hData           = iData.empty  % Structure with image data and properties
         
         % -----------------------------------------------------------------
         % GUI state
-        sPath           = pwd % The working directory
         SAction         = []  % Structure to store information for mouse actions
-        SMenu                  % A menu item structure
-        SSliders               % A slider structure
+        SMenu                 % A menu item structure
         iIconSize       = 64
         dGrid           = 0         % Distance between grid lines, 0 = off, -1 = show axes center for 3D view
         lRuler          = false
-        dColWidth       = [1 1 1 1 1 1]
-        dRowHeight      = [1 1 1 1 1 1]
-        iSidebarWidth   = 0
-        sROIMode        = 'none'
         iAxes           = [1, 1]
+        
+        dMinRes         = 1;        % The minimum resolution in any of the datasets (used to determine what 100% is)
+        
+        SColormaps      = struct;
     end
     
     properties(SetObservable = true)
-        DataMapping    = {};
+        iActiveView     = 1;
+        l3D             = false;
+        hData           = iData.empty  % Structure with image data and properties
     end
     
     
     properties (Access = private)
-        
+        hDataWindow     = iDataWindow.empty
+        sPath           = pwd % The working directory
+        dColWidth       = [1 1 1 1 1 1]
+        dRowHeight      = [1 1 1 1 1 1]
+        sROIMode        = 'none'
     end
     % =====================================================================
     
@@ -103,9 +106,25 @@ classdef imagine < handle
             %IMAGINE Constructor
             
             try
+                obj.SColormaps = obj.getColormaps(obj.iCOLORMAPLENTGH);
+                
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Get the input data
                 obj.parseInputs(varargin{:});
+                
+                if ~isempty(obj.hData)
+                    iNViews = max(cell2mat({obj.hData.iViews}));
+                    dRoot = sqrt(iNViews);
+                    iViewsN = ceil(dRoot);
+                    iViewsM = ceil(dRoot);
+                    while iViewsN*iViewsM >= iNViews
+                        iViewsN = iViewsN - 1;
+                    end
+                    iViewsN = iViewsN + 1;
+                    iViewsN = min([4, iViewsN]);
+                    iViewsM = min([4, iViewsM]);
+                    obj.iAxes = [iViewsM, iViewsN];
+                end
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Create all the GUI elements
@@ -117,9 +136,7 @@ classdef imagine < handle
                 if strcmp(get(obj.hF, 'WindowStyle'), 'docked')
                     obj.SMenu(strcmp({obj.SMenu.Name}, 'dock')).Active = 1;
                 end
-                obj.SMenu(strcmp({obj.SMenu.Name}, 'sidebar')).Active = obj.iSidebarWidth > 0;
                 obj.updateActivation;
-                obj.draw;
                 set(obj.hF, 'Visible', 'on'); % Triggers the resize function, notifies the views
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -129,6 +146,8 @@ classdef imagine < handle
                     commandwindow;
                 end
                 
+                % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                % Init the action structure
                 obj.SAction.lShift = false;
                 obj.SAction.lControl = false;
                 obj.SAction.lAlt = false;
@@ -167,7 +186,6 @@ classdef imagine < handle
         mdivide(obj, dDivisor)
         close(obj, hObject, eventdata)
         setViews(obj, iCols, iRows)
-        colon(obj, varargin)
         disp(obj)
         % -----------------------------------------------------------------
         
@@ -197,15 +215,12 @@ classdef imagine < handle
         utilDown(obj, hObject, eventdata)
         iconDown(obj, hObject, eventdata)
         dividerDown(obj, hObject, eventdata)
-        sliderDown(obj, hObject, eventdata)
         
         viewDrag(obj, hObject, eventdata)
         dividerDrag(obj, hObject, eventdata)
-        sliderDrag(obj, hObject, eventdata)
         
         viewUp(obj, hObject, eventdata)
         dividerUp(obj, hObject, eventdata)
-        sliderUp(obj, hObject, eventdata)
         
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % Keyboard callbacks
@@ -220,18 +235,14 @@ classdef imagine < handle
         
         % -----------------------------------------------------------------
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        % Rendering core        
-        drawFocus(obj, dCoord_mm)
-        drawGraph(obj)
-        drawHistogram(obj, iView)
-        
+        % Rendering core
+        draw(obj, ~, ~)
         tooltip(obj, sString, eventdata)
         contextMenu(obj, iInd, eventdata)
                 
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % GUI state helpers
         sTool = getTool(obj)
-        sMode = getSidebarMode(obj)
         lOn   = isOn(obj, sTag)
         
         updateData(obj, hObject, eventdata)
@@ -240,8 +251,6 @@ classdef imagine < handle
         
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % Conversion helpers
-        [iInd, iDimInd] = line2Data(obj, iInd)
-        
         parseInputs(obj, varargin)
         createGUIElements(obj)
         restoreGrid(obj, hObject, eventdata)
@@ -255,9 +264,8 @@ classdef imagine < handle
     
     % =====================================================================
     methods (Static)
-        csColormaps = getColormaps
-        dColormapImg = getColormapImg(csColormaps)
-        csRegistrations = getRegistrations
+        csColormaps = getColormaps(iLength)
+        csRegistrations = getRegistrations(obj)
     end
     % =====================================================================
     

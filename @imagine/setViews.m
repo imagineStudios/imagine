@@ -1,6 +1,7 @@
 function setViews(obj, iCols, iRows)
 
-iAxesPerView = double(obj.isOn('3d')) * 2 + 1;
+l3D = obj.isOn('3d');
+iAxesPerView = double(l3D) * 2 + 1;
 
 % -------------------------------------------------------------------------
 % Determine new number of views
@@ -37,13 +38,14 @@ elseif iNViews > iNExistingViews
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Create the new views
     for iI = iNExistingViews + 1:iNViews
-        obj.hViews(iI) = iView(obj, iI);
+        obj.hViews(iI) = iView(obj, iI, obj.isOn('3d'));
     end
 end
 % -------------------------------------------------------------------------
 
-obj.hViews.setMode(obj.isOn('3d'));
-obj.hViews.setData(obj.DataMapping);
+obj.hViews.setMode(l3D);
+obj.hViews.updateData;
+obj.draw;
 
 if strcmp(get(obj.hF, 'Visible'), 'on')
     obj.resize(0); % Assign correct positioning to all views

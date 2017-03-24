@@ -1,16 +1,6 @@
 function showSlicePosition(obj)
 
-% persistent iColor
-
-% iColor = [];
-% if isempty(iColor)
-%     dPattern = 1 - 0.7*rand(17001, 1);
-%     dBGImg = fBlend(3*obj(1).dColor, dPattern, 'multiply', 0.5);
-%     dBGImg = permute(dBGImg, [3 1 2]);
-%     iColor = uint8([dBGImg; zeros(1, 17001) + 0.5].*255);
-% end
-
-dDIST = 8;
+dDIST = 6;
 sMARKER = 's';
 
 for iI = 1:numel(obj)
@@ -60,38 +50,16 @@ for iI = 1:numel(obj)
             iCol = o.iRandColor(:,1:iN);
             iCol(:, iInd) = repmat(uint8([1; 1; 1; 0.8].*255), [1 length(iInd)]);
             
-            set(o.hS(iDimInd), 'XData', dX, 'YData', dY, 'Visible', 'on', 'SizeData', 9^2, 'Marker', sMARKER);
+            set(o.hS2(iDimInd), 'XData', dX, 'YData', dY, 'Visible', 'on', 'SizeData', (dDIST + 1)^2, 'Marker', sMARKER, 'MarkerEdgeColor', 'none');
             try
-                h = o.hS(iDimInd).MarkerHandle;
+                h = o.hS2(iDimInd).MarkerHandle;
                 set(h, 'FaceColorBinding', 'interpolated', 'FaceColorData', iCol);
             catch
                 
             end
-            
-            %         set(o.hText(2, 1, :), 'Visible', 'off');
-%             set([obj.STooltip.hImg obj.STooltip.hText],  'Visible', 'off');
         end
     end
 end
 
 stop(obj(1).hParent.STimers.hToolTip);
 start(obj(1).hParent.STimers.hToolTip);
-
-
-function [iNRows, iNCols] = fOptiRows(iN, iNMaxRows)
-
-
-iNRows = iNMaxRows;
-iNCols = ceil(iN./iNMaxRows);
-if iNCols == 1, return, end
-
-for iNRows = iNRows:-1:1
-    if mod(iN, iNRows) == 0, break; end
-end
-if iNRows < 0.5.*iNMaxRows
-    iNRows = iNMaxRows;
-end
-
-iNCols = ceil(iN./iNRows);
-
-

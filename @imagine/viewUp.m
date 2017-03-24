@@ -35,8 +35,8 @@ else
     switch obj.getTool
         
         case 'cursor'
-            if obj.isOn('3d') || ~strcmp(obj.SAction.sSelectionType, 'normal')
-%                 obj.draw;
+            if obj.isOn('3d') || obj.isOn('hd')
+                obj.draw;
             end
             
         case 'swap'

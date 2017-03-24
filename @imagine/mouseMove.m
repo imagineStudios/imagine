@@ -34,17 +34,6 @@ end
 
 
 % -------------------------------------------------------------------------
-% Check if over a slider
-obj.SAction.iSlider = find(hOver == [obj.SSliders.hAxes]);
-if ~isempty(obj.SAction.iSlider)
-    set(obj.hF, 'Pointer', 'left');
-    set(obj.hF, 'WindowButtonDownFcn', @obj.sliderDown);
-    return
-end
-% -------------------------------------------------------------------------
-
-
-% -------------------------------------------------------------------------
 % If over the tooltip, move it out of the way
 if obj.STooltip.hImg == hOver || obj.STooltip.hText == hOver
     
@@ -121,10 +110,10 @@ if ~isempty(obj.SAction.hView)
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % If view is not empty, show data pointer and update sidebar if necessary
+    set(obj.hF, 'WindowButtonDownFcn', @obj.viewDown);
     if ~isempty(obj.SAction.hView.hData)
 %         fUpdateDataCursor(obj, SView);
         setptr(obj.hF, 'datacursor');
-        set(obj.hF, 'WindowButtonDownFcn', @obj.viewDown);
         return
         
     else

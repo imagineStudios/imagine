@@ -9,14 +9,12 @@ for iI = 1:length(obj)
         
         dAxesPos = get(hView.hA(iDimInd), 'Position');
         
-        % dRes = min(hView.SData(SView.iData).dRes([1 2 4]));
-        
         if ~isempty(hView.hData)
+            dMinRes = min(hView.hParent.dMinRes(1:3));
             
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             % Panel not empty
             csDirs = {'normal', 'reverse'};
-            dMinRes = min(hView.hData(1).Res);
             iDim = hView.hData(1).Dims(iDimInd, :);
             
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

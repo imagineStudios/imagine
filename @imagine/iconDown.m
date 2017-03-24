@@ -86,8 +86,8 @@ switch obj.SMenu(iInd).GroupIndex
                         
                         obj.tooltip('Reslicing...'); drawnow
                         
-                        iSeries = obj.SAction.SView.iData(1);
-                        iDim = obj.SData(iSeries).iDims(obj.SAction.SView.iDimInd, :);
+                        iData = obj.SAction.SView.iData(1);
+                        iDim = obj.SData(iData).iDims(obj.SAction.SView.iDimInd, :);
                         
                         iSeriesToReslice = [];
                         for iView = 1:numel(obj.SView)
@@ -119,13 +119,13 @@ switch obj.SMenu(iInd).GroupIndex
                         dI = [dXX(:)'; dYY(:)'];
                         dI = dR*dI + repmat(dCorner, [1, iN*iN]);
                         
-                        for iSeries = iSeriesToReslice % obj.SAction.SView.iData;
+                        for iData = iSeriesToReslice % obj.SAction.SView.iData;
                             
-                            dImg = obj.SData(iSeries).dImg;
+                            dImg = obj.SData(iData).dImg;
                             iSize = fSize(dImg, 1:5);
                             
-                            dOldRes = obj.SData(iSeries).dRes   (iDim(1:2));
-                            dOrigin = obj.SData(iSeries).dOrigin(iDim(1:2));
+                            dOldRes = obj.SData(iData).dRes   (iDim(1:2));
+                            dOrigin = obj.SData(iData).dOrigin(iDim(1:2));
                             
                             dX = (0:iSize(2) - 1).*dOldRes(2) + dOrigin(2);
                             dY = (0:iSize(1) - 1).*dOldRes(1) + dOrigin(1);
@@ -139,17 +139,17 @@ switch obj.SMenu(iInd).GroupIndex
                             
                             dNewImg = reshape(dNewImg, iN, iN, iSize(3), iSize(4), iSize(5));
                             dNewImg = permute(dNewImg, [4 2 3 1 5]);
-                            obj.SData(iSeries).dImg = dNewImg;
+                            obj.SData(iData).dImg = dNewImg;
                             
-                            obj.SData(iSeries).dRes(1:2) = dRes;
-                            obj.SData(iSeries).dRes = obj.SData(iSeries).dRes([4 2 3 1 5]);
+                            obj.SData(iData).dRes(1:2) = dRes;
+                            obj.SData(iData).dRes = obj.SData(iData).dRes([4 2 3 1 5]);
                             
-                            obj.SData(iSeries).dOrigin(1:2) = 0;
-                            obj.SData(iSeries).dOrigin     = obj.SData(iSeries).dOrigin    ([4 2 3 1 5]);
+                            obj.SData(iData).dOrigin(1:2) = 0;
+                            obj.SData(iData).dOrigin     = obj.SData(iData).dOrigin    ([4 2 3 1 5]);
                             
-                            obj.SData(iSeries).dDrawCenter(1:2) = iN./2.*dRes;
-                            obj.SData(iSeries).dDrawCenter = obj.SData(iSeries).dDrawCenter([4 2 3 1 5]);
-                            obj.SData(iSeries).lInvert     = obj.SData(iSeries).lInvert    ([4 2 3 1]);
+                            obj.SData(iData).dDrawCenter(1:2) = iN./2.*dRes;
+                            obj.SData(iData).dDrawCenter = obj.SData(iData).dDrawCenter([4 2 3 1 5]);
+                            obj.SData(iData).lInvert     = obj.SData(iData).lInvert    ([4 2 3 1]);
                             
                         end
                         obj.position;
@@ -174,10 +174,12 @@ switch obj.SMenu(iInd).GroupIndex
                 
                 for iI = 1:length(csVars)
                     dVar = evalin('base', csVars{iI});
-                    sMode = fGetDataMode(dVar, csVars{iI});
-                    obj.plus(dVar, 'n', csVars{iI}, 'mode', sMode);
+%                     sMode = fGetDataMode(dVar, csVars{iI});
+%                     obj.plus(dVar, 'n', csVars{iI}, 'mode', sMode);
+                    obj.plus(dVar, 'name', csVars{iI});
                 end
-                obj.position;
+                obj.setViews(obj.iAxes(1), obj.iAxes(2));
+                obj.hViews.position;
                 obj.draw
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 
@@ -211,17 +213,6 @@ switch obj.SMenu(iInd).GroupIndex
                     obj.sPath = sPath;
                     fSaveMaskToFiles(sFilename, sPath);
                 end
-                
-                % - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                % DELETE DATA from structure
-            case 'delete'
-                obj.minus(obj.SAction.SView.iInd);
-%                 obj.SAction.SView.iData = [];
-%                 obj.setViewMapping;
-%                 obj.draw;
-%                 obj.position;
-%                 obj.grid;
-                
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Determine the NUMBER OF PANELS and their LAYOUT
@@ -360,8 +351,8 @@ switch obj.SMenu(iInd).GroupIndex
                 set(obj.STimers.hToolTip, 'StartDelay', 5);
                 
                 for iI = iTInd
-                    for iSeries = 1:length(obj.SData)
-                        obj.SData(iSeries).dDrawCenter(5) = min(iI, size(obj.SData(iSeries).dImg, 5));
+                    for iData = 1:length(obj.SData)
+                        obj.SData(iData).dDrawCenter(5) = min(iI, size(obj.SData(iData).dImg, 5));
                     end
                     
                     obj.draw(1);
@@ -376,8 +367,8 @@ switch obj.SMenu(iInd).GroupIndex
                         imwrite(iImg, iMap, sFilename, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
                     end
                 end
-                for iSeries = 1:length(obj.SData)
-                    obj.SData(iSeries).iTimePoint = 1;
+                for iData = 1:length(obj.SData)
+                    obj.SData(iData).iTimePoint = 1;
                 end
                 obj.draw(1);
                 
@@ -395,27 +386,27 @@ switch obj.SMenu(iInd).GroupIndex
                 sImgName = [sRegPath, filesep, 'Image.mhd'];
                 sMaskName = [sRegPath, filesep, 'Mask.mhd'];
                 
-                iSeries = obj.view2Series(obj.SAction.iStartView);
+                iData = obj.view2Series(obj.SAction.iStartView);
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Get the image and prepare for writing to disk
-                dImg = double(permute(obj.SData(iSeries).dImg(:,:,1,:,1), [1 2 4 3 5]));
+                dImg = double(permute(obj.SData(iData).dImg(:,:,1,:,1), [1 2 4 3 5]));
                 dImg = dImg - min(dImg(:));
                 SImg.data = uint16(dImg./max(dImg(:)).*(2^16 - 1));
                 SImg.size = size(dImg);
                 SImg.orientation = eye(3);
-                SImg.spacing = obj.SData(iSeries).dRes([1 2 4]);
-                SImg.origin = obj.SData(iSeries).dOrigin([1 2 4]);
+                SImg.spacing = obj.SData(iData).dRes([1 2 4]);
+                SImg.origin = obj.SData(iData).dOrigin([1 2 4]);
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Get the image and prepare for writing to disk
-                dMask = double(permute(obj.SData(iSeries).xMask(:,:,1,:,1), [1 2 4 3 5]));
+                dMask = double(permute(obj.SData(iData).xMask(:,:,1,:,1), [1 2 4 3 5]));
                 dMask = dMask - min(dMask(:));
                 SMask.data = uint16(dMask./max(dMask(:)).*(2^16 - 1));
                 SMask.size = size(dMask);
                 SMask.orientation = eye(3);
-                SMask.spacing = obj.SData(iSeries).dMaskResolution([1 2 4]);
+                SMask.spacing = obj.SData(iData).dMaskResolution([1 2 4]);
                 SMask.spacing = SMask.spacing(:)';
-                SMask.origin = obj.SData(iSeries).dMaskOrigin([1 2 4]);
+                SMask.origin = obj.SData(iData).dMaskOrigin([1 2 4]);
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Write a file for each respiratory state
@@ -443,28 +434,28 @@ switch obj.SMenu(iInd).GroupIndex
                 fclose(fid);
                 dShift = dShift(:)';
                 dShift(4) = dShift(3);
-                obj.SData(iSeries).dMaskOrigin = obj.SData(iSeries).dMaskOrigin - dShift;
+                obj.SData(iData).dMaskOrigin = obj.SData(iData).dMaskOrigin - dShift;
                 obj.draw;
                 obj.position;
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 
                 
             case 'tag'
-                iSeries = obj.SAction.SView.iData;
+                iData = obj.SAction.SView.iData;
                 %                 iDim = flip(obj.view2Orientation(obj.SAction.iStartView), 2);
                 
-                sRes = sprintf('%4.2f x ', obj.SData(iSeries).dRes([1 2 4]));
-                sOrg = sprintf('%4.2f x ', obj.SData(iSeries).dOrigin([1 2 4]));
-                csVal = {obj.SData(iSeries).sName, sRes(1:end-3), sOrg(1:end-3), obj.SData(iSeries).sUnits};
+                sRes = sprintf('%4.2f x ', obj.SData(iData).dRes([1 2 4]));
+                sOrg = sprintf('%4.2f x ', obj.SData(iData).dOrigin([1 2 4]));
+                csVal = {obj.SData(iData).sName, sRes(1:end-3), sOrg(1:end-3), obj.SData(iData).sUnits};
                 
-                csAns = inputdlg({'Name', 'Resolution', 'Origin', 'Units'}, sprintf('Change %s', obj.SData(iSeries).sName), 1, csVal);
+                csAns = inputdlg({'Name', 'Resolution', 'Origin', 'Units'}, sprintf('Change %s', obj.SData(iData).sName), 1, csVal);
                 if isempty(csAns), return, end
                 
                 sName = csAns{1};
-                obj.SData(iSeries).sName = sName;
-                obj.SData(iSeries).dRes([1 2 4])     = cell2mat(textscan(csAns{2}, '%fx%fx%f'));
-                obj.SData(iSeries).dOrigin([1 2 4])  = cell2mat(textscan(csAns{3}, '%fx%fx%f'));
-                obj.SData(iSeries).sUnits = csAns{4};
+                obj.SData(iData).sName = sName;
+                obj.SData(iData).dRes([1 2 4])     = cell2mat(textscan(csAns{2}, '%fx%fx%f'));
+                obj.SData(iData).dOrigin([1 2 4])  = cell2mat(textscan(csAns{3}, '%fx%fx%f'));
+                obj.SData(iData).sUnits = csAns{4};
                 
                 obj.draw;
                 obj.position;
@@ -496,24 +487,17 @@ switch obj.SMenu(iInd).GroupIndex
                     set(obj.hF, 'WindowStyle', 'docked');
                 end
                 
-            case 'sidebar'
-                lShow = obj.SMenu(iInd).Active;
-                if lShow
-                    set(obj.SSidebar.hPanel, 'Visible', 'on');
-                    iWidth = fExpAnimation(12, 0, 256);
-                else
-                    iWidth = fExpAnimation(12, 256, 0);
+            case 'datawindow'
+                if isempty(obj.hDataWindow) || ~ishandle(obj.hDataWindow)
+                    obj.hDataWindow = iDataWindow(obj);
+                    addlistener(obj.hDataWindow, 'update', @obj.draw);
                 end
-                for iW = round(iWidth)
-                    obj.iSidebarWidth = iW;
-                    obj.resize(0);
-                    drawnow update
-                end
-                if ~lShow, set(obj.SSidebar.hPanel, 'Visible', 'off'); end
+                
                 
             case '3d'
+                obj.l3D = obj.isOn('3d');
 %                 if obj.isOn('3d')
-                    obj.setViews(obj.iAxes);
+                obj.hViews.setAxes;
 %                 else
 %                     obj.setViews([obj.iPanelsr(1) ceil(obj.iPanels(2)/3)]);
 %                 end
@@ -536,28 +520,26 @@ switch obj.SMenu(iInd).GroupIndex
         switch(obj.SMenu(iInd).Name)
             
             case 'transversal'
-                iDims = [1 2 4; 4 2 1; 4 1 2];
-                lInvert = [0 0 0 1];
+                iDims = [1 2 3; 3 2 1; 3 1 2];
+                lInvert = [0 0 1];
                 
             case {'coronal', 'physical'}
-                iDims = [1 2 4; 1 4 2; 4 2 1];
-                lInvert = [0 0 0 0];
+                iDims = [1 2 3; 1 3 2; 3 2 1];
+                lInvert = [0 0 0];
                 
             case 'sagittal'
-                iDims = [1 2 4; 1 4 2; 2 4 1];
-                lInvert = [0 0 0 0];
+                iDims = [1 2 3; 1 3 2; 2 3 1];
+                lInvert = [0 0 0];
                 
         end
-        for iSeries = obj.SAction.SView.iData
-            if iSeries
-                obj.SData(iSeries).iDims = iDims;
-                obj.SData(iSeries).lInvert = lInvert;
-            end
+        for iI = 1:length(obj.SAction.hView.hData)
+            obj.SAction.hView.hData(iI).Dims = iDims;
+            obj.SAction.hView.hData(iI).Invert = lInvert;
         end
         
         obj.draw
-        obj.position;
-        obj.grid;
+        obj.hViews.position;
+        obj.hViews.grid;
         
         
     case 255 % The toolbar

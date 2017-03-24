@@ -22,6 +22,10 @@ SMapping(2).Tolerance = 2;
 SMapping(3).Source = {'units'};
 SMapping(3).Target = 'units';
 SMapping(3).Tolerance = 2;
+
+SMapping(4).Source = {'orient', 'orientation'};
+SMapping(4).Target = 'orientation';
+SMapping(4).Tolerance = 2;
 % -------------------------------------------------------------------------
 
 

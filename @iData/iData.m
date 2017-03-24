@@ -1,8 +1,7 @@
 classdef iData < handle
     
     properties
-        Parent          = imagine.empty
-        Img             = []
+        
         Name            = ''
         Res             = ones(1, 4)
         Origin          = ones(1, 4)
@@ -12,29 +11,41 @@ classdef iData < handle
         Invert          = [0 0 0]
         Dims            = [1 2 3; 1 3 2; 3 2 1]
         Orientation     = 'logical'
+        ThumbSlice      = 1
+        Alpha           = 1
+        iViews          = [];
         
         Window
         
-        dColormap
+        Colormap
         
         Hist
         HistCenter
+        
+%         CMapPreview
     end
     
     properties(Access = private)
+        Img             = []
+        Parent          = imagine.empty
         hListeners
         OldCenter
         OldWidth
+        Colormaps
     end
     
     methods
         
-        function obj = iData(hImagine, varargin)
+        function obj = iData(hImagine, iInd, varargin)
             
             obj.Parent = hImagine;
             obj.parseInputs(varargin{:});
+            if isempty(obj.Name)
+                obj.Name = sprintf('Data %d', iInd);
+            end
             
-            obj.dColormap = gray(256);
+            obj.ThumbSlice = round(obj.getSize(3)./2);
+            obj.setColormap(obj.Parent.SColormaps(1));
             
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             % Make sure data object is deleted if imagine is closed
@@ -46,30 +57,29 @@ classdef iData < handle
             delete@handle(obj);
         end
         
-        [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
-        iSize = getSize(obj)
+        [dImg, dXData, dYData, dAlpha] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
+        [dUData, dVData, dXData, dYData, dCData] = getVectors(obj, dDrawCenter, iDimInd, hA)
+        
+%         setColormap(obj, sMap)
+%         [sMap, iInd] = getColormap(obj)
+        
+        iSize = getSize(obj, iDim)
+        dCoverage = getCoverage(obj, iDim)
         dCenter = getCenter(obj)
         
         d3Lim_px = getSliceLim(obj, dDrawCenter, iDim)
         
-        function backup(obj)
-            for iI = 1:numel(obj)
-                obj(iI).OldCenter = mean(obj(iI).Window);
-                obj(iI).OldWidth  = obj(iI).Window(2) - obj(iI).Window(1);
-            end
-        end
-        
-        function window(obj, dFactor)
-            for iI = 1:length(obj)
-                dCenter = obj(iI).OldCenter.*exp(dFactor(1));
-                dWidth  = obj(iI).OldWidth.*exp(-dFactor(2));
-                obj(iI).Window = dCenter + 0.5.*[-dWidth, dWidth];
-            end
-        end
+        backup(obj)
+        window(obj, dFactor)
         
     end
     
     methods (Access = private)
         parseInputs(obj, varargin)
     end
+    
+%     methods (Static)
+%         csColormaps = getColormaps
+%         dPreview = getColormapPreview(csColormaps)
+%     end
 end

@@ -1,7 +1,7 @@
 classdef iView < handle
     
     properties
-        hData            = iData.empty                                     % The data series associated with the view
+%         hData            = iData.empty                                     % The data series associated with the view
         OldZoom
         OldDrawCenter
     end
@@ -10,6 +10,7 @@ classdef iView < handle
         Ind             = 1     % Index of the view (global)
         Zoom            = 1     % Zoom level
         DrawCenter      = []    % Coordinates of the central point
+        hData           = iData.empty
     end
     
     properties (Access = private)
@@ -18,9 +19,10 @@ classdef iView < handle
         hA          = matlab.graphics.axis.Axes.empty
         
         hI          = matlab.graphics.primitive.Image.empty                % Image components
-%         hQ          = cquiver.empty                                        % The quiver component
+        hQ          = cquiver.empty                                        % The quiver component
         hL          = matlab.graphics.primitive.Line.empty                 % Line components
-        hS          = matlab.graphics.chart.primitive.Scatter.empty        % Scatter components
+        hS1         = matlab.graphics.chart.primitive.Scatter.empty        % Scatter components
+        hS2         = matlab.graphics.chart.primitive.Scatter.empty        % Scatter components
         hT          = matlab.graphics.primitive.Text.empty                 % Text components
         hP          = matlab.graphics.primitive.Patch.empty                % Patch component
         
@@ -32,7 +34,9 @@ classdef iView < handle
         
     methods
         
-        function obj = iView(hImagine, iInd)
+        function obj = iView(hImagine, iInd, l3D)
+            
+            if nargin < 3, l3D = false; end
             
             obj.hParent = hImagine;
             obj.Ind = iInd;
@@ -46,7 +50,9 @@ classdef iView < handle
             dBGImg = permute(dBGImg, [3 1 2]);
             obj.iRandColor = uint8([dBGImg; zeros(1, 4096) + 0.5].*255);
             
-            obj.setAxes;
+            obj.updateData;
+            obj.setMode(l3D);
+%             obj.setAxes;
         end
         
         function delete(obj, ~, ~)
@@ -60,6 +66,7 @@ classdef iView < handle
         grid(obj)
         
         setAxes(obj)
+        updateData(obj)
         setPosition(obj, iX, iY, iWidth, iHeight)
         setData(obj, l3D, cData)
         setMode(obj, l3D)
@@ -69,8 +76,9 @@ classdef iView < handle
         shift(obj, dDelta)
         zoom(obj, dFactor)
         showSlicePosition(obj)
+        showTimePoint(obj)
         showSquare(obj)
-        
+        dCoverage = getCoverage(obj)
         
         function dCoord = getCurrentPoint(obj, iDimInd)
             dCoord = get(obj.hA(iDimInd), 'CurrentPoint');

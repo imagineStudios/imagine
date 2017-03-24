@@ -10,13 +10,17 @@ function plus(obj, varargin)
 % -------------------------------------------------------------------------
 % Prepare template data structure for new entry
 iDataInd = length(obj.hData) + 1;
-obj.hData(iDataInd) = iData(obj, varargin{:});
+obj.hData(iDataInd) = iData(obj, iDataInd, varargin{:});
 % -------------------------------------------------------------------------
 
 
 % -------------------------------------------------------------------------
-% Determine to which view the new data has to be added
-iCurrentViews = length(obj.hViews);
+% Determine to which view the new data has to be added. If no view supplied
+% explicitely, add a new view
+iCurrentViews = 0;
+for iI = 1:length(obj.hData)
+    iCurrentViews = max([iCurrentViews, obj.hData(iI).iViews]);
+end
 
 hP = inputParser;
 hP.KeepUnmatched = true;
@@ -28,19 +32,12 @@ hP.parse(varargin{2:end});
 
 % -------------------------------------------------------------------------
 % Add the data to the view mapping and update
-% The view class listen to changes in cViewMapping
-for iView = 1:length(hP.Results.View)
-    if length(obj.DataMapping) >= iView
-        obj.DataMapping{iView} = [obj.DataMapping{iView}, obj.hData(iDataInd)];
-    else
-        obj.DataMapping{iView} = obj.hData(iDataInd);
-    end
-end
+obj.hData(iDataInd).iViews = hP.Results.View;
 % -------------------------------------------------------------------------
 
+
 % -------------------------------------------------------------------------
-% Update the views
-% if strcmp(get(obj.hF, 'Visible'), 'on')
-%     obj.setViewMapping;
-% end
+% Update global drawing parameters
+dAllRes = cell2mat({obj.hData.Res}');
+obj.dMinRes = min(dAllRes, [], 1);
 % -------------------------------------------------------------------------

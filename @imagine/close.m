@@ -25,7 +25,6 @@ try
     S.dGrid         = max(0, obj.dGrid);
     S.l3DMode       = obj.isOn('3d');
     S.lDocked       = strcmp(get(obj.hF, 'WindowStyle'), 'docked');
-    S.iSidebarWidth = obj.iSidebarWidth;
     S.iIconSize     = obj.iIconSize;
     
     save(sMFilePath, 'S');

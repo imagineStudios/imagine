@@ -13,7 +13,7 @@ end
 if isempty(dBGMask)
     sPath = mfilename('fullpath');
     sPath = fileparts(sPath);
-    [~, ~, dBGMask] = imread([sPath, filesep, 'icons', filesep, 'tooltip_mask.png']);
+    [~, ~, dBGMask] = imread([sPath, filesep, '..', filesep, 'icons', filesep, 'tooltip_mask.png']);
     dBGMask = double(dBGMask)/255;
 end
 % -------------------------------------------------------------------------
@@ -45,7 +45,7 @@ else
         iWidth = round(length(sString).*dTOOLTIPSCALING) + 20;
         dHeight = size(dBGMask, 1);
         dFigureSize = get(obj.hF, 'Position');
-        dXPos = (dFigureSize(3) + 2.*obj.iIconSize - obj.iSidebarWidth - iWidth)/2;
+        dXPos = (dFigureSize(3) + 2.*obj.iIconSize - iWidth)/2;
         dYPos = 0.618.*(dFigureSize(4) - 2.*obj.iIconSize) - dHeight/2; % Awww... the golden ratio!
         set(obj.STooltip.hAxes, ...
             'Position'  , [dXPos, dYPos, iWidth, dHeight], ...

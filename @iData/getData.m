@@ -1,4 +1,10 @@
-function [dImg, dXData, dYData] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
+function [dImg, dXData, dYData, dAlpha] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
+
+if nargin == 1 && nargout == 1
+    % Special case of only one input argument: Return thumbnail
+    dImg = obj.Img(:,:,obj.ThumbSlice,1,:);
+    return
+end
 
 if nargin < 5, lHD = false;   end
 
@@ -13,10 +19,10 @@ iDim = obj.Dims(iDimInd, :);
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Translate to slice indices
 d3Lim_px = obj.getSliceLim(dDrawCenter, iDim);
-
+    
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Determine timepoint
-iT = min(dDrawCenter(4), size(obj.Img, 4));
+iT = max(1, min(dDrawCenter(4), size(obj.Img, 4)));
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Get data and permute into first two dimensions (3rd for projection data, 4th for rgb/vector data)
@@ -64,6 +70,9 @@ end
 
 dImg = double(dImg);
 
+lNum = ~isnan(dImg);
+dImg(~lNum) = 0;
+
 dAspect = obj.Res(iDim(1:2));
 dOrigin = obj.Origin(iDim(1:2));
 
@@ -91,68 +100,42 @@ if lHD && ~strcmp(obj.Mode, 'vector') && ~strcmp(obj.Mode, 'categorical') && ~is
     
     [dXXI, dYYI] = meshgrid(dXI, dYI);
     dImg = interp2(dX, dY, double(dImg), dXXI, dYYI, 'spline', 0);
+    dNum = interp2(dX(2:end-1), dY(2:end-1), double(lNum), dXXI, dYYI, 'spline', 0);
     
     dXData = [dXI(1), dXI(end)];
     dYData = [dYI(1), dYI(end)];
 else
+    dNum = double(lNum);
     dXData = [0 size(dImg, 2) - 1].*dAspect(2) + dOrigin(2);
     dYData = [0 size(dImg, 1) - 1].*dAspect(1) + dOrigin(1);
 end
 
-% -------------------------------------------------------------------------
-% If vector data, create the quiver data
-% if strcmp(obj.Mode, 'vector')
-%         
-%     dXData = (0:dQuiverSpacing:dAspect(2)*size(dImg, 2) - 2) + dOrigin(2);
-%     dYData = (0:dQuiverSpacing:dAspect(1)*size(dImg, 1) - 2) + dOrigin(1);
-%     
-%     dImg = dImg(round((dYData - dOrigin(1))./dAspect(1) + 1), ...
-%                 round((dXData - dOrigin(2))./dAspect(2) + 1), :);
-%             
-%     dLength = sqrt(sum(dImg.^2, 3));
-%     dLength(dLength == 0) = 1;
-%     dC = abs(dImg(:,:,[2 1 3]))./repmat(dLength, [1 1 3]);
-%     dC = reshape(dC, [], 3)';
-%     dC = [dC; dAlpha.*ones(1, size(dC, 2))];
-%     dC = uint8(dC*255);
-%     
-%     iDim(iDim == 4) = 3;
-%     dImg = dImg(:,:,iDim(1:2));
-%     dU = dImg(:,:,2);
-%     dV = dImg(:,:,1);
-%     
-%     
-%     dImg = reshape(repmat(dC, [5 1]), 4, []);
-% 
-%     
-%     
-%     [dXData, dYData] = fQuiver(dXData, dYData, dU(:), dV(:));
-% end
-
-% dQuiverSpacing  = obj.Parent.getSlider('Quiver Spacing');
-% dAlpha          = obj.Parent.getSlider('Mask Alpha');
 
 % -------------------------------------------------------------------------
 % Apply the intensity scaling and current colormap
-
-dMin = obj.Window(1);
-dMax = obj.Window(2);
+if strcmp(sDrawMode, 'phase')
+    dMin = -pi;
+    dMax = pi;
+else
+    dMin = obj.Window(1);
+    dMax = obj.Window(2);
+end
 
 switch obj.Mode
     
     case 'scalar'
-        dImg = dImg - dMin;
-        dImg = dImg./(dMax - dMin);
-        dImg(dImg < 0) = 0;
-        dImg(dImg > 1) = 1;
+        dImgA = dImg - dMin;
+        dImgA = dImgA./(dMax - dMin);
+        dImgA(dImgA < 0) = 0;
+        dImgA(dImgA > 1) = 1;
         
-        iImg = round(dImg.*(size(obj.dColormap, 1) - 1)) + 1;
-        dImg = reshape(obj.dColormap(iImg, :), [size(iImg, 1) ,size(iImg, 2), 3]);
+        iImg = round(dImgA.*(size(obj.Colormap.dMap, 1) - 1)) + 1;
+        dImg = reshape(obj.Colormap.dMap(iImg, :), [size(iImg, 1) ,size(iImg, 2), 3]);
         
     case 'categorical'
         dColormap = [0 0 0; lines(max(dImg(:)))];
         iImg = round(dImg) + 1;
-        dImg = reshape(dColormap(iImg, :), [size(iImg, 1) ,size(iImg, 2), 3]);
+        dImg = reshape(dColormap.dMap(iImg, :), [size(iImg, 1) ,size(iImg, 2), 3]);
             
     case 'rgb'
         dImg = dImg - dMin;
@@ -162,3 +145,12 @@ switch obj.Mode
         
 end
 % -------------------------------------------------------------------------
+
+if obj.Alpha == 0 && strcmp(obj.Mode, 'scalar')
+    dAlpha = dImgA;
+elseif ~isempty(d3Lim_px)
+    dAlpha = obj.Alpha;
+else
+    dAlpha = 0;
+end
+dAlpha = dNum.*dAlpha;

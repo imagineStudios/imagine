@@ -1,6 +1,6 @@
 function grid(obj)
 
-dGridSpacing = obj(1).hParent.getSlider('Grid Spacing');
+dGridSpacing = 50;
 dGrid = obj(1).hParent.dGrid;
 lRuler = obj(1).hParent.lRuler;
 

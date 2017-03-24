@@ -73,8 +73,8 @@ if diff(obj.Window) == 0, obj.Window(2) = obj.Window(1) + 1; end
 % Parse optional parameter-value pairs
 hP = inputParser;
 
-hValidFcn = @(x) validatestring(x, {'scalar', 'categorical', 'rgb', 'vector'});
-hP.addParameter('Mode', '', hValidFcn);
+% hValidFcn = @(x) validatestring(x, {'scalar', 'categorical', 'rgb', 'vector'});
+hP.addParameter('Mode', 'scalar');
 
 hP.addParameter('Source', '', @ischar);
 hP.addParameter('Name', '', @ischar);
@@ -88,6 +88,8 @@ hP.addParameter('Orientation', 'physical', @ischar);
 hP.addParameter('Views', []);
 
 hP.parse(cParams{:});
+
+obj.Mode = hP.Results.Mode;
 % -------------------------------------------------------------------------
 
 
@@ -117,7 +119,7 @@ end
 % Supplement the coordinate system data according to what's been supplied
 if isempty(hP.Results.Resolution)
     if ~isempty(hP.Results.Origin)
-        obj.Origin = hP.Results.Origin;
+        obj.Origin = hP.Results.Origin(:)';
     end
     if isempty(hP.Results.Units)
         obj.SpatialUnits = 'px';
@@ -125,19 +127,19 @@ if isempty(hP.Results.Resolution)
         obj.SpatialUnits = hP.Results.Units;
     end
 else
-    obj.Res = hP.Results.Resolution;
+    obj.Res = hP.Results.Resolution(:)';
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Resolution given
     if isempty(hP.Results.Origin) % Assume user wants 0 as data origin
-        obj.Origin = [0 0 0 1 1];
+        obj.Origin = [0 0 0 0];
     else
-        obj.Origin = hP.Results.Origin;
+        obj.Origin = hP.Results.Origin(:)';
     end
     if isempty(hP.Results.Units) % Assume mm resolution
         obj.SpatialUnits = 'mm';
     end
 end
 
-if length(obj.Res) < 5, obj.Res = padarray(obj.Res, [0, 5 - length(obj.Res)], 1, 'post'); end
-if length(obj.Origin) < 5, obj.Origin = padarray(obj.Origin, [0, 5 - length(obj.Origin)], 1, 'post'); end
+obj.Res    = padarray(obj.Res,    [0, 4 - length(obj.Res)],    1, 'post');
+obj.Origin = padarray(obj.Origin, [0, 4 - length(obj.Origin)], 1, 'post');
 % -------------------------------------------------------------------------

@@ -7,8 +7,6 @@ dCOLORLUT = 255 + zeros(10, 3);
 persistent cIcons
 persistent cIconsScaled
 
-% cIcons = {};
-% cIconsScaled = {};
 if isempty(cIcons)
     cIcons = fGetIcons(obj);
 end
@@ -91,26 +89,9 @@ end
 % -------------------------------------------------------------------------
 
 
-% -------------------------------------------------------------------------
-% The sidebar tabs (no change in icon size)
-iSideInd = 1;
-for iI = find([obj.SMenu.GroupIndex] == 256)
-    
-    set(obj.SImgs.hIcons(iI), ...
-        'CData'     , cIcons{iI}(:,:,1:3), ...
-        'AlphaData' , cIcons{iI}(:,:,4).*dAlphaScale(iI), ...  
-        'XData'     , 1 + iSideInd, ...
-        'YData'     , 1);
-        iSideInd = iSideInd + 44;
-end
-% -------------------------------------------------------------------------
-
-% obj.drawHistogram(1);
-
-
 function cIcons = fGetIcons(obj)
 
-sIconPath = [fileparts(mfilename('fullpath')), filesep, 'icons', filesep];
+sIconPath = [fileparts(mfilename('fullpath')), filesep, '..', filesep, 'icons', filesep];
 
 [~, ~, dImg] = imread([sIconPath, 'tab.png']);
 dTab = double(dImg(15:62,9:68))./255;

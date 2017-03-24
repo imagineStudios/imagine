@@ -7,11 +7,11 @@ if isempty(hView), return, end
 
 obj.contextMenu(0);
 if isempty(hView.hData)
+    obj.iActiveView = hView.Ind;
+    obj.hViews.showSquare;
     return
 end
 % -------------------------------------------------------------------------
-
-% set([obj.SView.hScatter], 'Visible', 'off'); % Make sure the position display is hidden
 
 % -------------------------------------------------------------------------
 % Save some infos about button down event
@@ -33,6 +33,9 @@ obj.SAction.dDrawCenter   = obj.SAction.hView.DrawCenter;
 obj.hViews.backup;
 obj.hData.backup;
 % -------------------------------------------------------------------------
+
+obj.iActiveView = find(obj.hViews == obj.SAction.hView);
+obj.hViews.showSquare;
 
 
 % -------------------------------------------------------------------------

@@ -34,27 +34,46 @@ for iI = 1:numel(obj)
     
     hView = obj(iI);
 
-    if isempty(hView.hData)
+    if isempty(obj(iI).hData)
 
-        set(hView.hI, 'CData', dBGImg, 'XData', [1 size(dBGImg, 2)], 'YData', [1 size(dBGImg, 1)]);
+        set(hView.hI, ...
+            'CData'     , dBGImg, ...
+            'AlphaData' , 1, ...
+            'XData'     , [1 size(dBGImg, 2)], ...
+            'YData'     , [1 size(dBGImg, 1)]);
 
     else
 
-        for hData = hView.hData
+        for iJ = 1:length(obj(iI).hData)
 
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Get the image data, do windowing and apply colormap
             for iDimInd = 1:length(hView.hA)
-                [dImg, dXData, dYData]  = hData.getData(hView.DrawCenter, iDimInd, hView.hA(iDimInd), lHD);
-                set(hView.hI(iDimInd), 'CData', dImg, 'XData', dXData, 'YData', dYData);%, 'AlphaData', dAlpha);
+                
+                [dImg, dXData, dYData, dAlpha] = ...
+                    obj(iI).hData(iJ).getData(hView.DrawCenter, iDimInd, hView.hA(iDimInd), lHD);
+                
+                if ~strcmp(obj(iI).hData(iJ).Mode, 'vector')
+                    % It's image data
+                    set(hView.hI(iDimInd, iJ), ...
+                        'CData'     , dImg, ...
+                        'AlphaData' , dAlpha, ...
+                        'XData'     , dXData, ...
+                        'YData'     , dYData);
+                    
+                else
+                    % Its a quiver plot
+                    set(SView.hQuiver, ...
+                        'XData'     , dXData, ...
+                        'YData'     , dYData, ...
+                        'Visible'   , 'on', ...
+                        'LineWidth' , dQuiverWidth);
+                    
+                    set(SView.hQuiver.Edge, ...
+                        'ColorBinding'  , 'interpolated', ...
+                        'ColorData'     , uint8(dImg))
+                end
             end
-    %                 
-    %             case 'vector'
-    %                 
-    %                 set(SView.hQuiver, 'XData', dXData, 'YData', dYData, 'Visible', 'on', 'LineWidth', dQuiverWidth);
-    %                 set(SView.hQuiver.Edge, 'ColorBinding', 'interpolated', 'ColorData', uint8(dImg))
-    %         end
-
     %         set(SView.hText(1, 1, :),  'String', sprintf('[%d]: %s', SView.iData(1), obj.SData(SView.iData(1)).sName), 'Visible', 'on');
             %             set(SView.hAxes, 'Color', obj.dColormap(1,:));
 
