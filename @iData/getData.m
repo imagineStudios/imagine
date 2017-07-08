@@ -70,7 +70,7 @@ end
 
 dImg = double(dImg);
 
-lNum = ~isnan(dImg);
+lNum = ~any(isnan(dImg), 4);
 dImg(~lNum) = 0;
 
 dAspect = obj.Res(iDim(1:2));
@@ -142,6 +142,7 @@ switch obj.Mode
         dImg = dImg./(dMax - dMin);
         dImg(dImg < 0) = 0;
         dImg(dImg > 1) = 1;
+        dImg = squeeze(dImg);
         
 end
 % -------------------------------------------------------------------------

@@ -14,6 +14,7 @@ classdef iData < handle
         ThumbSlice      = 1
         Alpha           = 1
         iViews          = [];
+        sDrawMode       = 'mag';
         
         Window
         

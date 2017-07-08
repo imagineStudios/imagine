@@ -11,20 +11,7 @@ end
 % dGamma         = get(obj.SSliders(1).hScatter, 'XData');
 % dMaskAlpha     = obj.getSlider('Mask Alpha');
 % dQuiverWidth   = obj.getSlider('Quiver Width');
-% sDrawMode      = obj.getDrawMode;
 % -------------------------------------------------------------------------
-
-
-% -------------------------------------------------------------------------
-% Initialize windowing limits for phase and linked cases
-% if strcmp(sDrawMode, 'phase')
-%     dMin = -pi; dMax = pi;
-% elseif obj.isOn('lock_window') && obj.SView(1).iData
-%     dMin = obj.SData(obj.SView(1).iData).dWindowCenter - 0.5.*obj.SData(obj.SView(1).iData).dWindowWidth;
-%     dMax = obj.SData(obj.SView(1).iData).dWindowCenter + 0.5.*obj.SData(obj.SView(1).iData).dWindowWidth;
-% end
-% -------------------------------------------------------------------------
-
 
 % -------------------------------------------------------------------------
 % Loop over all views
