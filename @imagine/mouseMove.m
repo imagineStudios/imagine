@@ -7,7 +7,7 @@ if isempty(dFleur), dFleur = fGetFleur; end
 set(obj.hF, 'Pointer', 'Arrow', 'WindowButtonDownFcn', @obj.contextMenu);
 
 % Get current object
-hOver = hittest;
+hOver = hittest();
 
 % -------------------------------------------------------------------------
 % Check if over an icon (button)
@@ -25,34 +25,9 @@ if ~isempty(iIcon)
         if iModifier(1), sAccelerator = sprintf('Shift+%s', sAccelerator); end
         sText = sprintf('%s [%s]', sText, sAccelerator);
     end
-    obj.tooltip(sText);
+    obj.hTooltip.show(sText);
     
     set(obj.hF, 'WindowButtonDownFcn', @obj.iconDown);
-    return
-end
-% -------------------------------------------------------------------------
-
-
-% -------------------------------------------------------------------------
-% If over the tooltip, move it out of the way
-if obj.STooltip.hImg == hOver || obj.STooltip.hText == hOver
-    
-    dTooltipPos = get(obj.STooltip.hAxes, 'Position');
-    dFigureSize = get(obj.hF, 'Position');
-    dNormalHeight = 0.618.*(dFigureSize(4) - 2.*obj.iIconSize) - dTooltipPos(4)/2;
-    
-    if dTooltipPos(2) <= dNormalHeight
-        dHeight = fExpAnimation(10, dTooltipPos(2), dTooltipPos(2) + 1.2.*dTooltipPos(4));
-    else
-        dHeight = fExpAnimation(10, dTooltipPos(2), dTooltipPos(2) - 1.2.*dTooltipPos(4));
-    end
-    
-    for iI = 1:length(dHeight)
-        dTooltipPos(2) = dHeight(iI);
-        set(obj.STooltip.hAxes, 'Position', dTooltipPos);
-        pause(0.01);
-    end
-
     return
 end
 % -------------------------------------------------------------------------

@@ -2,74 +2,40 @@ classdef iComboBox < handle
   
   properties
     Imgs
+    Alpha
+    Labels
     Ind         = 0
-    Parent      = matlab.graphics.axis.Axes.empty
     Position    = [1 1]
+    Parent      = matlab.graphics.axis.Axes.empty()
     Callback    = function_handle.empty()
   end
   
   properties (Access = private)
     
+    hI          = matlab.graphics.primitive.Image.empty()
+    hA          = matlab.graphics.axis.Axes.empty()
     
-    hI          = matlab.graphics.primitive.Image.empty                 % Line components
-    hA          = matlab.graphics.axis.Axes.empty
-    
-    iWidth      = 16
-    iHeight     = 16
+    iWidth
+    iHeight
     
     hListeners
+    Tooltip
   end
   
   methods
     
     function obj = iComboBox(varargin)
       
-      % -------------------------------------------------------------------------
-      % Parse optional parameter-value pairs
-      hP = inputParser();
+      obj.parseInputs(varargin{:});
+      obj.createGUIElements();
       
-      hP.addParameter('Parent', matlab.graphics.axis.Axes.empty, @(x) isa(x, 'matlab.graphics.axis.Axes'));
-      %             hValidFcn = @(x) validateattributes(x, {'numeric'});
-      hP.addParameter('Imgs', 0, @(x) isnumeric(x));
-      hValidFcn = @(x) validateattributes(x, {'numeric'}, {'scalar'});
-      hP.addParameter('Ind', 1, hValidFcn);
-      hValidFcn = @(x) validateattributes(x, {'numeric'}, {'numel', 2});
-      hP.addParameter('Position', [1 1], hValidFcn);
-      hP.addParameter('Callback', function_handle.empty, @(x) isa(x, 'function_handle'));
-      
-      hP.parse(varargin{:});
-      
-      cFN = fieldnames(hP.Results);
-      for iI = 1:length(cFN)
-        obj.(cFN{iI}) = hP.Results.(cFN{iI});
-      end
-      % -------------------------------------------------------------------------
-      
-      if isempty(obj.Parent)
-        obj.Parent = gca;
-      end
-      obj.iWidth = size(obj.Imgs, 2);
-      obj.iHeight = size(obj.Imgs, 1);
-      
-      hF = get(obj.Parent, 'Parent');
-      
-      obj.hA = axes( ...
-        'Parent'            , hF, ...
-        'Visible'           , 'off', ...
-        'YDir'              , 'reverse', ...
-        'XLim'              , [0, obj.iWidth] + 0.5, ...
-        'Units'             , 'pixels', ...
-        'Hittest'           , 'off');
-      obj.hI(1) = image(...
-        'Parent'            , obj.Parent, ...
-        'CData'             , 0);
-      
-      % Create a stacked version of the icons and display in hidden
-      % image for selection
-      dImg = reshape(permute(obj.Imgs, [1, 4, 2, 3]), [], size(obj.Imgs, 2), size(obj.Imgs, 3));
+      % Create a stacked version of the icons and display in hidden image for selection
+      dImg = reshape(permute(obj.Imgs(:,:,1:3,:), [1, 4, 2, 3]), [], size(obj.Imgs, 2), size(obj.Imgs, 3));
+      dAlpha = reshape(permute(obj.Alpha(:,:,:,:), [1, 4, 2, 3]), [], size(obj.Alpha, 2), size(obj.Alpha, 3));
       obj.hI(2) = image( ...
         'Parent'            , obj.hA, ...
         'CData'             , dImg, ...
+        'AlphaData'         , dAlpha, ...
         'Visible'           , 'off');
       
       obj.drawIcon;
@@ -83,7 +49,7 @@ classdef iComboBox < handle
     
     
     function delete(obj, ~, ~)
-      delete([obj.hI]);
+      delete([obj.hA]);
       delete([obj.hListeners]);
       delete@handle(obj)
     end
@@ -104,76 +70,125 @@ classdef iComboBox < handle
   
   methods (Access = private)
     
-    function mouseDown(obj, ~, ~)
-      hOver = hittest;
+    function parseInputs(obj, varargin)
+      hP = inputParser();
       
-      if hOver == obj.hI(1)
-        
-        uistack(obj.hA, 'top');
-        hF = obj.Parent.Parent;
-        
-        dYLimTarget = [0, size(obj.Imgs, 1).*size(obj.Imgs, 4)] + 0.5;
-        dYLimStart  = [0.5, 1.5];
-        
-        dPos = obj.Parent.Position;
-        
-        dYStart = - obj.Position(2) + dPos(2) + dPos(4) - obj.iHeight;
-        
-        dStartHeight  = 1;
-        dTargetHeight = diff(dYLimTarget);
-        
-        if dTargetHeight > dYStart
-          dFigureSize = get(hF, 'Position');
-          dYEnd = min(dTargetHeight, dFigureSize(4));
+      hP.addParameter('Parent', matlab.graphics.axis.Axes.empty, @(x) isa(x, 'matlab.graphics.axis.Axes'));
+      hP.addParameter('Imgs', 0, @(x) isnumeric(x));
+      hValidFcn = @(x) validateattributes(x, {'numeric'}, {'scalar'});
+      hP.addParameter('Ind', 1, hValidFcn);
+      hValidFcn = @(x) validateattributes(x, {'numeric'}, {'numel', 2});
+      hP.addParameter('Position', [1 1], hValidFcn);
+      hP.addParameter('Callback', function_handle.empty, @(x) isa(x, 'function_handle'));
+      hP.addParameter('Alpha', 1, @(x) isnumeric(x));
+      hP.addParameter('Labels', '', @(x) iscell(x));
+      hP.addParameter('Tooltip', '', @(x) isa(x, 'iTooltip'));
+      
+      hP.parse(varargin{:});
+      
+      cFN = fieldnames(hP.Results);
+      for iI = 1:length(cFN)
+        obj.(cFN{iI}) = hP.Results.(cFN{iI});
+      end
+      
+      if isempty(obj.Parent)
+        obj.Parent = gca;
+      end
+      obj.iWidth = size(obj.Imgs, 2);
+      obj.iHeight = size(obj.Imgs, 1);
+      
+      if isscalar(obj.Alpha)
+        obj.Alpha = zeros(obj.iHeight, obj.iWidth, 1, size(obj.Imgs, 4)) + obj.Alpha;
+      end
+    end
+    
+    function createGUIElements(obj)
+      hF = get(obj.Parent, 'Parent');
+      
+      obj.hA = axes( ...
+        'Parent'            , hF, ...
+        'Visible'           , 'off', ...
+        'YDir'              , 'reverse', ...
+        'XLim'              , [0, obj.iWidth] + 0.5, ...
+        'Units'             , 'pixels', ...
+        'Hittest'           , 'off');
+      obj.hI(1) = image(...
+        'Parent'            , obj.Parent, ...
+        'CData'             , 0);
+    end
+    
+    function mouseDown(obj, ~, ~)
+      hOver = hittest();
+      
+      if hOver == obj.hI(1) % Click on the box
+        if strcmp(obj.hI(2).Visible, 'on')
+          obj.hide();
         else
-          dYEnd = dYStart;
+          obj.show();
         end
         
-        dPos = [obj.Position(1) + dPos(1), dYStart, obj.iWidth, 1];
-        set(obj.hI(2), 'Visible', 'on', 'AlphaData', 1);
-        
-        for dVal = fExpAnimation(20, 1, 0);
-          dYLim = (1 - dVal)*dYLimTarget + dVal*dYLimStart;
-          iHeight = (1 - dVal)*dTargetHeight + dVal*dStartHeight;
-          iY = (1 - dVal)*dYEnd + dVal*dYStart;
-          dPos(2) = iY - iHeight;
-          dPos(4) = iHeight;
-          set(obj.hA, 'Position', dPos, 'YLim', dYLim + 0.5);
-          drawnow update
-          pause(0.01);
-        end
-        
-      elseif hOver == obj.hI(2)
+      elseif hOver == obj.hI(2) % Click on the menu
         dPos = get(obj.hA, 'CurrentPoint');
         obj.Ind = ceil(dPos(1, 2)/obj.iHeight);
         obj.drawIcon();
         obj.Callback();
         
-        dAlphaData = 1;
-        for dAlpha = 0.8:-0.1:0
-          set(obj.hI(2), 'AlphaData', dAlpha.*dAlphaData);
-          drawnow update
-          pause(0.01);
-        end
-        
-        set(obj.hI(2), 'Visible', 'off');
+        obj.hide();
         
       else
         if strcmp(get(obj.hI(2), 'Visible'), 'on')
-          dAlphaData = 1;
-          for dAlpha = 0.8:-0.1:0
-            set(obj.hI(2), 'AlphaData', dAlpha.*dAlphaData);
-            drawnow update
-            pause(0.01);
-          end
-          
-          set(obj.hI(2), 'Visible', 'off');
+          obj.hide();
         end
       end
     end
     
     function mouseMove(obj, ~, ~)
-      disp('Hallo');
+      if strcmp(obj.hI(2).Visible, 'on')
+        if hittest() == obj.hI(2) &&  ~isempty(obj.Labels) && ~isempty(obj.Tooltip)
+          dPos = get(obj.hA, 'CurrentPoint');
+          iInd = ceil(dPos(1, 2)/obj.iHeight);
+          if iInd > 0 && iInd <= size(obj.Imgs, 4)
+            obj.Tooltip.show(obj.Labels{iInd});          
+          end
+        end
+      end
+    end
+    
+    function show(obj)
+      uistack(obj.hA, 'top');
+        
+        dPos = obj.Parent.Position;
+        dYStart = dPos(2) + dPos(4) - obj.iHeight - obj.Position(2);
+        
+        dStartHeight  = 1;
+        dTargetHeight = size(obj.Imgs, 1).*size(obj.Imgs, 4);
+        
+        dPos = [obj.Position(1) + dPos(1), dYStart, obj.iWidth, 1];
+        set(obj.hI(2), 'Visible', 'on');
+        
+        for dVal = fExpAnimation(20, 1, 0);
+          iH = round((1 - dVal)*dTargetHeight + dVal*dStartHeight);
+          dPos(2) = dYStart - iH;
+          dPos(4) = iH;
+          set(obj.hA, ...
+            'Position'  , [dPos(1), dYStart - iH, dPos(3), iH], ...
+            'YLim'      , [0 iH] + 0.5);
+          
+          pause(0.01);
+        end
+        obj.hListeners(2).Enabled = true;
+    end
+    
+    function hide(obj)
+      dAlphaData = get(obj.hI(2), 'AlphaData');
+      for dAlpha = 0.8:-0.1:0
+        set(obj.hI(2), 'AlphaData', dAlpha.*dAlphaData);
+        drawnow update
+        pause(0.01);
+      end
+      
+      set(obj.hI(2), 'Visible', 'off', 'AlphaData', dAlphaData);
+      obj.hListeners(2).Enabled = false;
     end
     
     function setPosition(obj)
@@ -181,13 +196,13 @@ classdef iComboBox < handle
     end
     
     function drawIcon(obj)
-      dImg = obj.Imgs(:,:,:,obj.Ind);
+      dImg = cat(3, obj.Imgs(:,:,:,obj.Ind), obj.Alpha(:,:,:,obj.Ind));
       dArrow = obj.getArrowImg;
-      dPrePad = floor( (obj.iHeight - size(dArrow, 1))./2 );
-      dPostPad = obj.iHeight - size(dArrow, 1) - dPrePad;
-      dArrow = padarray(dArrow, [dPrePad, 0, 0], 0, 'pre');
-      dArrow = padarray(dArrow, [dPostPad, 0, 0], 0, 'post');
-      set(obj.hI(1), 'CData', [dImg, dArrow]);
+      dArrow = imresize(dArrow, size(dImg(:,:,1)));
+      dImg = fBlend(dImg, dArrow, 'normal');
+      set(obj.hI(1), ...
+        'CData'   , dImg(:,:,1:3), ...
+        'AlphaData', dImg(:,:,4));
     end
     
   end
@@ -198,11 +213,11 @@ classdef iComboBox < handle
       
       persistent dArrowImg
       
-      %             dArrowImg = [];
+%       dArrowImg = [];
       if isempty(dArrowImg)
         sPath = fileparts(mfilename('fullpath'));
-        [~, ~, iImg] = imread([sPath, filesep, 'arrow.png']);
-        dArrowImg = repmat(double(iImg)./255, [1 1 3]);
+        [iImg, ~, iAlpha] = imread([sPath, filesep, 'arrow.png']);
+        dArrowImg = double(cat(3, iImg, iAlpha))./255;
       end
       
       dImg = dArrowImg;

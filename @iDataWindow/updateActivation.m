@@ -1,13 +1,10 @@
 function updateActivation(obj, ~, ~)
 
-% iActiveView = obj.hImagine.iActiveView;
-
 for iI = 1:length(obj.hPanels)
-%     if any(obj.hPanels(iI).hData.iViews == iActiveView)
     if obj.hPanels(iI) == obj.hActivePanel
-        obj.hPanels(iI).setColor(brighten(obj.hImagine.dBGCOLOR, 0.3));
+        obj.hPanels(iI).setActive(true);
     else
-        obj.hPanels(iI).setColor(obj.hImagine.dBGCOLOR);
+        obj.hPanels(iI).setActive(false);
     end
 end
 

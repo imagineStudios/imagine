@@ -45,8 +45,9 @@ classdef imagine < handle
     % =====================================================================
     properties (Constant)
         sVERSION                = '3.0 Alpha';          % Figure title
-        dBGCOLOR                = [0.18 0.20 0.25];     % Background color
-        dHIGHLIGHTCOLOR         = [0.8 0.8 0.8];        % Color of axes and stuff
+        dCOL1                   = [20 21 19]./255;
+        dCOL2                   = [39 40 34]./255;
+        dCOL3                   = [64 66 54]./255;
         iMAXVIEWS               = 6;                    % Maximum number of views per dimension
         lWIP                    = false;                % Show work-in-progress features
         iCOLORMAPLENTGH         = 2^10;
@@ -58,25 +59,24 @@ classdef imagine < handle
         % -----------------------------------------------------------------
         % Graphic object handle containers and other handles
         hF          % The main figure
-        STooltip    % The tooltip and its components
         SAxes       % Miscellaneous axes
         SImgs       % Miscellaneous images
         STimers     % Timers to realize delayed actions
         
         % -----------------------------------------------------------------
         % Data and Views (custom classes)
-        hViews          = iView.empty  % The views and its components
+        hTooltip        = iTooltip.empty
+        hViews          = iView.empty
         
         % -----------------------------------------------------------------
         % GUI state
-        SAction         = []  % Structure to store information for mouse actions
-        SMenu                 % A menu item structure
-        iIconSize       = 64
+        SAction         = []        % Structure to store information for mouse actions
+        SMenu                       % A menu item structure
+        
         dGrid           = 0         % Distance between grid lines, 0 = off, -1 = show axes center for 3D view
         lRuler          = false
         iAxes           = [1, 1]
-        
-        dMinRes         = 1;        % The minimum resolution in any of the datasets (used to determine what 100% is)
+        dMinRes         = 1        % The minimum resolution in any of the datasets (used to determine what 100% is)
         
         SColormaps      = struct;
     end
@@ -93,6 +93,7 @@ classdef imagine < handle
         sPath           = pwd % The working directory
         dColWidth       = [1 1 1 1 1 1]
         dRowHeight      = [1 1 1 1 1 1]
+        iIconSize       = 64
         sROIMode        = 'none'
     end
     % =====================================================================
@@ -237,7 +238,6 @@ classdef imagine < handle
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % Rendering core
         draw(obj, ~, ~)
-        tooltip(obj, sString, eventdata)
         contextMenu(obj, iInd, eventdata)
                 
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

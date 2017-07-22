@@ -61,5 +61,5 @@ for iI = 1:numel(obj)
     end
 end
 
-stop(obj(1).hParent.STimers.hToolTip);
-start(obj(1).hParent.STimers.hToolTip);
+% stop(obj(1).hParent.STimers.hToolTip);
+% start(obj(1).hParent.STimers.hToolTip);

@@ -27,7 +27,7 @@ dAlphaScale( [obj.SMenu.Enabled] & ~[obj.SMenu.Active] & [obj.SMenu.GroupIndex] 
 dAlphaScale(strcmp({obj.SMenu.Name}, 'dock')) = 1;
 
 iToolYStart = 1;
-iMenuXStart = obj.iIconSize;
+iMenuXStart = 1;
 iContextInd = 1;
 for iI = find([obj.SMenu.GroupIndex] ~= 256)
 %     dColor = repmat(permute([240 250 250], [1 3 2])/255, [obj.iIconSize, obj.iIconSize, 1]);
@@ -105,7 +105,7 @@ dSub = double(repmat(dImg, [1 1 2]));
 
 cIcons = cell(1, length(obj.SMenu));
 
-dFade = repmat([linspace(1, 0.95, 42)'; linspace(0.75, 0.6, 34)'], [1 size(dImg, 2) 2]);
+% dFade = repmat([linspace(1, 0.95, 42)'; linspace(0.75, 0.6, 34)'], [1 size(dImg, 2) 2]);
 
 for iI = 1:length(obj.SMenu)
     
@@ -121,7 +121,7 @@ for iI = 1:length(obj.SMenu)
         end
         dImg = double(cat(3, dImg, dImg1));
         if obj.SMenu(iI).SubGroup, dImg = dImg + dSub; end
-        cIcons{iI} = dImg.*dFade./255;
+        cIcons{iI} = dImg./255;
     else
         % Tabs
         dImg = imresize(double(dImg(15:62,15:62))./255, [32 32], 'bicubic');

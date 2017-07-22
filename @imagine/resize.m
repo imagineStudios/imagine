@@ -46,9 +46,18 @@ end
 dMenubarHeight = obj.iIconSize;
 dContentsHeight = dFigureHeight - dMenubarHeight;
 set(obj.SAxes.hMenu,  ...
-    'Position'      , [0, dFigureHeight - obj.iIconSize + 1, dFigureWidth + 1, dMenubarHeight], ...
+    'Position'      , [0, dFigureHeight - obj.iIconSize + 1 - 4, dFigureWidth + 1, dMenubarHeight + 4], ...
     'XLim'          , [0 dFigureWidth + 1] + 0.5, ...
-    'YLim'          , [0 obj.iIconSize] + 0.5);
+    'YLim'          , [0 obj.iIconSize + 4] + 0.5);
+
+dCData = repmat(permute(obj.dCOL2, [1 3 2]), obj.iIconSize + 4, 1);
+dCData(obj.iIconSize + 1:end, :, :) = 0;
+dAlpha = ones(obj.iIconSize + 4, 1);
+dAlpha(obj.iIconSize + 1:obj.iIconSize + 4) = [0.7; 0.5; 0.3; 0.0];
+set(obj.SImgs.hMenu, ...
+  'CData'       , dCData, ...
+  'AlphaData'   , dAlpha);
+  
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Toolbar

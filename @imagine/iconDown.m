@@ -7,7 +7,7 @@ persistent dGridImg
 % dGridImg = [];
 if isempty(dGridImg)
   dGridImg = 1 - 0.7.*rand(obj.iMAXVIEWS);
-  dGridImg = fBlend(3*obj.dBGCOLOR, dGridImg, 'Multiply', 0.5);
+  dGridImg = fBlend([100 180 255]/255, dGridImg, 'Multiply', 0.5);
 end
 % -------------------------------------------------------------------------
 

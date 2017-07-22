@@ -55,7 +55,7 @@ switch obj.getTool
                     end
                 end
                 
-                obj.tooltip(sprintf('%d %%', round(obj.SAction.hView.Zoom*100)));
+                obj.hTooltip.show(sprintf('%d %%', round(obj.SAction.hView.Zoom*100)));
                 obj.hViews.position;
 %                 obj.grid;
             
