@@ -487,7 +487,7 @@ switch obj.SMenu(iInd).GroupIndex
           set(obj.hF, 'WindowStyle', 'docked');
         end
         
-      case 'datawindow'
+      case 'explorer'
         if isempty(obj.hDataWindow) || ~ishandle(obj.hDataWindow)
           obj.hDataWindow = iDataWindow(obj);
           addlistener(obj.hDataWindow, 'update', @obj.draw);

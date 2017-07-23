@@ -51,6 +51,7 @@ classdef imagine < handle
         iMAXVIEWS               = 6;                    % Maximum number of views per dimension
         lWIP                    = false;                % Show work-in-progress features
         iCOLORMAPLENTGH         = 2^10;
+        iICONPADDING            = 8;
     end
     
     
