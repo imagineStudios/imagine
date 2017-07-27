@@ -45,7 +45,7 @@ classdef CData < handle
             end
             
             obj.ThumbSlice = round(obj.getSize(3)./2);
-            obj.setColormap(obj.Parent.SColormaps(1));
+            obj.setColormap('Gray');
             
             % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             % Make sure data object is deleted if imagine is closed
@@ -59,6 +59,9 @@ classdef CData < handle
         
         [dImg, dXData, dYData, dAlpha] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
         [dUData, dVData, dXData, dYData, dCData] = getVectors(obj, dDrawCenter, iDimInd, hA)
+        
+        setColormap(obj, xMap)
+        [sMap, iInd] = getColormap(obj)
         
         iSize = getSize(obj, iDim)
         dCoverage = getCoverage(obj, iDim)

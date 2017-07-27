@@ -11,7 +11,7 @@ if isempty(SMaps)
     
     for iI = 1:length(SDir)
         [~, sName] = fileparts(SDir(iI).name);
-        SMaps(iI).sName = sName(5:end);
+        SMaps(iI).sName = sName;
         SMaps(iI).hFcn  = str2func(['iColormaps.', sName]);
         SMaps(iI).dMap  = SMaps(iI).hFcn(iLength, 1);
     end
