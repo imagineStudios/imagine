@@ -23,7 +23,6 @@ classdef CData < handle
         Hist
         HistCenter
         
-%         CMapPreview
     end
     
     properties(Access = private)
@@ -61,9 +60,6 @@ classdef CData < handle
         [dImg, dXData, dYData, dAlpha] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
         [dUData, dVData, dXData, dYData, dCData] = getVectors(obj, dDrawCenter, iDimInd, hA)
         
-%         setColormap(obj, sMap)
-%         [sMap, iInd] = getColormap(obj)
-        
         iSize = getSize(obj, iDim)
         dCoverage = getCoverage(obj, iDim)
         dCenter = getCenter(obj)
@@ -78,9 +74,5 @@ classdef CData < handle
     methods (Access = private)
         parseInputs(obj, varargin)
     end
-    
-%     methods (Static)
-%         csColormaps = getColormaps
-%         dPreview = getColormapPreview(csColormaps)
-%     end
+
 end
