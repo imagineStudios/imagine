@@ -14,12 +14,12 @@ classdef CView < handle
     end
     
     properties (Access = private)
-        hParent     = CImagine.empty
+        hParent     = CImagine.empty()
         
-        hA          = matlab.graphics.axis.Axes.empty
+        hA          = matlab.graphics.axis.Axes.empty()
         
         hI          = matlab.graphics.primitive.Image.empty                % Image components
-        hQ          = cquiver.empty                                        % The quiver component
+        hQ          = CQuiver.empty()                                      % The quiver component
         hL          = matlab.graphics.primitive.Line.empty                 % Line components
         hS1         = matlab.graphics.chart.primitive.Scatter.empty        % Scatter components
         hS2         = matlab.graphics.chart.primitive.Scatter.empty        % Scatter components
@@ -46,7 +46,7 @@ classdef CView < handle
             obj.dColor = dColors(end, :);
             
             dPattern = 1 - 0.7*rand(4096, 1);
-            dBGImg = fBlend(obj.dColor, dPattern, 'multiply', 0.5);
+            dBGImg = iGlobals.fBlend(obj.dColor, dPattern, 'multiply', 0.5);
             dBGImg = permute(dBGImg, [3 1 2]);
             obj.iRandColor = uint8([dBGImg; zeros(1, 4096) + 0.5].*255);
             

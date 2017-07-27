@@ -24,7 +24,7 @@ for iI = 1:numel(obj)
             iN = dSize(iDim(3));
             
             iNRows = min(floor(dYSize_px.*0.9./dDIST), iN);
-            [iNRows, iNCols] = fOptiRows(iN, iNRows);
+            [iNRows, iNCols] = iGlobals.fOptiRows(iN, iNRows);
             
             dYData = dDIST.*( (0:iNRows - 1)' - (iNRows - 1)/2 );
             if strcmp(get(hA, 'YDir'), 'normal')

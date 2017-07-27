@@ -29,7 +29,7 @@ if isnumeric(iInd) && iInd > 0
     set(obj.SAxes.hContext, 'XLim', [0 obj.iIconSize] + 0.5);
     
     dPos = [dPos(1), dYStart, obj.iIconSize, 1];
-    for dVal = fExpAnimation(20, 1, 0);
+    for dVal = iGlobals.fExpAnimation(20, 1, 0);
         dYLim = (1 - dVal)*dYLimTarget + dVal*dYLimStart;
         iHeight = (1 - dVal)*dTargetHeight + dVal*dStartHeight;
         iY = (1 - dVal)*dYEnd + dVal*dYStart;

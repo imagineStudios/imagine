@@ -26,7 +26,7 @@ try
   S.iIconSize     = obj.iIconSize;
   S.sTheme        = obj.sTheme;
   
-  save([obj.sBasePath, filesep, 'Settings.mat'], 'S');
+  save([obj.sBasePath, filesep(), 'Settings.mat'], 'S');
   
   % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   % Delete and close

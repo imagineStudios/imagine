@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings>
+  <color Name="bg_dark">
+    <red>20</red>
+    <green>21</green>
+    <blue>19</blue>
+  </color>
+  <color Name="bg_normal">
+    <red>39</red>
+    <green>40</green>
+    <blue>34</blue>
+  </color>
+  <color Name="bg_light">
+    <red>64</red>
+    <green>66</green>
+    <blue>54</blue>
+  </color>
+</settings>

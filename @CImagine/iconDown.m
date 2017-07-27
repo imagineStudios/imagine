@@ -7,7 +7,7 @@ persistent dGridImg
 % dGridImg = [];
 if isempty(dGridImg)
   dGridImg = 1 - 0.7.*rand(obj.iMAXVIEWS);
-  dGridImg = fBlend([100 180 255]/255, dGridImg, 'Multiply', 0.5);
+  dGridImg = iGlobals.fBlend([100 180 255]/255, dGridImg, 'Multiply', 0.5);
 end
 % -------------------------------------------------------------------------
 
@@ -222,7 +222,7 @@ switch obj.SMenu(iInd).GroupIndex
         
         set(obj.SImgs.hUtil, 'Visible', 'on', 'CData', dGridImg, 'AlphaData', 0.5, 'UserData', 1);
         set(obj.SAxes.hUtil, 'XLim', [0.5 obj.iMAXVIEWS + 0.5], 'YLim', [0.5, obj.iMAXVIEWS + 0.5]);
-        for iSize = fExpAnimation(10, 1, 120)
+        for iSize = iGlobals.fExpAnimation(10, 1, 120)
           dPos(2) = dStartY - iSize;
           dPos(3) = iSize;
           dPos(4) = iSize;

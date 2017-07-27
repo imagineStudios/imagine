@@ -5,16 +5,16 @@ classdef CDataPanel < handle
   end
   
   properties
-    hData        = iData.empty                                     % The data series associated with the view
+    hData        = CData.empty()         % The data series associated with the view
     dBGCOLOR     = [0.18 0.20 0.25];     % Background color
   end
   
   properties (Access = private)
-    hParent     = iDataWindow.empty
+    hParent     = CExplorer.empty()
     
-    hA          = matlab.graphics.axis.Axes.empty
+    hA          = matlab.graphics.axis.Axes.empty()
     hI
-    hT          = matlab.graphics.primitive.Text.empty                 % Text components
+    hT          = matlab.graphics.primitive.Text.empty()
     
     hListeners
   end
@@ -34,7 +34,7 @@ classdef CDataPanel < handle
         'YLim'              , [0, obj.iHEIGHT] + 0.5, ...
         'Units'             , 'pixels', ...
         'Position'          , [10 10 100 obj.iHEIGHT], ...
-        'Color'             , obj.hParent.hImagine.dCOL1, ...
+        'Color'             , obj.hParent.hImagine.SColors.bg_dark, ...
         'Visible'           , 'on');
       hold on
       

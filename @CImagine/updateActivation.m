@@ -90,7 +90,7 @@ end
 
 function cIcons = fGetIcons(obj)
 
-sIconPath = [obj.sBasePath, filesep, 'themes', filesep, obj.sTheme, filesep, 'icons', filesep];
+sIconPath = [obj.sBasePath, filesep(), '..', filesep(), 'themes', filesep(), obj.sTheme, filesep(), 'icons'];
 
 % [~, ~, dImg] = imread([sIconPath, 'submenu.png']);
 % dSub = double(repmat(dImg, [1 1 2]));
@@ -98,7 +98,7 @@ sIconPath = [obj.sBasePath, filesep, 'themes', filesep, obj.sTheme, filesep, 'ic
 cIcons = cell(1, length(obj.SMenu));
 for iI = 1:length(obj.SMenu)
   
-  [dImg1, ~, dAlpha1] = imread([sIconPath, obj.SMenu(iI).Name, '.png']); % icon file name (.png) has to be equal to icon name
+  [dImg1, ~, dAlpha1] = imread([sIconPath, filesep(), obj.SMenu(iI).Name, '.png']); % icon file name (.png) has to be equal to icon name
   dImg1 = double( cat(3, dImg1, dAlpha1) )./255;
   
   if exist([sIconPath, obj.SMenu(iI).Name, '1.png'], 'file')

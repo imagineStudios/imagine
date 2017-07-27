@@ -12,7 +12,7 @@ classdef CExplorer < handle
     hPanels       = CDataPanel.empty()
     hScrollPanel  = CScrollPanel.empty()
     hA
-    hI
+    hI            = matlab.graphics.primitive.Image.empty()
     hSlider       = CSlider.empty()
     hC            = CComboBox.empty()
     
@@ -63,7 +63,7 @@ classdef CExplorer < handle
   
   methods (Static)
     
-    function dImg = getOrientIcons(iSize)
+    function dImg = getOrientIcons(hImagine, iSize)
       
       persistent dIcons
 %       dIcons = [];
@@ -71,7 +71,7 @@ classdef CExplorer < handle
       if isempty(dIcons)
         
         csIcons = {'physical', 'transversal', 'sagittal', 'coronal'};
-        sIconPath = [fileparts(mfilename('fullpath')), filesep, '..', filesep, 'icons', filesep];
+        sIconPath = [hImagine.sBasePath, filesep(), '..', filesep(), 'themes', filesep(), hImagine.sTheme, filesep(), 'icons', filesep()];
         
         dIcons = zeros(iSize, iSize, length(csIcons));
         
@@ -87,7 +87,7 @@ classdef CExplorer < handle
       dImg = dIcons;
     end
     
-    function dImg = getTypeIcons(iSize)
+    function dImg = getTypeIcons(hImagine, iSize)
      
       persistent dIcons
 %       dIcons = [];
@@ -95,7 +95,7 @@ classdef CExplorer < handle
       if isempty(dIcons)
         
         csIcons = {'scalar', 'categorical', 'rgb', 'vector'};
-        sIconPath = [fileparts(mfilename('fullpath')), filesep, '..', filesep, 'icons', filesep];
+        sIconPath = [hImagine.sBasePath, filesep(), '..', filesep(), 'themes', filesep(), hImagine.sTheme, filesep(), 'icons', filesep()];
         
         dIcons = zeros(iSize, iSize, 4, length(csIcons));
         

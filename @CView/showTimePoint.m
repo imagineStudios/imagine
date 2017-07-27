@@ -22,7 +22,7 @@ for iI = 1:numel(obj)
             iN = o.hData(1).getSize(4);
             
             iNCols = min(floor(dXSize_px.*0.9./dDIST), iN);
-            [iNCols, iNRows] = fOptiRows(iN, iNCols);
+            [iNCols, iNRows] = iGlobals.fOptiRows(iN, iNCols);
                         
             dXData = dDIST.*( (0:iNCols - 1)' - (iNCols - 1)/2 );
             if ~strcmp(get(hA, 'XDir'), 'normal')
@@ -59,5 +59,5 @@ for iI = 1:numel(obj)
     end
 end
 
-stop(obj(1).hParent.STimers.hToolTip);
-start(obj(1).hParent.STimers.hToolTip);
+% stop(obj(1).hParent.STimers.hToolTip);
+% start(obj(1).hParent.STimers.hToolTip);

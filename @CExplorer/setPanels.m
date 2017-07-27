@@ -7,7 +7,7 @@ end
 
 for iI = 1:length(hData)
   if iI > length(obj.hPanels)
-    obj.hPanels(iI) = iDataPanel(obj, hData(iI));
+    obj.hPanels(iI) = CDataPanel(obj, hData(iI));
     obj.hScrollPanel.add(obj.hPanels(iI));
   end
 end

@@ -152,9 +152,9 @@ function [iDX, iDY] = fGetDivider(obj)
 iMousePos = get(obj.hF, 'CurrentPoint');
 iFigureSize = get(obj.hF, 'Position');
 
-iX = round(fNonLinSpace(obj.iIconSize + 1, iFigureSize(3) + 1, obj.dColWidth(1:obj.iAxes(1))));
+iX = round(iGlobals.fNonLinSpace(obj.iIconSize + 1, iFigureSize(3) + 1, obj.dColWidth(1:obj.iAxes(1))));
 iDX = find(abs(iMousePos(1) - iX(2:end-1)) < 10);
-iY = round(fNonLinSpace(iFigureSize(4) - obj.iIconSize + 1, 1, obj.dRowHeight(1:obj.iAxes(2))));
+iY = round(iGlobals.fNonLinSpace(iFigureSize(4) - obj.iIconSize + 1, 1, obj.dRowHeight(1:obj.iAxes(2))));
 iDY = find(abs(iMousePos(2) - iY(2:end-1)) < 10);
 
 

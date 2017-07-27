@@ -10,7 +10,7 @@ function plus(obj, varargin)
 % -------------------------------------------------------------------------
 % Prepare template data structure for new entry
 iDataInd = length(obj.hData) + 1;
-obj.hData(iDataInd) = iData(obj, iDataInd, varargin{:});
+obj.hData(iDataInd) = CData(obj, iDataInd, varargin{:});
 % -------------------------------------------------------------------------
 
 

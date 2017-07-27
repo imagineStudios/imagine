@@ -4,6 +4,21 @@ function createGUIElements(obj)
 % Get defaults and load preferences from file
 iPosition = fGetDefaults(obj);
 
+obj.SColors.bg_dark = [0 0 0];
+obj.SColors.bg_normal = [0 0 0];
+obj.SColors.bg_light = [0 0 0];
+obj.SColors.accent1 = [255 255 255];
+
+hDOM = xmlread([obj.sBasePath, filesep(), '..', filesep(), 'themes', filesep(), obj.sTheme, filesep(), 'colors.xml']);
+hColors = hDOM.getElementsByTagName('color');
+for iI = 0:hColors.getLength - 1
+  sName = hColors.item(iI).getAttribute('Name');
+  dR    = str2double( hColors.item(iI).getElementsByTagName('red').item(0).getTextContent );
+  dG    = str2double( hColors.item(iI).getElementsByTagName('green').item(0).getTextContent );
+  dB    = str2double( hColors.item(iI).getElementsByTagName('blue').item(0).getTextContent );
+  obj.SColors.(char(sName)) = [dR dG dB]./255;
+end
+
 % -------------------------------------------------------------------------
 % Create the main figure
 obj.hF = figure(...
@@ -12,7 +27,7 @@ obj.hF = figure(...
     'Interruptible'         , 'off', ...
     'Units'                 , 'pixels', ...
     'Renderer'              , 'opengl', ...
-    'Color'                 , obj.dCOL1, ...
+    'Color'                 , obj.SColors.bg_dark, ...
     'Colormap'              , gray(256), ...
     'MenuBar'               , 'none', ...
     'NumberTitle'           , 'off', ...
@@ -56,7 +71,7 @@ obj.SAxes.hTools = axes(...
 hold on
 
 obj.SImgs.hTools = image(...
-    'CData'             , permute(obj.dCOL1, [1 3 2]), ...
+    'CData'             , permute(obj.SColors.bg_dark, [1 3 2]), ...
     'XData'             , [1, 64], ...
     'YData'             , [1, 2000]);
 
@@ -86,12 +101,6 @@ obj.SAxes.hContext = axes(...
     'Visible'           , 'off', ...
     'Hittest'           , 'off');
 hold on
-
-obj.SImgs.hContextBG = image(...
-    'CData'             , repmat(obj.dCOL1(1) + 0.02.*rand(1400, 1), [1, 2, 3]), ...
-    'XData'             , [1, 64], ...
-    'YData'             , [1, 1400], ...
-    'AlphaData'         , 0.8);
 
 % ---------------------------------------------------------------------
 
@@ -133,7 +142,7 @@ obj.SImgs.hUtil = image(...
     'Visible'               , 'off');
 % -------------------------------------------------------------------------
 
-obj.hTooltip = CTooltip(obj.hF, obj.dCOL2);
+obj.hTooltip = CTooltip(obj.hF, obj.SColors.bg_light);
 
 
 function [iPosition, l3DMode] = fGetDefaults(obj)
@@ -151,10 +160,10 @@ iPosition(3:4) = iScreenSize(3:4) - 400;
 % Read saved preferences from file
 l3DMode = 0;
 csSaveVars = {'sPath', 'lRuler', 'dGrid', 'iIconSize', 'sTheme'};
-if exist([obj.sBasePath, 'Settings.mat'], 'file')
-    load([obj.sBasePath, filesep, 'Settings.mat']);
+if exist([obj.sBasePath, filesep(), 'Settings.mat'], 'file')
+    load([obj.sBasePath, filesep(), 'Settings.mat']);
     
-    iPosition           = S.iPosition;
+    iPosition                 = S.iPosition;
     %     l3DMode             = S.l3DMode;
     
     for iI = 1:length(csSaveVars)
@@ -176,10 +185,8 @@ end
 
 % -------------------------------------------------------------------------
 % Read the menu and slider definitions
-S = load([obj.sBasePath, filesep, 'resources', filesep, 'Menu.mat']);
+S = load([obj.sBasePath, filesep(), 'Menu.mat']);
 obj.SMenu = S.SMenu;
 % -------------------------------------------------------------------------
 
-if ~obj.lWIP
-    obj.SMenu = obj.SMenu(~[obj.SMenu.WIP]);
-end
+obj.SMenu = obj.SMenu(~[obj.SMenu.WIP]);

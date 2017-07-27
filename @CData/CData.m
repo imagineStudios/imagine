@@ -28,7 +28,7 @@ classdef CData < handle
     
     properties(Access = private)
         Img             = []
-        Parent          = imagine.empty
+        Parent          = CImagine.empty()
         hListeners
         OldCenter
         OldWidth

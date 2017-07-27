@@ -1,4 +1,4 @@
-classdef cquiver < handle
+classdef CQuiver < handle
 %CQUIVER Quiver with individual colors and great performance
 %
 % CQUIVER(x, y, u, v, c)
@@ -90,7 +90,7 @@ classdef cquiver < handle
     % Class methods
     methods
         
-        function obj = cquiver(varargin)
+        function obj = CQuiver(varargin)
             % Constructor. See class description for syntax.
             
             % -------------------------------------------------------------

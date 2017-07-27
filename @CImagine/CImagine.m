@@ -45,11 +45,7 @@ classdef CImagine < handle
     % =====================================================================
     properties (Constant)
         sVERSION                = '3.0 Alpha';          % Figure title
-        dCOL1                   = [20 21 19]./255;
-        dCOL2                   = [39 40 34]./255;
-        dCOL3                   = [64 66 54]./255;
         iMAXVIEWS               = 6;                    % Maximum number of views per dimension
-        lWIP                    = false;                % Show work-in-progress features
         iCOLORMAPLENTGH         = 2^10;
         iICONPADDING            = 8;
     end
@@ -59,15 +55,13 @@ classdef CImagine < handle
         
         % -----------------------------------------------------------------
         % Graphic object handle containers and other handles
-        hF          % The main figure
-        SAxes       % Miscellaneous axes
-        SImgs       % Miscellaneous images
+        hF             = matlab.ui.Figure.empty()% The main figure
         STimers     % Timers to realize delayed actions
         
         % -----------------------------------------------------------------
         % Data and Views (custom classes)
-        hTooltip        = CTooltip.empty
-        hViews          = CView.empty
+        hTooltip        = CTooltip.empty()
+        hViews          = CView.empty()
         
         % -----------------------------------------------------------------
         % GUI state
@@ -82,19 +76,24 @@ classdef CImagine < handle
         SColormaps      = struct
         
         sTheme          = 'default'
+        SColors
         
         sBasePath
     end
     
     properties(SetObservable = true)
+        
+        
         iActiveView     = 1;
         l3D             = false;
-        hData           = CData.empty  % Structure with image data and properties
+        hData           = CData.empty()  % Structure with image data and properties
     end
     
     
     properties (Access = private)
-        hExplorer       = CExplorer.empty
+        hExplorer       = CExplorer.empty()
+        SAxes       % Miscellaneous axes
+        SImgs       % Miscellaneous images
         sPath           = pwd % The working directory
         dColWidth       = [1 1 1 1 1 1]
         dRowHeight      = [1 1 1 1 1 1]
@@ -111,17 +110,10 @@ classdef CImagine < handle
         function obj = CImagine(varargin)
             %IMAGINE Constructor
             
-            sPath = [fileparts(mfilename('fullpath')), filesep];
-            iInd = strfind(sPath(1:end - 1), filesep);
-            obj.sBasePath = sPath(1:iInd(end) - 1);
-            
-            
-            if ~exist('fBlend', 'file')
-              addpath([obj.sBasePath, filesep, 'globals']);
-            end
-            
+            obj.sBasePath = fileparts(mfilename('fullpath'));
+                        
             try
-                obj.SColormaps = obj.getColormaps(obj.iCOLORMAPLENTGH);
+                obj.SColormaps = obj.getColormaps(obj.sBasePath, obj.iCOLORMAPLENTGH);
                 
                 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 % Get the input data
@@ -278,7 +270,7 @@ classdef CImagine < handle
     
     % =====================================================================
     methods (Static)
-        csColormaps = getColormaps(iLength)
+        csColormaps = getColormaps(sPath, iLength)
         csRegistrations = getRegistrations(obj)
     end
     % =====================================================================

@@ -50,7 +50,7 @@ set(obj.SAxes.hMenu,  ...
     'XLim'          , [0 dFigureWidth + 1] + 0.5, ...
     'YLim'          , [0 obj.iIconSize + 4] + 0.5);
 
-dCData = repmat(permute(obj.dCOL2, [1 3 2]), obj.iIconSize + 4, 1);
+dCData = repmat(permute(obj.SColors.bg_normal, [1 3 2]), obj.iIconSize + 4, 1);
 dCData(obj.iIconSize + 1:end, :, :) = 0;
 dAlpha = ones(obj.iIconSize + 4, 1);
 dAlpha(obj.iIconSize + 1:obj.iIconSize + 4) = [0.7; 0.5; 0.3; 0.0];
@@ -77,8 +77,8 @@ set(obj.SImgs.hIcons(lInd), 'XData', 1 + dFigureWidth - obj.iIconSize);
 % Arrange the views
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Get the origins, widths and heights of each view's axes
-iX = round(fNonLinSpace(dToolbarWidth + 1, dFigureWidth + 1, obj.dColWidth(1:obj.iAxes(1))));
-iY = round(fNonLinSpace(dContentsHeight + 1, 1, obj.dRowHeight(1:obj.iAxes(2))));
+iX = round(iGlobals.fNonLinSpace(dToolbarWidth + 1, dFigureWidth + 1, obj.dColWidth(1:obj.iAxes(1))));
+iY = round(iGlobals.fNonLinSpace(dContentsHeight + 1, 1, obj.dRowHeight(1:obj.iAxes(2))));
 [iXX, iYY] = meshgrid(iX, iY);
 iXXStart = iXX(1:end - 1, 1:end - 1)';
 iXXWidth = diff(iXX(1:end-1, :), 1, 2)' - 1;

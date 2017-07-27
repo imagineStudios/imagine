@@ -3,7 +3,7 @@ function draw(obj, lHD)
 persistent dBGImg
 % dBGImg = [];
 if isempty(dBGImg)
-    dBGImg = fBGImg(obj(1).hParent.dCOL1);
+    dBGImg = fBGImg(obj(1).hParent.SColors.bg_normal);
 end
 
 % -------------------------------------------------------------------------
