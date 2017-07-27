@@ -101,8 +101,8 @@ for iI = 1:length(obj.SMenu)
   [dImg1, ~, dAlpha1] = imread([sIconPath, filesep(), obj.SMenu(iI).Name, '.png']); % icon file name (.png) has to be equal to icon name
   dImg1 = double( cat(3, dImg1, dAlpha1) )./255;
   
-  if exist([sIconPath, obj.SMenu(iI).Name, '1.png'], 'file')
-    [dImg2, ~, dAlpha2] = imread([sIconPath, obj.SMenu(iI).Name, '1.png']);
+  if exist([sIconPath, filesep(), obj.SMenu(iI).Name, '1.png'], 'file')
+    [dImg2, ~, dAlpha2] = imread([sIconPath, filesep(), obj.SMenu(iI).Name, '1.png']);
     dImg2 = double( cat(3, dImg2, dAlpha2) )./255;
   else
     dImg2 = rgb2gray(dImg1(:,:,1:3));
