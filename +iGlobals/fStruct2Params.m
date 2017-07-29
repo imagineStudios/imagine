@@ -36,7 +36,7 @@ for iI = 1:length(csFields)
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Check for image data
-    if any(strdist(csFields{iI}, {'img', 'image', 'data'}, false) < 2)
+    if any(iGlobals.strdist(csFields{iI}, {'img', 'image', 'data'}, false) < 2)
         dImg = SImg.(csFields{iI});
         continue
     end
@@ -44,7 +44,7 @@ for iI = 1:length(csFields)
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Check for properties defined in the mappign structure
     for iJ = 1:length(SMapping)
-        if any(strdist(csFields{iI}, SMapping(iJ).Source, false) < SMapping(iJ).Tolerance)
+        if any(iGlobals.strdist(csFields{iI}, SMapping(iJ).Source, false) < SMapping(iJ).Tolerance)
             xVal = SImg.(csFields{iI});
             cAdditionalInputs = [cAdditionalInputs, SMapping(iJ).Target, xVal];
             break

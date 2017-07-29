@@ -41,13 +41,14 @@ end
 % -------------------------------------------------------------------------
 % Arrange the imagine elements
 
+dToolbarWidth = obj.iIconSize;
+dMenubarHeight = obj.iIconSize;
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % MenuBar
-dMenubarHeight = obj.iIconSize;
-dContentsHeight = dFigureHeight - dMenubarHeight;
+dMenuWidth = dFigureWidth + 1 - dToolbarWidth;
 set(obj.SAxes.hMenu,  ...
-    'Position'      , [0, dFigureHeight - obj.iIconSize + 1 - 4, dFigureWidth + 1, dMenubarHeight + 4], ...
-    'XLim'          , [0 dFigureWidth + 1] + 0.5, ...
+    'Position'      , [dToolbarWidth, dFigureHeight - obj.iIconSize + 1 - 4, dMenuWidth, dMenubarHeight + 4], ...
+    'XLim'          , [0 dMenuWidth] + 0.5, ...
     'YLim'          , [0 obj.iIconSize + 4] + 0.5);
 
 dCData = repmat(permute(obj.SColors.bg_normal, [1 3 2]), obj.iIconSize + 4, 1);
@@ -61,10 +62,9 @@ set(obj.SImgs.hMenu, ...
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Toolbar
-dToolbarWidth = obj.iIconSize;
 set(obj.SAxes.hTools, ...
     'Position'      , [0, 1, dToolbarWidth, dFigureHeight - obj.iIconSize], ...
-    'XLim'          , [0 obj.iIconSize] + 0.5, ...
+    'XLim'          , [0 dToolbarWidth] + 0.5, ...
     'YLim'          , [0 dFigureHeight - obj.iIconSize] + 0.5);
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -77,6 +77,7 @@ set(obj.SImgs.hIcons(lInd), 'XData', 1 + dFigureWidth - obj.iIconSize);
 % Arrange the views
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Get the origins, widths and heights of each view's axes
+dContentsHeight = dFigureHeight - dMenubarHeight;
 iX = round(iGlobals.fNonLinSpace(dToolbarWidth + 1, dFigureWidth + 1, obj.dColWidth(1:obj.iAxes(1))));
 iY = round(iGlobals.fNonLinSpace(dContentsHeight + 1, 1, obj.dRowHeight(1:obj.iAxes(2))));
 [iXX, iYY] = meshgrid(iX, iY);

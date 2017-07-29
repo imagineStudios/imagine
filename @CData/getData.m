@@ -3,6 +3,7 @@ function [dImg, dXData, dYData, dAlpha] = getData(obj, dDrawCenter, iDimInd, hA,
 if nargin == 1 && nargout == 1
     % Special case of only one input argument: Return thumbnail
     dImg = obj.Img(:,:,obj.ThumbSlice,1,:);
+    dImg = permute(dImg, [1 2 5 4 3]);
     return
 end
 

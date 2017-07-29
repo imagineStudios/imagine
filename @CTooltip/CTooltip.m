@@ -61,6 +61,8 @@ classdef CTooltip < handle
       obj.hListeners = addlistener(obj.hParent, 'ObjectBeingDestroyed' , @obj.delete);
       obj.hListeners(2) = addlistener(obj.hParent, 'WindowMouseMotion' , @obj.checkOver);
       
+      obj.hListeners(2).Enabled = false;
+      
     end
     
     function delete(obj, ~, ~)
@@ -107,6 +109,8 @@ classdef CTooltip < handle
         set(obj.hT, ...
           'String'    , sString, ...
           'Visible'   , 'on');
+        
+        obj.hListeners(2).Enabled = true;
       end
       
       stop(obj.hTimer);
@@ -122,6 +126,8 @@ classdef CTooltip < handle
       set(obj.hT, ...
         'Visible'   , 'off', ...
         'String'    , '');
+      
+      obj.hListeners(2).Enabled = false;
     end
     
     function checkOver(obj, ~, ~)
