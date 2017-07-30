@@ -70,7 +70,6 @@ classdef CImagine < handle
         
         dGrid           = 0         % Distance between grid lines, 0 = off, -1 = show axes center for 3D view
         lRuler          = false
-        iAxes           = [1, 1]
         dMinRes         = 1        % The minimum resolution in any of the datasets (used to determine what 100% is)
         
         SColormaps      = struct
@@ -82,8 +81,6 @@ classdef CImagine < handle
     end
     
     properties(SetObservable = true)
-        
-        
         iActiveView     = 1;
         l3D             = false;
         hData           = CData.empty()  % Structure with image data and properties
@@ -95,6 +92,7 @@ classdef CImagine < handle
         SAxes       % Miscellaneous axes
         SImgs       % Miscellaneous images
         sPath           = pwd % The working directory
+        iAxes           = [1, 1]
         dColWidth       = [1 1 1 1 1 1]
         dRowHeight      = [1 1 1 1 1 1]
         iIconSize       = 64

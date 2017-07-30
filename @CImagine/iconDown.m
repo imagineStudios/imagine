@@ -477,7 +477,7 @@ switch obj.SMenu(iInd).GroupIndex
     switch(obj.SMenu(iInd).Name)
       
       case 'hd'
-        obj.draw;
+        obj.draw();
         
       case 'dock'
         if strcmp(get(obj.hF, 'WindowStyle'), 'docked')
@@ -494,12 +494,7 @@ switch obj.SMenu(iInd).GroupIndex
         
         
       case '3d'
-        obj.l3D = obj.isOn('3d');
-        %                 if obj.isOn('3d')
-        obj.hViews.setAxes;
-        %                 else
-        %                     obj.setViews([obj.iPanelsr(1) ceil(obj.iPanels(2)/3)]);
-        %                 end
+        obj.setViews(obj.iAxes);
         
     end
     % End of TOGGLE buttons

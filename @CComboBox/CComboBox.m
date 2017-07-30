@@ -8,6 +8,7 @@ classdef CComboBox < handle
     Position    = [1 1]
     Parent      = matlab.graphics.axis.Axes.empty()
     Callback    = function_handle.empty()
+    Color       = [1 1 1]
   end
   
   properties (Access = private)

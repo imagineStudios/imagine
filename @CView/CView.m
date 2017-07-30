@@ -52,7 +52,6 @@ classdef CView < handle
             
             obj.updateData;
             obj.setMode(l3D);
-%             obj.setAxes;
         end
         
         function delete(obj, ~, ~)
@@ -65,7 +64,7 @@ classdef CView < handle
         position(obj, ~, ~)
         grid(obj)
         
-        setAxes(obj)
+        setAxes(obj, iAxesLayout)
         updateData(obj)
         setPosition(obj, iX, iY, iWidth, iHeight)
         setData(obj, l3D, cData)

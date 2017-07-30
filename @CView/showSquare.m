@@ -11,15 +11,15 @@ for iI = 1:numel(obj)
         dAxesPos = get(hA, 'Position');
         
         if strcmp(get(o.hA(iDimInd), 'YDir'), 'normal')
-            dYData = dYLim_mm(2) - 10.*diff(dYLim_mm)./dAxesPos(4);
+            dYData = dYLim_mm(2) - 14.*diff(dYLim_mm)./dAxesPos(4);
         else
-            dYData = dYLim_mm(1) + 10.*diff(dYLim_mm)./dAxesPos(4);
+            dYData = dYLim_mm(1) + 14.*diff(dYLim_mm)./dAxesPos(4);
         end
         
         if strcmp(get(o.hA(iDimInd), 'XDir'), 'normal')
-            dXData = dXLim_mm(1) + 10.*diff(dXLim_mm)./dAxesPos(3);
+            dXData = dXLim_mm(1) + 14.*diff(dXLim_mm)./dAxesPos(3);
         else
-            dXData = dXLim_mm(2) - 10.*diff(dXLim_mm)./dAxesPos(3);
+            dXData = dXLim_mm(2) - 14.*diff(dXLim_mm)./dAxesPos(3);
         end
         
         set(o.hS1(iDimInd), 'XData', dXData, 'YData', dYData, 'SizeData', 15.^2, 'Marker', 's');

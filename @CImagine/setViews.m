@@ -34,18 +34,22 @@ if iNViews < iNExistingViews
     delete(obj.hViews(iNViews + 1:iNExistingViews));
     obj.hViews = obj.hViews(1:iNViews); % Remove invalid handles    
     
+%     fprintf('Deleting %d view(s)!\n', iNExistingViews - iNViews);
+    
 elseif iNViews > iNExistingViews
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Create the new views
     for iI = iNExistingViews + 1:iNViews
-        obj.hViews(iI) = CView(obj, iI, obj.isOn('3d'));
+        obj.hViews(iI) = CView(obj, iI, l3D);
+%         fprintf('Creating new view!\n');
     end
 end
 % -------------------------------------------------------------------------
 
 obj.hViews.setMode(l3D);
-obj.hViews.updateData;
-obj.draw;
+obj.hViews.setAxes(obj.iAxes);
+obj.hViews.updateData();
+obj.draw();
 
 if strcmp(get(obj.hF, 'Visible'), 'on')
     obj.resize(0); % Assign correct positioning to all views

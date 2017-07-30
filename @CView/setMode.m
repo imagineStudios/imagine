@@ -5,5 +5,4 @@ for iI = 1:numel(obj)
     else
         obj(iI).sMode = '2D';
     end
-    obj(iI).setAxes;
 end
