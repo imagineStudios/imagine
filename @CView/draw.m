@@ -28,7 +28,8 @@ for iI = 1:numel(obj)
             'AlphaData' , 1, ...
             'XData'     , [1 size(dBGImg, 2)], ...
             'YData'     , [1 size(dBGImg, 1)]);
-
+        
+        set(obj(iI).hT(:, :, :, :), 'Visible', 'off');
     else
 
         for iJ = 1:length(obj(iI).hData)
@@ -61,8 +62,7 @@ for iI = 1:numel(obj)
                         'ColorData'     , uint8(dImg))
                 end
             end
-    %         set(SView.hText(1, 1, :),  'String', sprintf('[%d]: %s', SView.iData(1), obj.SData(SView.iData(1)).sName), 'Visible', 'on');
-            %             set(SView.hAxes, 'Color', obj.dColormap(1,:));
+            set(obj(iI).hT(1, 1, :, :), 'String', sprintf('%s', obj(iI).hData.Name), 'Visible', 'on');
 
         end
     end

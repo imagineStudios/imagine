@@ -534,7 +534,7 @@ switch obj.SMenu(iInd).GroupIndex
 end
 % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
-obj.updateActivation;
+obj.updateActivation();
 % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
 

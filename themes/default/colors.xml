@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <settings>
   <color Name="bg_dark">
-    <red>20</red>
-    <green>21</green>
-    <blue>19</blue>
+    <red>18</red>
+    <green>18</green>
+    <blue>18</blue>
   </color>
   <color Name="bg_normal">
-    <red>39</red>
-    <green>40</green>
-    <blue>34</blue>
+    <red>28</red>
+    <green>28</green>
+    <blue>28</blue>
   </color>
   <color Name="bg_light">
-    <red>64</red>
-    <green>66</green>
-    <blue>54</blue>
+    <red>40</red>
+    <green>40</green>
+    <blue>40</blue>
+  </color>
+  <color Name="highlight">
+    <red>100</red>
+    <green>180</green>
+    <blue>255</blue>
   </color>
 </settings>
