@@ -2,7 +2,7 @@ function SColormaps = getColormaps(sPath, iLength)
 
 persistent SMaps
 
-% SMaps = [];
+SMaps = [];
 % -------------------------------------------------------------------------
 % On first startup, determine the installed colormaps
 if isempty(SMaps)
@@ -14,6 +14,7 @@ if isempty(SMaps)
         SMaps(iI).sName = sName;
         SMaps(iI).hFcn  = str2func(['iColormaps.', sName]);
         SMaps(iI).dMap  = SMaps(iI).hFcn(iLength, 1);
+%         SMaps(iI).dImg  = iGlobals.fLogo(12, 7, SMaps(iI).hFcn(7, 1));
     end
 end
 % -------------------------------------------------------------------------

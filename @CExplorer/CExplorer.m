@@ -1,5 +1,5 @@
 classdef CExplorer < handle
-    
+  
   properties
     hImagine      = CImagine.empty()
     hF
@@ -66,7 +66,7 @@ classdef CExplorer < handle
     function dImg = getOrientIcons(hImagine, iSize)
       
       persistent dIcons
-%       dIcons = [];
+      %       dIcons = [];
       
       if isempty(dIcons)
         
@@ -88,9 +88,9 @@ classdef CExplorer < handle
     end
     
     function dImg = getTypeIcons(hImagine, iSize)
-     
+      
       persistent dIcons
-%       dIcons = [];
+      %       dIcons = [];
       
       if isempty(dIcons)
         
@@ -111,19 +111,43 @@ classdef CExplorer < handle
       dImg = dIcons;
     end
     
-    function dImg = getColormapIcons(iSize, SColormaps)
+    
+    function dImg = getColormapIcons(iSize, iN, SColormaps)
       
       persistent dIcons
       dIcons = [];
       
       if isempty(dIcons)
         
-        iNColormaps = length(SColormaps);
-        dIcons = zeros(iSize/2, iSize, 3, iNColormaps);
+        iSUPERSAMPLING = 4;
         
-        for iI = 1:iNColormaps
-          dMap = SColormaps(iI).hFcn(iSize, 1);
-          dIcons(:,:,:,iI) = [repmat( permute(dMap, [3 1 2]), [iSize/2, 1 1] )];
+        iRadius = round(iSize/5)*iSUPERSAMPLING;
+        [dX, dY] = meshgrid(0:iRadius - 1, 0:iRadius - 1);
+        dQuadrant = double((dX.^2 + dY.^2) <= iRadius.^2);
+        dLogo = iGlobals.fDecimate([flip(flip(dQuadrant, 2), 1); dQuadrant], iSUPERSAMPLING);
+        dAlpha = zeros(iSize);
+        dAlpha(4:(size(dLogo, 1) + 3), (iSize/2):(iSize/2 + size(dLogo, 2) - 1)) = dLogo;
+        
+        for iI = 1:length(SColormaps)
+          
+          dCol = SColormaps(iI).hFcn(iN, 1);
+          
+          dImg = zeros(iSize, iSize, 3);
+          dA = zeros(iSize);
+          
+          for iJ = 1:iN
+            dC = repmat(permute(dCol(iJ, :), [1 3 2]), size(dImg, 1), size(dImg, 2), 1);
+            dAR = repmat(0.8.*iGlobals.fRotate(dAlpha, -(iJ - 1 - (iN - 1)/2).*180/(iN - 1) + 25), 1, 1, 3);
+            dC = dC.*dAR; % premultiplied alpha
+            
+            % Blend over with alpha
+            dImg = dC + dImg.*(1 - dAR);
+            dA = dAR(:,:,1) + dA.*(1 - dAR(:,:,1));
+          end
+          
+          dImg = dImg./repmat(dA, 1, 1, 3);
+          
+          dIcons(:,:,:,iI) = cat(3, dImg, dA);
         end
         
       end
@@ -131,6 +155,7 @@ classdef CExplorer < handle
       dImg = dIcons;
       
     end
+    
     
   end
   
