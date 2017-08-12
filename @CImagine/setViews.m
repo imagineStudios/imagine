@@ -40,13 +40,12 @@ elseif iNViews > iNExistingViews
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Create the new views
     for iI = iNExistingViews + 1:iNViews
-        obj.hViews(iI) = CView(obj, iI, l3D);
+        obj.hViews(iI) = CView(obj, iI);
 %         fprintf('Creating new view!\n');
     end
 end
 % -------------------------------------------------------------------------
 
-obj.hViews.setMode(l3D);
 obj.hViews.setAxes(obj.iAxes);
 obj.hViews.updateData();
 obj.draw();

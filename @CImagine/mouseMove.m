@@ -87,14 +87,14 @@ if ~isempty(obj.SAction.hView)
     % If view is not empty, show data pointer and update sidebar if necessary
     set(obj.hF, 'WindowButtonDownFcn', @obj.viewDown);
     if ~isempty(obj.SAction.hView.hData)
-%         fUpdateDataCursor(obj, SView);
+%         dCoord = obj.SAction.hView.getCurrentPoint(obj.SAction.iDimInd);
+%         fprintf('%f\n', dCoord(1));
         setptr(obj.hF, 'datacursor');
         return
         
     else
         % If view is empty, hide the bottom left text
         set(obj.hF, 'Pointer', 'Arrow');
-%         fNoBottomLeftText(obj);
         return
     end
     

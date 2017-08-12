@@ -26,6 +26,10 @@ SMapping(3).Tolerance = 2;
 SMapping(4).Source = {'orient', 'orientation'};
 SMapping(4).Target = 'orientation';
 SMapping(4).Tolerance = 2;
+
+SMapping(5).Source = {'name', 'sname'};
+SMapping(5).Target = 'name';
+SMapping(5).Tolerance = 2;
 % -------------------------------------------------------------------------
 
 

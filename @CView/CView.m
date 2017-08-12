@@ -26,7 +26,6 @@ classdef CView < handle
         hT          = matlab.graphics.primitive.Text.empty                 % Text components
         hP          = matlab.graphics.primitive.Patch.empty                % Patch component
         
-        sMode       = '2D'
         dColor      = [0.1 0.2 0.3]
         iRandColor
         hListeners
@@ -34,9 +33,7 @@ classdef CView < handle
         
     methods
         
-        function obj = CView(hImagine, iInd, l3D)
-            
-            if nargin < 3, l3D = false; end
+        function obj = CView(hImagine, iInd)
             
             obj.hParent = hImagine;
             obj.Ind = iInd;
@@ -51,7 +48,6 @@ classdef CView < handle
             obj.iRandColor = uint8([dBGImg; zeros(1, 4096) + 0.5].*255);
             
             obj.updateData;
-            obj.setMode(l3D);
         end
         
         function delete(obj, ~, ~)
@@ -67,8 +63,7 @@ classdef CView < handle
         setAxes(obj, iAxesLayout)
         updateData(obj)
         setPosition(obj, iX, iY, iWidth, iHeight)
-        setData(obj, l3D, cData)
-        setMode(obj, l3D)
+        setData(obj, cData)
         [iView, iDimInd] = isOver(obj, hOver)
         iDivider = isOverDevider(obj, dCoord_px)
         backup(obj)

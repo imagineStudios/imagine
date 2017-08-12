@@ -163,13 +163,21 @@ switch obj.SMenu(iInd).GroupIndex
         % - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % LOAD new FILES using file dialog
       case 'folder_open'
-        obj.loadFiles;
+        CMessageBox(...
+          'Parent'          , obj.hF, ...
+          'HighlightColor'  , obj.SColors.highlight, ...
+          'Color'           , obj.SColors.bg_light, ...
+          'Caption'         , 'MessageBox', ...
+          'String'          , {'This is a test messagebox', 'This is a second line!'}, ...
+          'Alpha'           , 0.6 ...
+          );
+%         obj.loadFiles;
         % - - - - - - - - - - - - - - - - - - - - - - - - - - -
         
         % - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % IMPORT workspace (base) VARIABLE(S)
       case 'doc_import'
-        csVars = fWSImport();
+        csVars = iImport.fWSImport();
         if isempty(csVars), return, end   % Dialog aborted
         
         for iI = 1:length(csVars)

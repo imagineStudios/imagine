@@ -11,6 +11,7 @@ end
 % dGamma         = get(obj.SSliders(1).hScatter, 'XData');
 % dMaskAlpha     = obj.getSlider('Mask Alpha');
 % dQuiverWidth   = obj.getSlider('Quiver Width');
+l3D = obj(1).hParent.get3DMode();
 % -------------------------------------------------------------------------
 
 % -------------------------------------------------------------------------
@@ -36,6 +37,9 @@ for iI = 1:numel(obj)
 
             % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
             % Get the image data, do windowing and apply colormap
+            if l3D
+              iDimMapping = 1:3;
+            end
             for iDimInd = 1:length(hView.hA)
                 
                 [dImg, dXData, dYData, dAlpha] = ...

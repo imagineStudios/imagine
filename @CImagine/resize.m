@@ -70,7 +70,7 @@ set(obj.SAxes.hTools, ...
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Dock button
 lInd = strcmp({obj.SMenu.Name}, 'dock');
-set(obj.SImgs.hIcons(lInd), 'XData', 1 + dFigureWidth - obj.iIconSize);
+set(obj.SImgs.hIcons(lInd), 'XData', 1 + dFigureWidth - dToolbarWidth - obj.iIconSize);
 % -------------------------------------------------------------------------
 
 % -------------------------------------------------------------------------

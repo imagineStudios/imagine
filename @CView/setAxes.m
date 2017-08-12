@@ -1,6 +1,7 @@
 function setAxes(obj, iAxesLayout)
 
-iAxesPerView = 1 + double(strcmp(obj(1).sMode, '3D'))*2;
+l3D = obj(1).hParent.get3DMode;
+iAxesPerView = 1 + double(l3D)*2;
 
 for iView = 1:length(obj)
   o = obj(iView);
@@ -108,18 +109,18 @@ for iView = 1:length(obj)
         'Visible'               , 'on', ...
         'Hittest'               , 'off');
       
-      for iJ = 1:8
+      for iJ = 1:4
         hT(iJ) = text(1, 1, 'Test', ...
           'Parent'                , o.hA(iI), ...
           'Units'                 , 'pixels', ...
           'FontSize'              , 14, ...
           'Hittest'               , 'off');
       end
-      hT = reshape(hT, [2 2 2]);
+      hT = reshape(hT, [2 1 2]);
       set(hT(:, :, 1), 'Color', 'k');
       set(hT(:, :, 2), 'Color', 'w');
       set(hT(:, 1, :), 'HorizontalAlignment', 'left');
-      set(hT(:, 2, :), 'HorizontalAlignment', 'right');
+%       set(hT(:, 2, :), 'HorizontalAlignment', 'right');
       set(hT(1, :, :), 'VerticalAlignment', 'cap');
       set(hT(2, :, :), 'VerticalAlignment', 'baseline');
       set(hT(2, 1, 1), 'Position', [11, 10]);

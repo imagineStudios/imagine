@@ -199,6 +199,9 @@ classdef CImagine < handle
         dVal  = getSlider(obj, sName)
         sMode = getDrawMode(obj)
         lHD   = getHDMode(obj)
+        function l3D = get3DMode(obj)
+          l3D = obj.isOn('3d');
+        end
     end
     % =====================================================================
     
