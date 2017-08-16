@@ -1,8 +1,5 @@
-function iSize = getSize(obj, iDim)
+function iSize_xyz = getSize(obj)
 
-iSize = size(obj.Img);
-iSize = padarray(iSize, [0, 5 - length(iSize)], 1, 'post');
+iSize = +iGlobals.fSize(obj.Img, 1:3);
 
-if nargin > 1
-    iSize = iSize(iDim);
-end
+iSize_xyz = obj.B*iSize(:);

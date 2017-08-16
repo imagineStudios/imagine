@@ -19,7 +19,7 @@ obj.hData(iDataInd) = CData(obj, iDataInd, varargin{:});
 % explicitely, add a new view
 iCurrentViews = 0;
 for iI = 1:length(obj.hData)
-    iCurrentViews = max([iCurrentViews, obj.hData(iI).iViews]);
+    iCurrentViews = max([iCurrentViews, obj.hData(iI).Views]);
 end
 
 hP = inputParser;
@@ -32,12 +32,12 @@ hP.parse(varargin{2:end});
 
 % -------------------------------------------------------------------------
 % Add the data to the view mapping and update
-obj.hData(iDataInd).iViews = hP.Results.View;
+obj.hData(iDataInd).Views = hP.Results.View;
 % -------------------------------------------------------------------------
 
 
 % -------------------------------------------------------------------------
 % Update global drawing parameters
-dAllRes = cell2mat({obj.hData.Res}');
+dAllRes = obj.hData.getRes();
 obj.dMinRes = min(dAllRes, [], 1);
 % -------------------------------------------------------------------------

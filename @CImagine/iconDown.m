@@ -519,12 +519,7 @@ switch obj.SMenu(iInd).GroupIndex
     else
       sDrawMode = obj.SMenu(iInd).Name;
     end
-    
-    % Update data structures with current draw mode
-    for iI = 1:numel(obj.hData)
-      obj.hData(iI).sDrawMode = sDrawMode;
-    end
-    
+        
     fRadioGroup(obj, 1, sDrawMode);
     obj.draw;
     

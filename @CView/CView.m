@@ -29,6 +29,15 @@ classdef CView < handle
         dColor      = [0.1 0.2 0.3]
         iRandColor
         hListeners
+        
+        % Transformation matrix from axes to xyz
+%         dA = cat(3, [ 0,  1,  0;  0,  0,  1; 1,  0,  0], ... % Coronal view to xyz
+%                     [ 0,  0,  1;  0,  1,  0; 1,  0,  0], ... % Sagittal view to xyz
+%                     [ 0, -1,  0;  1,  0,  0; 0,  0,  1])     % Transversal view to xyz
+                  
+        dA = cat(3, [ 0,  1,  0;  0,  0,  1; -1,  0,  0], ... % Coronal view to xyz
+                    [ 0,  0,  1;  0,  1,  0; -1,  0,  0], ... % Sagittal view to xyz
+                    [ 0,  1,  0;  1,  0,  0;  0,  0,  1])     % Transversal view to xyz          
     end
         
     methods
@@ -55,7 +64,19 @@ classdef CView < handle
             delete([obj.hListeners]);
             delete@handle(obj)
         end
-                
+        
+        function iDimPermutation = getPermutation(obj, iAxesInd)
+          if obj.hParent.get3DMode() == false
+            switch(obj.hData(1).Orientation)
+              case 'cor', iAxesInd = 1;
+              case 'sag', iAxesInd = 2;
+              case 'tra', iAxesInd = 3;
+              case 'nat', iAxesInd = 3;
+            end
+          end
+          iDimPermutation = obj.dA(:,:,iAxesInd)'*[1 2 3]';
+        end
+        
         draw(obj, lHD)
         position(obj, ~, ~)
         grid(obj)

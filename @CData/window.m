@@ -1,6 +1,8 @@
 function window(obj, dFactor)
+
 for iI = 1:length(obj)
-    dCenter = obj(iI).OldCenter.*exp(dFactor(1));
-    dWidth  = obj(iI).OldWidth.*exp(-dFactor(2));
-    obj(iI).Window = dCenter + 0.5.*[-dWidth, dWidth];
+  hData = obj.(iI);
+  dCenter = hData.OldCenter.*exp( dFactor(1));
+  dWidth  = hData.OldWidth .*exp(-dFactor(2));
+  hData.Window = dCenter + dWidth./2.*[-1, 1];
 end

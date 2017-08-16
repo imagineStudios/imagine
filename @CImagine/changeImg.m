@@ -8,13 +8,14 @@ if isstruct(iCnt) || isobject(iCnt)
     % Mouse wheel callback: operate depending on current view
     iCnt = iCnt.VerticalScrollCount;
     hView = obj.SAction.hView;
-    iDimInd = obj.SAction.iDimInd;
+    iDim = obj.SAction.iDimPermutation(3);
 else
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Keyboard input (iCnt is numeric): work on the first view
     hView = obj.hViews(1);
-    iDimInd = 1;
+    iDimPermutation = obj.hViews(1).getPermutation(1);
+    iDim = iDimPermutation(3);
 end
 
 if isempty(hView), return, end
@@ -31,7 +32,7 @@ else
     
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % Change z coordinate
-    iDim = hView.hData(1).Dims(iDimInd, 3);
+%     iDim = hView.hData(1).Dims(iDimInd, 3);
     dStepSize = obj.dMinRes(iDim);
 %     dStepSize = hView.hData(1).Res(iDim);
 end
@@ -53,7 +54,7 @@ if obj.isOn('3d')
 %     if obj.dGrid ~= -1, obj.SAction.dGrid = obj.dGrid; end
     obj.dGrid = -1;
     obj.hViews.position;
-    obj.hViews.grid;
+%     obj.hViews.grid;
 end
 
 if iDim == 4

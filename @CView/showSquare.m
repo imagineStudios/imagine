@@ -2,34 +2,34 @@ function showSquare(obj)
 
 iActiveView = obj(1).hParent.iActiveView;
 for iI = 1:numel(obj)
-    o = obj(iI);
-    lIsActive = o.Ind == iActiveView;
-    for iDimInd = 1:length(obj(iI).hA)
-        hA = o.hA(iDimInd);
+    hView = obj(iI);
+    lIsActive = hView.Ind == iActiveView;
+    for iAxesInd = 1:length(obj(iI).hA)
+        hA = hView.hA(iAxesInd);
         dYLim_mm = get(hA, 'YLim');
         dXLim_mm = get(hA, 'XLim');
         dAxesPos = get(hA, 'Position');
         
-        if strcmp(get(o.hA(iDimInd), 'YDir'), 'normal')
+        if strcmp(get(hView.hA(iAxesInd), 'YDir'), 'normal')
             dYData = dYLim_mm(2) - 14.*diff(dYLim_mm)./dAxesPos(4);
         else
             dYData = dYLim_mm(1) + 14.*diff(dYLim_mm)./dAxesPos(4);
         end
         
-        if strcmp(get(o.hA(iDimInd), 'XDir'), 'normal')
+        if strcmp(get(hView.hA(iAxesInd), 'XDir'), 'normal')
             dXData = dXLim_mm(1) + 14.*diff(dXLim_mm)./dAxesPos(3);
         else
             dXData = dXLim_mm(2) - 14.*diff(dXLim_mm)./dAxesPos(3);
         end
         
-        set(o.hS1(iDimInd), 'XData', dXData, 'YData', dYData, 'SizeData', 15.^2, 'Marker', 's');
+        set(hView.hS1(iAxesInd), 'XData', dXData, 'YData', dYData, 'SizeData', 15.^2, 'Marker', 's');
     end
-    set([o.hS1.MarkerHandle], 'FaceColorBinding', 'interpolated', 'FaceColorData', o.iRandColor(:, 1));
+    set([hView.hS1.MarkerHandle], 'FaceColorBinding', 'interpolated', 'FaceColorData', hView.iRandColor(:, 1));
     if ~lIsActive
         
-        set([o.hS1], 'MarkerEdgeColor', 'none');
+        set([hView.hS1], 'MarkerEdgeColor', 'none');
     else
         %             set([o.hS.MarkerHandle], 'FaceColorBinding', 'interpolated', 'FaceColorData', zeros(4, 1, 'uint8'));
-        set([o.hS1], 'MarkerEdgeColor', [0.5 0.5 0.5]);
+        set([hView.hS1], 'MarkerEdgeColor', [0.5 0.5 0.5]);
     end
 end

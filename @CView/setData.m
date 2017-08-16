@@ -9,7 +9,7 @@ for iI = 1:numel(obj)
     if length(cData) >= o.Ind
         o.hData = cData{o.Ind};
         if isempty(o.DrawCenter) && ~isempty(o.hData)
-            o.DrawCenter = o.hData(1).getCenter;
+            o.DrawCenter = o.hData(1).getCenter();
         end
     else
         o.hData = [];

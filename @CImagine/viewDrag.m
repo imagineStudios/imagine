@@ -7,7 +7,7 @@ dROTATION_THRESHOLD     = 50;       % Defines the number of pixels the cursor ha
 % Get some frequently used values
 iD = get(obj.hF, 'CurrentPoint') - obj.SAction.iPos;
 if norm(iD) > 2, obj.SAction.lMoved = true; end
-iDim = obj.SAction.hView.hData(1).Dims(obj.SAction.iDimInd, :);
+iDim = obj.SAction.hView.Dims(obj.SAction.iDimInd, :);
 
 switch obj.getTool
     

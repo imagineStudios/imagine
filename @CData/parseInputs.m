@@ -63,9 +63,9 @@ hP.addParameter('Origin', []);
 hP.addParameter('Units', 'px', @ischar);
 hP.addParameter('TemporalUnits', '', @ischar);
 
-hP.addParameter('Mode', '');
+hP.addParameter('Type', '');
 
-hP.addParameter('Orientation', 'physical', @ischar);
+hP.addParameter('Orientation', 'native', @ischar);
 hP.addParameter('Source', 'startup', @ischar);
 
 hP.addParameter('Window', []);
@@ -74,7 +74,7 @@ hP.addParameter('Alpha', 1);
 
 hP.parse(cParams{:});
 
-sMode = hP.Results.Mode;
+sType = hP.Results.Type;
 obj.Name = hP.Results.Name;
 % -------------------------------------------------------------------------
 
@@ -84,43 +84,43 @@ lReal = isreal(dImg);
 switch ndims(dImg)
   
   case 2
-    if strcmpi(sMode, 'rgb') || strcmpi(sMode, 'vector')
+    if strcmpi(sType, 'rgb') || strcmpi(sType, 'vector')
       error('2D data connot be RGB or Vector data!');
     end
-    if isempty(sMode), sMode = 'scalar'; end
+    if isempty(sType), sType = 'scalar'; end
     obj.Img = dImg;
-    obj.Mode = sMode;
+    obj.Mode = sType;
     
   case 3
-    if size(dImg, 3) == 3 && ~(strcmp(sMode, 'scalar') || strcmp(sMode, 'categorical')) && lReal % Assume RGB data
-      if isempty(sMode), sMode = 'rgb'; end
+    if size(dImg, 3) == 3 && ~(strcmp(sType, 'scalar') || strcmp(sType, 'categorical')) && lReal % Assume RGB data
+      if isempty(sType), sType = 'rgb'; end
       obj.Img = permute(dImg, [1 2 5 4 3]);
-      obj.Mode = sMode;
+      obj.Type = sType;
     else
-      if strcmpi(sMode, 'rgb') || strcmpi(sMode, 'vector')
+      if strcmpi(sType, 'rgb') || strcmpi(sType, 'vector')
         error('Data is declared RGB or Vector, but 3rd dimension is not of size 3!');
       end
-      if isempty(sMode), sMode = 'scalar'; end
+      if isempty(sType), sType = 'scalar'; end
       obj.Img = dImg;
-      obj.Mode = sMode;
+      obj.Type = sType;
     end
     
   case 4
-    if size(dImg, 3) == 3 && ~(strcmp(sMode, 'scalar') || strcmp(sMode, 'categorical')) && lReal % Assume RGB Video
-      if isempty(sMode), sMode = 'rgb'; end
+    if size(dImg, 3) == 3 && ~(strcmp(sType, 'scalar') || strcmp(sType, 'categorical')) && lReal % Assume RGB Video
+      if isempty(sType), sType = 'rgb'; end
       obj.Img = permute(dImg, [1 2 5 4 3]);
-      obj.Mode = sMode;
+      obj.Type = sType;
     else
-      if strcmpi(sMode, 'rgb') || strcmpi(sMode, 'vector')
+      if strcmpi(sType, 'rgb') || strcmpi(sType, 'vector')
         error('Data is declared RGB or Vector, but 3rd dimension is not of size 3!');
       end
-      if isempty(sMode), sMode = 'scalar'; end
+      if isempty(sType), sType = 'scalar'; end
       obj.Img = dImg;
-      obj.Mode = sMode;
+      obj.Type = sType;
     end
     
   case 5 % can only be 3D Vector data
-    if strcmp(sMode, 'scalar') || strcmp(sMode, 'categorical')
+    if strcmp(sType, 'scalar') || strcmp(sType, 'categorical')
       error('5D data can only be of type RGB or vector!');
     end
     if ~lReal
@@ -144,8 +144,8 @@ switch ndims(dImg)
           obj.Img = permute(dImg, [1 2 3 5 4]);
         end
     end
-    if isempty(sMode), sMode = 'vector'; end
-    obj.Mode = sMode;
+    if isempty(sType), sType = 'vector'; end
+    obj.Mode = sType;
     
   otherwise
     error('Allowed number of input dimensions is 2-5');
@@ -158,23 +158,24 @@ end
 
 % -------------------------------------------------------------------------
 % Handle the orientation data
-obj.Orientation = validatestring(hP.Results.Orientation, {'transversal', 'coronal', 'physical', 'sagittal'});
-switch (obj.Orientation)
-  case 'transversal'
-    obj.Dims = [1 2 3; 3 2 1; 3 1 2];
-    obj.Invert = [0 0 1];
-    
-  case {'coronal', 'physical'}
-    obj.Dims = [1 2 3; 1 3 2; 3 2 1];
-    obj.Invert = [0 0 0];
-    
-  case {'sagittal'}
-    obj.Dims = [1 2 3; 1 3 2; 2 3 1];
-    obj.Invert = [0 0 0];
-    
-  otherwise
-    error('Orientation must be either "tra", "cor" or "sag"!');
-end
+obj.setOrientation(hP.Results.Orientation);
+% obj.Orientation = validatestring(hP.Results.Orientation, {'transversal', 'coronal', 'physical', 'sagittal'});
+% switch (obj.Orientation)
+%   case 'transversal'
+%     obj.Dims = [1 2 3; 3 2 1; 3 1 2];
+%     obj.Invert = [0 0 1];
+%     
+%   case {'coronal', 'physical'}
+%     obj.Dims = [1 2 3; 1 3 2; 3 2 1];
+%     obj.Invert = [0 0 0];
+%     
+%   case {'sagittal'}
+%     obj.Dims = [1 2 3; 1 3 2; 2 3 1];
+%     obj.Invert = [0 0 0];
+%     
+%   otherwise
+%     error('Orientation must be either "tra", "cor" or "sag"!');
+% end
 % -------------------------------------------------------------------------
 
 

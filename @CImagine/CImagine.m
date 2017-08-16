@@ -118,7 +118,7 @@ classdef CImagine < handle
                 obj.parseInputs(varargin{:});
                 
                 if ~isempty(obj.hData)
-                    iNViews = max(cell2mat({obj.hData.iViews}));
+                    iNViews = max(cell2mat({obj.hData.Views}));
                     dRoot = sqrt(iNViews);
                     iViewsN = ceil(dRoot);
                     iViewsM = ceil(dRoot);

@@ -1,5 +1,5 @@
-function dCenter = getCenter(obj)
+function dCenter_xyz = getCenter(obj)
 
-iSize = obj.getSize;
-dCenter = round((iSize(1:4)./2 - 1).*obj.Res + obj.Origin);
-dCenter([4, 5]) = 1;
+iSize_mno = iGlobals.fSize(obj.Img, 1:3);
+dCenter_xyz = obj.mno2xyz(iSize_mno./2);
+dCenter_xyz = ([dCenter_xyz(:)', 1, 1]);

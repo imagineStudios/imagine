@@ -8,7 +8,7 @@ for iI = 1:length(obj)
     lShow = false(size(hData));
     
     for iJ = 1:length(lShow)
-        if any(hData(iJ).iViews == o.Ind)
+        if any(hData(iJ).Views == o.Ind)
             lShow(iJ) = true;
         end
     end
@@ -17,14 +17,14 @@ for iI = 1:length(obj)
     if isempty(o.DrawCenter)
         if o.Ind == 1
             if ~isempty(o.hData)
-                o.DrawCenter = o.hData(1).getCenter;
+                o.DrawCenter = o.hData(1).getCenter();
             end
         else
             o.DrawCenter = o.hParent.hViews(o.Ind - 1).DrawCenter;
         end
     end
     
-    iNQuiver = sum(strcmp([o.hData.Mode], 'vector'));
+    iNQuiver = sum(strcmp([o.hData.Type], 'vector'));
     iNImg = length(o.hData) - iNQuiver;
     
 end

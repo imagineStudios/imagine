@@ -1,4 +1,7 @@
-function [dImg, dXData, dYData, dAlpha] = getData(obj, dDrawCenter, iDimInd, hA, lHD)
+function [dImg, dXData, dYData, dAlpha] = getData(obj, dDrawCenter_xyzt, dA, hAxes)
+
+% if nargin < 5, lHD = false;   end
+lHD = obj.Parent.getHDMode();
 
 if nargin == 1 && nargout == 1
     % Special case of only one input argument: Return thumbnail
@@ -7,33 +10,24 @@ if nargin == 1 && nargout == 1
     return
 end
 
-if nargin < 5, lHD = false;   end
-
-iDim = obj.Dims(iDimInd, :);
-
 % -------------------------------------------------------------------------
 % Get the corresponding image data
+iDimPermutation = abs(dA'*obj.getPermutation());
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% Calculate the boundaries of the projection in physical units
-
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% Translate to slice indices
-d3Lim_px = obj.getSliceLim(dDrawCenter, iDim);
-    
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-% Determine timepoint
-iT = max(1, min(dDrawCenter(4), size(obj.Img, 4)));
+% Translate to slice indices, determine timepoint
+d3Lim_px = obj.getSliceLim(dDrawCenter_xyzt, iDimPermutation(3));
+iT = max(1, min(dDrawCenter_xyzt(4), size(obj.Img, 4)));
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % Get data and permute into first two dimensions (3rd for projection data, 4th for rgb/vector data)
 if ~isempty(d3Lim_px)
-    switch iDim(3)
+    switch iDimPermutation(3)
         case 1, dImg = obj.Img(d3Lim_px,:,:,iT,:);
         case 2, dImg = obj.Img(:,d3Lim_px,:,iT,:);
         case 3, dImg = obj.Img(:,:,d3Lim_px,iT,:);
     end
-    dImg = permute(dImg, [iDim(1:2) iDim(3) 5 4]);
+    dImg = permute(dImg, [iDimPermutation' 5 4]);
 else
     dImg = 0;
 end
@@ -74,8 +68,8 @@ dImg = double(dImg);
 lNum = ~any(isnan(dImg), 4);
 dImg(~lNum) = 0;
 
-dAspect = obj.Res(iDim(1:2));
-dOrigin = obj.Origin(iDim(1:2));
+dAspect = obj.Res(iDimPermutation(1:2));
+dOrigin = obj.Origin(iDimPermutation(1:2));
 
 if lHD && ~strcmp(obj.Mode, 'vector') && ~strcmp(obj.Mode, 'categorical') && ~isscalar(dImg)
     % -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -89,9 +83,9 @@ if lHD && ~strcmp(obj.Mode, 'vector') && ~strcmp(obj.Mode, 'categorical') && ~is
     dX = (-1:size(dImg, 2) - 2).*dAspect(2) + dOrigin(2);
     dY = (-1:size(dImg, 1) - 2).*dAspect(1) + dOrigin(1);
     
-    dXLim = get(hA, 'XLim');
-    dYLim = get(hA, 'YLim');
-    dPosition = get(hA, 'Position');
+    dXLim = get(hAxes, 'XLim');
+    dYLim = get(hAxes, 'YLim');
+    dPosition = get(hAxes, 'Position');
     
     dXI = (0.5:dPosition(3) - 0.5)./dPosition(3).*diff(dXLim) + dXLim(1);
     dYI = (0.5:dPosition(4) - 0.5)./dPosition(4).*diff(dYLim) + dYLim(1);
@@ -122,7 +116,7 @@ else
     dMax = obj.Window(2);
 end
 
-switch obj.Mode
+switch obj.Type
     
     case 'scalar'
         dImgA = dImg - dMin;

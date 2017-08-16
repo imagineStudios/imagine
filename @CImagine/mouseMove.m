@@ -65,10 +65,10 @@ end
 
 % -------------------------------------------------------------------------
 % Mouse over a VIEW
-[iView, iDimInd] = obj.hViews.isOver(hOver);
+[iView, iAxes] = obj.hViews.isOver(hOver);
 obj.SAction.hView = obj.hViews(iView);
-obj.SAction.iDimInd = iDimInd;
 if ~isempty(obj.SAction.hView)
+  obj.SAction.iDimPermutation = obj.hViews(iView).getPermutation(iAxes);
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     % If resclicing mode and in box
     if strcmp(obj.sROIMode, 'reslice') && strcmp(get(SView.hLine(1), 'Visible'), 'on')
