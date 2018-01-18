@@ -110,6 +110,12 @@ classdef CImagine < handle
         function obj = CImagine(varargin)
             %IMAGINE Constructor
             
+            % check version info
+            if(verLessThan('matlab','8.4'))
+                obj = [];
+                error('Matlab versions before 2014a are not supported due to graphic system change');
+            end    
+            
             obj.sBasePath = fileparts(mfilename('fullpath'));
                         
             try
