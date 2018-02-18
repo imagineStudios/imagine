@@ -169,7 +169,7 @@ switch obj.SMenu(iInd).GroupIndex
         % - - - - - - - - - - - - - - - - - - - - - - - - - - -
         % IMPORT workspace (base) VARIABLE(S)
       case 'doc_import'
-        csVars = fWSImport();
+        csVars = iImport.fWSImport();
         if isempty(csVars), return, end   % Dialog aborted
         
         for iI = 1:length(csVars)
