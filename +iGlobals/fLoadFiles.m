@@ -84,13 +84,13 @@ iExtHash = zeros(size(csFilenames));
 % Hash the file extensions and names to make things more easy
 for iI = 1:length(csFilenames)
     [~, sName, sExt] = fileparts(csFilenames{iI});
-    iNameHash(iI) = fHash(sName);
-    iExtHash(iI) = fHash(sExt);
+    iNameHash(iI) = iGlobals.fHash(sName);
+    iExtHash(iI) = iGlobals.fHash(sExt);
 end
 
 % These are supposed to be analyze files
-iHDRHash = fHash('.hdr');
-iIMGHash = fHash('.img');
+iHDRHash = iGlobals.fHash('.hdr');
+iIMGHash = iGlobals.fHash('.img');
 lAnalyze = iExtHash == iHDRHash | iExtHash == iIMGHash;
 
 % These files will be kept
